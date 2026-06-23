@@ -90,7 +90,14 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteMode, setDeleteMode] = useState<null | "prompt" | "single">(null);
-  const [recentLocations, setRecentLocations] = useState<string[]>([]);
+  const [recentLocations, setRecentLocations] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      return JSON.parse(localStorage.getItem("ea-recent-locations") || "[]");
+    } catch {
+      return [];
+    }
+  });
 
   useEffect(() => {
     fetch("/api/events")
@@ -99,14 +106,17 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
         const locs: string[] = [];
         const seen = new Set<string>();
         for (const e of [...(data.events ?? [])].reverse()) {
-          const loc = e.location?.trim();
+          const loc = (e.location ?? "").trim();
           if (loc && !seen.has(loc.toLowerCase())) {
             seen.add(loc.toLowerCase());
             locs.push(loc);
             if (locs.length >= 4) break;
           }
         }
-        setRecentLocations(locs);
+        if (locs.length > 0) {
+          setRecentLocations(locs);
+          localStorage.setItem("ea-recent-locations", JSON.stringify(locs));
+        }
       })
       .catch(() => {});
   }, []);
