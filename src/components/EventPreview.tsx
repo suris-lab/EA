@@ -68,7 +68,7 @@ export default function EventPreview({
   const canSave = title.trim() && date;
 
   const handleConfirm = async () => {
-    if (!canSave) return;
+    if (!canSave || saving) return;
     setSaving(true);
 
     const startDate = allDay || !time
@@ -81,17 +81,23 @@ export default function EventPreview({
         : `${endDate}T${endTime}:00`
       : null;
 
-    await onConfirm({
-      ...event,
+    const edited: CalendarEvent = {
+      id: event.id || "",
       title: title.trim(),
       start_date: startDate,
       end_date: endDateStr,
       all_day: allDay,
       location: location.trim() || null,
       description: description.trim() || null,
-    });
+      source: event.source || "photo",
+      created_at: event.created_at || "",
+    };
 
-    setSaving(false);
+    try {
+      await onConfirm(edited);
+    } catch {
+      setSaving(false);
+    }
   };
 
   return (

@@ -85,9 +85,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ events: data });
   }
 
+  const row = {
+    title: body.title,
+    start_date: body.start_date,
+    end_date: body.end_date || null,
+    all_day: body.all_day ?? false,
+    location: body.location || null,
+    description: body.description || null,
+    source: body.source || "manual",
+    series_id: body.series_id || null,
+  };
+
   const { data, error } = await supabase
     .from("events")
-    .insert({ ...body, series_id: null })
+    .insert(row)
     .select()
     .single();
 

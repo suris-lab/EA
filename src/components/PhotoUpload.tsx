@@ -60,6 +60,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
   const [error, setError] = useState<string | null>(null);
   const [parsedEvents, setParsedEvents] = useState<ParsedEvent[]>([]);
   const [currentEventIdx, setCurrentEventIdx] = useState(0);
+  const [savedCount, setSavedCount] = useState(0);
   const [showSourcePicker, setShowSourcePicker] = useState(false);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const libraryInputRef = useRef<HTMLInputElement>(null);
@@ -102,6 +103,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
 
       setParsedEvents(data.events);
       setCurrentEventIdx(0);
+      setSavedCount(0);
     } catch {
       setError("Network error. Please check your connection and try again.");
     }
@@ -109,47 +111,57 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
     setScanning(false);
   };
 
+  const saveEvent = async (eventData: {
+    title: string;
+    start_date: string;
+    end_date: string | null;
+    all_day: boolean;
+    location: string | null;
+    description: string | null;
+  }): Promise<boolean> => {
+    const res = await fetch("/api/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: eventData.title,
+        start_date: eventData.start_date,
+        end_date: eventData.end_date,
+        all_day: eventData.all_day,
+        location: eventData.location,
+        description: eventData.description,
+        source: "photo",
+      }),
+    });
+    return res.ok;
+  };
+
+  const advanceOrFinish = (saved: boolean) => {
+    const newSavedCount = saved ? savedCount + 1 : savedCount;
+    if (saved) setSavedCount(newSavedCount);
+
+    const nextIdx = currentEventIdx + 1;
+    if (nextIdx < parsedEvents.length) {
+      setCurrentEventIdx(nextIdx);
+    } else {
+      if (newSavedCount > 0) onSaved();
+      onClose();
+    }
+  };
+
   const handleConfirmEvent = async (edited: CalendarEvent) => {
-    const payload = {
+    const ok = await saveEvent({
       title: edited.title,
       start_date: edited.start_date,
       end_date: edited.end_date || null,
       all_day: edited.all_day ?? false,
       location: edited.location || null,
       description: edited.description || null,
-      source: "photo" as const,
-    };
-
-    try {
-      const res = await fetch("/api/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        console.error("Failed to save event:", await res.text());
-      }
-    } catch (err) {
-      console.error("Network error saving event:", err);
-    }
-
-    const nextIdx = currentEventIdx + 1;
-    if (nextIdx < parsedEvents.length) {
-      setCurrentEventIdx(nextIdx);
-    } else {
-      onSaved();
-      onClose();
-    }
+    });
+    advanceOrFinish(ok);
   };
 
   const handleSkipEvent = () => {
-    const nextIdx = currentEventIdx + 1;
-    if (nextIdx < parsedEvents.length) {
-      setCurrentEventIdx(nextIdx);
-    } else {
-      if (currentEventIdx > 0) onSaved();
-      onClose();
-    }
+    advanceOrFinish(false);
   };
 
   if (parsedEvents.length > 0 && currentEventIdx < parsedEvents.length) {
@@ -183,7 +195,6 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
           Take a photo or choose from your library to extract events.
         </p>
 
-        {/* Hidden file inputs */}
         <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleInputChange} />
         <input ref={libraryInputRef} type="file" accept="image/*" className="hidden" onChange={handleInputChange} />
 
@@ -202,40 +213,26 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
             onDrop={handleDrop}
           >
             <PhotoLibraryIcon />
-            <p className="mt-3 text-sm font-medium text-text-primary">
-              Tap to add a photo
-            </p>
-            <p className="mt-1 text-xs text-text-muted">
-              PNG, JPG up to 10 MB
-            </p>
+            <p className="mt-3 text-sm font-medium text-text-primary">Tap to add a photo</p>
+            <p className="mt-1 text-xs text-text-muted">PNG, JPG up to 10 MB</p>
           </div>
         )}
 
-        {/* Source picker action sheet */}
         {showSourcePicker && (
           <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center" onClick={() => setShowSourcePicker(false)}>
             <div className="absolute inset-0 bg-black/40" />
             <div className="animate-slide-up relative z-10 w-full max-w-sm px-4 pb-8 sm:pb-4" onClick={(e) => e.stopPropagation()}>
               <div className="overflow-hidden rounded-2xl bg-surface shadow-xl">
-                <button
-                  onClick={() => { setShowSourcePicker(false); cameraInputRef.current?.click(); }}
-                  className="flex w-full items-center gap-3 border-b border-border-light px-5 py-4 text-left transition-colors active:bg-surface-dim"
-                >
+                <button onClick={() => { setShowSourcePicker(false); cameraInputRef.current?.click(); }} className="flex w-full items-center gap-3 border-b border-border-light px-5 py-4 text-left transition-colors active:bg-surface-dim">
                   <CameraIcon />
                   <span className="text-sm font-medium text-text-primary">Take Photo</span>
                 </button>
-                <button
-                  onClick={() => { setShowSourcePicker(false); libraryInputRef.current?.click(); }}
-                  className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors active:bg-surface-dim"
-                >
+                <button onClick={() => { setShowSourcePicker(false); libraryInputRef.current?.click(); }} className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors active:bg-surface-dim">
                   <PhotoLibraryIcon />
                   <span className="text-sm font-medium text-text-primary">Choose from Library</span>
                 </button>
               </div>
-              <button
-                onClick={() => setShowSourcePicker(false)}
-                className="mt-2 w-full rounded-2xl bg-surface py-4 text-center text-sm font-semibold text-brand-500 shadow-xl transition-colors active:bg-surface-dim"
-              >
+              <button onClick={() => setShowSourcePicker(false)} className="mt-2 w-full rounded-2xl bg-surface py-4 text-center text-sm font-semibold text-brand-500 shadow-xl transition-colors active:bg-surface-dim">
                 Cancel
               </button>
             </div>
@@ -247,9 +244,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
         )}
 
         <div className="flex justify-end gap-2">
-          <Button variant="ghost" size="md" onClick={onClose}>
-            Cancel
-          </Button>
+          <Button variant="ghost" size="md" onClick={onClose}>Cancel</Button>
           <Button variant="primary" size="md" onClick={handleScan} loading={scanning} disabled={!file}>
             {scanning ? "Scanning..." : "Scan"}
           </Button>
