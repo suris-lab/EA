@@ -256,6 +256,23 @@ body {
     background: var(--color-brand-50);
     border-radius: 0.5rem;
   }
+
+  /* Selected date styling */
+  .ea-calendar .fc .fc-daygrid-day .selected-date-number {
+    background: var(--color-brand-500);
+    color: #fff;
+    border-radius: 9999px;
+    width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+
+  .ea-calendar .fc .fc-daygrid-day.fc-day-today .selected-date .selected-date-number {
+    background: var(--color-brand-700);
+  }
 }
 
 /* =============================================
