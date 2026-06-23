@@ -58,7 +58,7 @@ body {
   --fc-button-hover-border-color: var(--color-brand-600);
   --fc-button-active-bg-color: var(--color-brand-700);
   --fc-button-active-border-color: var(--color-brand-700);
-  --fc-today-bg-color: color-mix(in srgb, var(--color-brand-50), transparent 30%);
+  --fc-today-bg-color: transparent;
   --fc-neutral-bg-color: var(--color-surface-dim);
   --fc-page-bg-color: var(--color-surface);
   --fc-event-bg-color: var(--color-brand-500);
@@ -131,16 +131,8 @@ body {
 }
 
 .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
-  background: var(--color-brand-500);
-  color: #fff;
-  border-radius: 9999px;
-  width: 1.75rem;
-  height: 1.75rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  font-weight: 600;
+  color: var(--color-brand-600);
+  font-weight: 700;
 }
 
 .fc .fc-daygrid-day {
@@ -240,10 +232,6 @@ body {
     color: var(--color-text-primary);
   }
 
-  .ea-calendar .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
-    font-size: 0.8rem;
-  }
-
   .ea-calendar .fc .fc-daygrid-day.fc-day-other .fc-daygrid-day-number {
     color: var(--color-text-muted);
     opacity: 0.5;
@@ -325,14 +313,10 @@ body {
     background: var(--color-brand-700);
   }
 
-  /* Today (not selected) */
-  .ea-calendar .fc .fc-day-today .date-cell-content:not(.date-cell-selected) {
-    background: color-mix(in srgb, var(--color-brand-100), transparent 50%);
-  }
-
+  /* Today (not selected) — just color the number, no background */
   .ea-calendar .fc .fc-day-today .date-cell-content:not(.date-cell-selected) .date-cell-number {
     color: var(--color-brand-600);
-    font-weight: 600;
+    font-weight: 700;
   }
 
   /* Holiday date number — red */
