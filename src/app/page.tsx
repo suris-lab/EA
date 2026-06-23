@@ -26,10 +26,19 @@ function ShareIcon() {
   );
 }
 
+function getExportUrl(): string {
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  return origin.replace(/^https?/, "webcal") + "/api/export";
+}
+
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleEventSaved = () => setRefreshKey((k) => k + 1);
+
+  const handleExport = () => {
+    window.location.href = getExportUrl();
+  };
 
   const handleShare = async () => {
     const url = "https://ea-calendar.vercel.app/";
@@ -60,19 +69,16 @@ export default function Home() {
               <Button variant="ghost" size="sm" icon={<ShareIcon />} onClick={handleShare}>
                 Share
               </Button>
-              <a href="/api/export" className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-medium text-text-primary shadow-sm transition-colors hover:bg-surface-dim active:bg-gray-100">
-                <CalendarPlusIcon />
+              <Button variant="secondary" size="sm" icon={<CalendarPlusIcon />} onClick={handleExport}>
                 Add to Calendar
-              </a>
+              </Button>
             </div>
           </div>
 
-          {/* Mobile: compact action row, no header text */}
+          {/* Mobile: compact action row */}
           <div className="flex items-center justify-end gap-2 sm:hidden">
             <Button variant="ghost" size="sm" icon={<ShareIcon />} onClick={handleShare} />
-            <a href="/api/export" className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface text-text-primary shadow-sm transition-colors active:bg-gray-100">
-              <CalendarPlusIcon />
-            </a>
+            <Button variant="secondary" size="sm" icon={<CalendarPlusIcon />} onClick={handleExport} />
           </div>
 
           <Calendar refreshKey={refreshKey} onRefresh={handleEventSaved} />

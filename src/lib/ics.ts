@@ -1,21 +1,47 @@
-import { createEvents, type EventAttributes } from "ics";
 import type { CalendarEvent } from "@/types/event";
 
-function toDateArray(iso: string): [number, number, number, number, number] {
+function formatICSDate(iso: string): string {
   const d = new Date(iso);
-  return [d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes()];
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+}
+
+function escapeICS(str: string): string {
+  return str.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+}
+
+function uid(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}@ea-calendar`;
 }
 
 export function generateICS(events: CalendarEvent[]): string {
-  const icsEvents: EventAttributes[] = events.map((e) => ({
-    title: e.title,
-    start: toDateArray(e.start_date),
-    ...(e.end_date ? { end: toDateArray(e.end_date) } : { duration: { hours: 1 } }),
-    location: e.location ?? undefined,
-    description: e.description ?? undefined,
-  }));
+  const lines: string[] = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//EA Calendar//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "X-WR-CALNAME:EA Calendar",
+  ];
 
-  const { value, error } = createEvents(icsEvents);
-  if (error) throw error;
-  return value ?? "";
+  for (const e of events) {
+    lines.push("BEGIN:VEVENT");
+    lines.push(`UID:${e.id || uid()}`);
+    lines.push(`DTSTART:${formatICSDate(e.start_date)}`);
+    if (e.end_date) {
+      lines.push(`DTEND:${formatICSDate(e.end_date)}`);
+    } else {
+      const end = new Date(e.start_date);
+      end.setHours(end.getHours() + 1);
+      lines.push(`DTEND:${formatICSDate(end.toISOString())}`);
+    }
+    lines.push(`SUMMARY:${escapeICS(e.title)}`);
+    if (e.location) lines.push(`LOCATION:${escapeICS(e.location)}`);
+    if (e.description) lines.push(`DESCRIPTION:${escapeICS(e.description)}`);
+    lines.push(`DTSTAMP:${formatICSDate(new Date().toISOString())}`);
+    lines.push("END:VEVENT");
+  }
+
+  lines.push("END:VCALENDAR");
+  return lines.join("\r\n");
 }

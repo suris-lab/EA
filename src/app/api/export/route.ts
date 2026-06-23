@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { generateICS } from "@/lib/ics";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const { data, error } = await supabase
     .from("events")
@@ -16,8 +18,9 @@ export async function GET() {
 
   return new NextResponse(icsContent, {
     headers: {
-      "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": 'inline; filename="ea-calendar.ics"',
+      "Content-Type": "text/calendar",
+      "Content-Disposition": 'attachment; filename="ea-calendar.ics"',
+      "Cache-Control": "no-store",
     },
   });
 }
