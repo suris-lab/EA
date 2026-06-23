@@ -218,20 +218,14 @@ body {
   }
 
   .ea-calendar .fc .fc-daygrid-day {
-    min-height: 3.75rem;
+    min-height: 4rem;
   }
 
   .ea-calendar .fc .fc-daygrid-day-frame {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 3.5rem;
-  }
-
-  .lunar-label {
-    font-size: 0.55rem;
-    line-height: 1;
-    white-space: nowrap;
+    min-height: 3.75rem;
   }
 
   .ea-calendar .fc .fc-daygrid-day-top {
@@ -247,8 +241,6 @@ body {
   }
 
   .ea-calendar .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
-    width: 2rem;
-    height: 2rem;
     font-size: 0.8rem;
   }
 
@@ -284,26 +276,68 @@ body {
     border-radius: 0.5rem;
   }
 
-  /* Selected date styling */
-  .ea-calendar .fc .fc-daygrid-day .selected-date-number {
-    background: var(--color-brand-500);
-    color: #fff;
-    border-radius: 9999px;
-    width: 2rem;
-    height: 2rem;
-    display: inline-flex;
+  /* Date cell structure */
+  .date-cell-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    width: 100%;
+  }
+
+  .date-cell-content {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    transition: background-color 0.15s ease;
+  }
+
+  .date-cell-number {
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+  }
+
+  .lunar-label {
+    font-size: 0.5rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  /* Selected state — circle covers both lines */
+  .date-cell-selected {
+    background: var(--color-brand-500);
+    animation: date-select-pop 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .date-cell-selected .date-cell-number {
+    color: #fff;
     font-weight: 600;
   }
 
-  .ea-calendar .fc .fc-daygrid-day.fc-day-today .selected-date .selected-date-number {
+  /* Today + selected */
+  .ea-calendar .fc .fc-day-today .date-cell-selected {
     background: var(--color-brand-700);
   }
 
-  /* Holiday date number — red on mobile */
-  .ea-calendar .fc .fc-daygrid-day .holiday-date-number {
-    color: #dc2626;
+  /* Today (not selected) */
+  .ea-calendar .fc .fc-day-today .date-cell-content:not(.date-cell-selected) {
+    background: color-mix(in srgb, var(--color-brand-100), transparent 50%);
+  }
+
+  .ea-calendar .fc .fc-day-today .date-cell-content:not(.date-cell-selected) .date-cell-number {
+    color: var(--color-brand-600);
+    font-weight: 600;
+  }
+
+  /* Holiday date number — red */
+  .holiday-date-number {
+    color: #dc2626 !important;
     font-weight: 600;
   }
 
@@ -312,10 +346,26 @@ body {
     background: color-mix(in srgb, #fee2e2, transparent 60%);
   }
 
-  /* Selected holiday — brand circle overrides red */
-  .ea-calendar .fc .hk-holiday-cell .selected-date-number {
+  /* Selected holiday — brand circle, white text */
+  .date-cell-selected-holiday {
     background: var(--color-brand-500);
-    color: #fff;
+  }
+
+  .date-cell-selected-holiday .holiday-date-number {
+    color: #fff !important;
+  }
+
+  /* Selection pop animation */
+  @keyframes date-select-pop {
+    0% { transform: scale(0.9); }
+    60% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .date-cell-selected {
+      animation: none;
+    }
   }
 }
 

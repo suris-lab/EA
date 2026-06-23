@@ -200,9 +200,16 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
     const isSelected = selectedDate === dateStr;
     const lunar = getLunarInfo(arg.date.getFullYear(), arg.date.getMonth() + 1, arg.date.getDate());
     const hasFestival = lunar.festivals.length > 0;
-
     const lunarLabel = lunar.cellLabel;
-    const isFestivalOrTerm = hasFestival || !!lunar.solarTerm;
+
+    let lunarColor = "text-text-muted";
+    if (isSelected) {
+      lunarColor = "text-white/70";
+    } else if (isHoliday) {
+      lunarColor = "text-red-400";
+    } else if (hasFestival) {
+      lunarColor = "text-brand-500 font-medium";
+    }
 
     const ariaParts = [
       `${arg.date.getDate()} ${MONTHS[arg.date.getMonth()]} ${arg.date.getFullYear()}`,
@@ -212,18 +219,18 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
     if (hasFestival) ariaParts.push(lunar.festivals.join("、"));
 
     return (
-      <div
-        className={`flex flex-col items-center gap-0 ${isSelected ? "selected-date" : ""}`}
-        role="gridcell"
-        aria-label={ariaParts.join("，")}
-      >
-        <span className={`${isSelected ? "selected-date-number" : ""} ${!isSelected && isHoliday ? "holiday-date-number" : ""}`}>
-          {arg.dayNumberText}
-        </span>
-        <span className={`lunar-label ${isSelected ? "text-white/70" : isFestivalOrTerm ? "text-brand-500 font-medium" : isHoliday ? "text-red-400" : "text-text-muted"}`}>
-          {lunarLabel}
-        </span>
-        <div className="flex gap-0.5">
+      <div className="date-cell-wrapper" role="gridcell" aria-label={ariaParts.join("，")}>
+        {/* Selection circle — behind content */}
+        <div className={`date-cell-content ${isSelected ? "date-cell-selected" : ""} ${isSelected && isHoliday ? "date-cell-selected-holiday" : ""}`}>
+          <span className={`date-cell-number ${!isSelected && isHoliday ? "holiday-date-number" : ""}`}>
+            {arg.dayNumberText}
+          </span>
+          <span className={`lunar-label ${lunarColor}`}>
+            {lunarLabel}
+          </span>
+        </div>
+        {/* Indicators below the circle */}
+        <div className="flex gap-0.5" style={{ minHeight: 6 }}>
           {isHoliday && (
             <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? "bg-white" : "bg-red-500"}`} />
           )}
