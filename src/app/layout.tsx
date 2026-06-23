@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -11,13 +11,9 @@ export const metadata: Metadata = {
   title: "EA Calendar — School Notice Calendar",
   description:
     "Upload school notices and convert them into organised calendar events",
-};
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  other: {
+    "viewport": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+  },
 };
 
 export default function RootLayout({
@@ -27,7 +23,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-surface-dim font-[family-name:var(--font-inter)] text-text-primary antialiased">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+      </head>
+      <body className="min-h-screen bg-surface-dim font-[family-name:var(--font-inter)] text-text-primary antialiased touch-manipulation">
         {children}
       </body>
     </html>
