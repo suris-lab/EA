@@ -13,6 +13,28 @@ interface CalendarProps {
   onRefresh: () => void;
 }
 
+function toLocalDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function eventLocalDate(iso: string | null | undefined): string {
+  if (!iso) return "";
+  return toLocalDate(new Date(iso));
+}
+
+function eventsOnDate(events: CalendarEvent[], dateStr: string): CalendarEvent[] {
+  return events.filter((e) => {
+    const start = eventLocalDate(e.start_date);
+    const end = eventLocalDate(e.end_date);
+    if (start === dateStr) return true;
+    if (end && start && dateStr >= start && dateStr <= end) return true;
+    return false;
+  });
+}
+
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -73,32 +95,25 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
     else api.today();
   };
 
-  const eventsForDate = selectedDate
-    ? events.filter((e) => {
-        const start = e.start_date?.slice(0, 10);
-        const end = e.end_date?.slice(0, 10);
-        return start === selectedDate || (end && start && selectedDate >= start && selectedDate <= end);
-      })
-    : [];
+  const eventsForDate = selectedDate ? eventsOnDate(events, selectedDate) : [];
 
   const dayCellContent = (arg: DayCellContentArg) => {
     if (!isMobile) return undefined;
-    const dateStr = arg.date.toISOString().slice(0, 10);
-    const dayEvents = events.filter((e) => {
-      const start = e.start_date?.slice(0, 10);
-      const end = e.end_date?.slice(0, 10);
-      return start === dateStr || (end && start && dateStr >= start && dateStr <= end);
-    });
-    const hasEvents = dayEvents.length > 0;
+    const dateStr = toLocalDate(arg.date);
+    const dayEvents = eventsOnDate(events, dateStr);
+    const count = dayEvents.length;
 
     return (
       <div className="flex flex-col items-center gap-0.5">
         <span>{arg.dayNumberText}</span>
-        {hasEvents && (
+        {count > 0 && (
           <div className="flex gap-0.5">
             {dayEvents.slice(0, 3).map((_, i) => (
-              <span key={i} className="h-1 w-1 rounded-full bg-brand-500" />
+              <span key={i} className="h-1.5 w-1.5 rounded-full bg-brand-500" />
             ))}
+            {count > 3 && (
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-300" />
+            )}
           </div>
         )}
       </div>
