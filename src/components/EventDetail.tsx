@@ -43,8 +43,9 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
   const [description, setDescription] = useState(event.description ?? "");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteMode, setDeleteMode] = useState<null | "prompt" | "single" | "series">(null);
 
+  const isSeries = !!event.series_id;
   const canSave = title.trim() && date;
 
   const handleSave = async () => {
@@ -80,16 +81,28 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
     onClose();
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (deleteSeries: boolean) => {
     setDeleting(true);
     await fetch("/api/events", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: event.id }),
+      body: JSON.stringify({
+        id: event.id,
+        deleteSeries,
+        seriesId: event.series_id,
+      }),
     });
     setDeleting(false);
     onUpdated();
     onClose();
+  };
+
+  const handleDeleteClick = () => {
+    if (isSeries) {
+      setDeleteMode("prompt");
+    } else {
+      setDeleteMode("single");
+    }
   };
 
   function formatDate(iso: string): string {
@@ -108,10 +121,13 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
     }
   }
 
+  const recurrenceLabel = event.recurrence
+    ? `Repeats ${event.recurrence.frequency}`
+    : null;
+
   return (
     <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center" onClick={onClose}>
       <div className="animate-modal-in w-full max-w-md rounded-t-2xl bg-surface p-6 shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
         <div className="mb-1 flex items-center justify-between">
           <h2 className="text-base font-semibold text-text-primary">
             {editing ? "Edit Event" : "Event Details"}
@@ -124,7 +140,6 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
         </div>
 
         {editing ? (
-          /* Edit mode */
           <div className="mb-5 mt-4 space-y-3">
             <div>
               <label className="mb-1 block text-xs font-medium text-text-secondary">Title</label>
@@ -173,7 +188,6 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
             </div>
           </div>
         ) : (
-          /* View mode */
           <div className="mb-5 mt-4 space-y-3 rounded-xl border border-border-light bg-surface-dim p-4">
             <div className="text-base font-semibold text-text-primary">{event.title}</div>
             <div className="space-y-2 text-sm text-text-secondary">
@@ -196,6 +210,14 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
               )}
               {event.all_day && (
                 <div className="inline-block rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-700">All day</div>
+              )}
+              {recurrenceLabel && (
+                <div className="flex items-center gap-2">
+                  <svg className="h-4 w-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>{recurrenceLabel}</span>
+                </div>
               )}
               {event.location && (
                 <div className="flex items-center gap-2">
@@ -221,16 +243,16 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
           </div>
         )}
 
-        {/* Delete confirmation */}
-        {confirmDelete && (
+        {/* Delete confirmation — single event */}
+        {deleteMode === "single" && (
           <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
             <p className="text-xs font-medium text-red-700">Delete this event? This cannot be undone.</p>
             <div className="mt-2 flex gap-2">
-              <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(false)}>
+              <Button variant="ghost" size="sm" onClick={() => setDeleteMode(null)}>
                 Keep
               </Button>
               <button
-                onClick={handleDelete}
+                onClick={() => handleDelete(false)}
                 disabled={deleting}
                 className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-red-700 disabled:bg-red-300"
               >
@@ -240,40 +262,77 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
           </div>
         )}
 
-        {/* Actions */}
-        <div className="flex items-center justify-between">
-          {!editing && (
-            <button
-              onClick={() => setConfirmDelete(true)}
-              className="text-xs font-medium text-red-500 transition-colors hover:text-red-600"
-            >
-              Delete event
-            </button>
-          )}
-          {editing && <div />}
-
-          <div className="flex gap-2">
-            {editing ? (
-              <>
-                <Button variant="ghost" size="md" onClick={() => setEditing(false)}>
-                  Cancel
-                </Button>
-                <Button variant="primary" size="md" onClick={handleSave} loading={saving} disabled={!canSave}>
-                  Save Changes
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="ghost" size="md" onClick={onClose}>
-                  Close
-                </Button>
-                <Button variant="secondary" size="md" onClick={() => setEditing(true)}>
-                  Edit
-                </Button>
-              </>
-            )}
+        {/* Delete confirmation — series event */}
+        {deleteMode === "prompt" && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4">
+            <p className="mb-3 text-sm font-medium text-red-700">This is a recurring event.</p>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => handleDelete(false)}
+                disabled={deleting}
+                className="flex w-full items-center justify-between rounded-lg border border-red-200 bg-surface px-4 py-3 text-left text-sm transition-colors hover:bg-red-50 active:bg-red-100"
+              >
+                <div>
+                  <p className="font-medium text-text-primary">Delete this event only</p>
+                  <p className="text-xs text-text-secondary">Other events in the series will remain.</p>
+                </div>
+              </button>
+              <button
+                onClick={() => handleDelete(true)}
+                disabled={deleting}
+                className="flex w-full items-center justify-between rounded-lg border border-red-200 bg-surface px-4 py-3 text-left text-sm transition-colors hover:bg-red-50 active:bg-red-100"
+              >
+                <div>
+                  <p className="font-medium text-red-600">Delete all events in this series</p>
+                  <p className="text-xs text-text-secondary">This will remove every occurrence.</p>
+                </div>
+              </button>
+              <button
+                onClick={() => setDeleteMode(null)}
+                className="mt-1 text-center text-xs font-medium text-text-secondary"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Actions */}
+        {!deleteMode && (
+          <div className="flex items-center justify-between">
+            {!editing && (
+              <button
+                onClick={handleDeleteClick}
+                className="text-xs font-medium text-red-500 transition-colors hover:text-red-600"
+              >
+                Delete event
+              </button>
+            )}
+            {editing && <div />}
+
+            <div className="flex gap-2">
+              {editing ? (
+                <>
+                  <Button variant="ghost" size="md" onClick={() => setEditing(false)}>
+                    Cancel
+                  </Button>
+                  <Button variant="primary" size="md" onClick={handleSave} loading={saving} disabled={!canSave}>
+                    Save Changes
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" size="md" onClick={onClose}>
+                    Close
+                  </Button>
+                  <Button variant="secondary" size="md" onClick={() => setEditing(true)}>
+                    Edit
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

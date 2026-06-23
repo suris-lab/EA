@@ -7,6 +7,7 @@ export interface CalendarEvent {
   location?: string | null;
   description?: string | null;
   recurrence?: RecurrenceRule | null;
+  series_id?: string | null;
   source: "manual" | "photo";
   created_at: string;
 }
@@ -16,7 +17,6 @@ export interface RecurrenceRule {
   interval: number;
   endDate?: string;
   count?: number;
-  daysOfWeek?: number[];
 }
 
 export interface CreateEventPayload {
@@ -27,5 +27,6 @@ export interface CreateEventPayload {
   location?: string | null;
   description?: string | null;
   recurrence?: RecurrenceRule | null;
+  series_id?: string | null;
   source: "manual" | "photo";
 }

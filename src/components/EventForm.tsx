@@ -18,6 +18,7 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [recurrence, setRecurrence] = useState("none");
+  const [recurrenceEnd, setRecurrenceEnd] = useState("");
   const [saving, setSaving] = useState(false);
 
   const canSave = title.trim() && date;
@@ -37,7 +38,7 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
       : null;
 
     const recurrenceObj = recurrence !== "none"
-      ? { frequency: recurrence, interval: 1 }
+      ? { frequency: recurrence, interval: 1, ...(recurrenceEnd ? { endDate: recurrenceEnd } : {}) }
       : null;
 
     const res = await fetch("/api/events", {
@@ -132,6 +133,14 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
               <option value="yearly">Yearly</option>
             </select>
           </div>
+
+          {recurrence !== "none" && (
+            <div>
+              <label className="mb-1 block text-xs font-medium text-text-secondary">Repeat until</label>
+              <input type="date" value={recurrenceEnd} onChange={(e) => setRecurrenceEnd(e.target.value)} className={inputClass} />
+              <p className="mt-1 text-xs text-text-muted">Leave empty to repeat for 1 year</p>
+            </div>
+          )}
 
           <div>
             <label className="mb-1 block text-xs font-medium text-text-secondary">Notes</label>
