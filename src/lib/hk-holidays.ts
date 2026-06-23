@@ -97,3 +97,25 @@ export function getHolidayMap(year: number): Map<string, HKHoliday> {
   }
   return map;
 }
+
+export function findHolidaysInRange(startDate: string, endDate: string | null): HKHoliday[] {
+  if (!startDate) return [];
+  const start = startDate.slice(0, 10);
+  const end = endDate ? endDate.slice(0, 10) : start;
+  const startYear = parseInt(start.slice(0, 4));
+  const endYear = parseInt(end.slice(0, 4));
+
+  const seen = new Set<string>();
+  const result: HKHoliday[] = [];
+
+  for (let y = startYear; y <= endYear; y++) {
+    for (const h of getHKHolidays(y)) {
+      if (h.date >= start && h.date <= end && !seen.has(h.date)) {
+        seen.add(h.date);
+        result.push(h);
+      }
+    }
+  }
+
+  return result;
+}

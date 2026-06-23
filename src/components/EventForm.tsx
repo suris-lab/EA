@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useEffect } from "react";
 import Button from "./Button";
+import HolidayReminder from "./HolidayReminder";
+import { findHolidaysInRange, type HKHoliday } from "@/lib/hk-holidays";
 
 interface EventFormProps {
   onClose: () => void;
@@ -50,6 +52,7 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
   const [recurrence, setRecurrence] = useState("none");
   const [recurrenceEnd, setRecurrenceEnd] = useState("");
   const [saving, setSaving] = useState(false);
+  const [holidayWarning, setHolidayWarning] = useState<HKHoliday[]>([]);
   const [recentLocations, setRecentLocations] = useState<string[]>(() => {
     if (typeof window === "undefined") return [];
     try {
@@ -153,8 +156,17 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
 
   const canSave = title.trim() && date && !endBeforeStart && !recurrenceEndInvalid;
 
-  const handleSave = async () => {
+  const handleSaveClick = () => {
     if (!canSave) return;
+    const holidays = findHolidaysInRange(date, endDate || date);
+    if (holidays.length > 0 && holidayWarning.length === 0) {
+      setHolidayWarning(holidays);
+      return;
+    }
+    doSave();
+  };
+
+  const doSave = async () => {
     setSaving(true);
 
     const startDate = allDay || !time
@@ -187,6 +199,7 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
     });
 
     setSaving(false);
+    setHolidayWarning([]);
     if (res.ok) {
       onSaved();
       onClose();
@@ -351,14 +364,23 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
         </div>
 
         <div className="shrink-0 border-t border-border-light px-6 pb-6 pt-3">
-          <div className="flex justify-end gap-2">
-            <Button variant="ghost" size="md" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button variant="primary" size="md" onClick={handleSave} loading={saving} disabled={!canSave}>
-              Save Event
-            </Button>
-          </div>
+          {holidayWarning.length > 0 ? (
+            <HolidayReminder
+              holidays={holidayWarning}
+              onContinue={doSave}
+              onGoBack={() => setHolidayWarning([])}
+              saving={saving}
+            />
+          ) : (
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" size="md" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button variant="primary" size="md" onClick={handleSaveClick} loading={saving} disabled={!canSave}>
+                Save Event
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

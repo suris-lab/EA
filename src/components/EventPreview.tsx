@@ -3,6 +3,8 @@
 import { useState } from "react";
 import type { CalendarEvent } from "@/types/event";
 import Button from "./Button";
+import HolidayReminder from "./HolidayReminder";
+import { findHolidaysInRange, type HKHoliday } from "@/lib/hk-holidays";
 
 interface EventPreviewProps {
   event: CalendarEvent;
@@ -66,11 +68,21 @@ export default function EventPreview({
   const [location, setLocation] = useState(String(event.location || ""));
   const [description, setDescription] = useState(String(event.description || ""));
   const [saving, setSaving] = useState(false);
+  const [holidayWarning, setHolidayWarning] = useState<HKHoliday[]>([]);
 
   const canSave = title.trim() && date;
 
-  const handleConfirm = async () => {
+  const handleConfirmClick = () => {
     if (!canSave || saving) return;
+    const holidays = findHolidaysInRange(date, endDate || date);
+    if (holidays.length > 0 && holidayWarning.length === 0) {
+      setHolidayWarning(holidays);
+      return;
+    }
+    doConfirm();
+  };
+
+  const doConfirm = async () => {
     setSaving(true);
 
     const startDate = allDay || !time
@@ -177,14 +189,23 @@ export default function EventPreview({
           {externalError && (
             <p className="mb-3 rounded-lg bg-red-50 p-3 text-xs text-red-600">{externalError}</p>
           )}
-          <div className="flex justify-end gap-2">
-            <Button variant="ghost" size="md" onClick={onCancel}>
-              {cancelLabel}
-            </Button>
-            <Button variant="primary" size="md" onClick={handleConfirm} disabled={!canSave} loading={saving}>
-              {confirmLabel}
-            </Button>
-          </div>
+          {holidayWarning.length > 0 ? (
+            <HolidayReminder
+              holidays={holidayWarning}
+              onContinue={doConfirm}
+              onGoBack={() => setHolidayWarning([])}
+              saving={saving}
+            />
+          ) : (
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" size="md" onClick={onCancel}>
+                {cancelLabel}
+              </Button>
+              <Button variant="primary" size="md" onClick={handleConfirmClick} disabled={!canSave} loading={saving}>
+                {confirmLabel}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
