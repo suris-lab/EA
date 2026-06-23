@@ -31,9 +31,17 @@ export default function Home() {
 
   const handleEventSaved = () => setRefreshKey((k) => k + 1);
 
-  const handleExport = () => {
-    const webcalUrl = `${window.location.origin}/api/export`;
-    window.location.href = webcalUrl;
+  const handleExport = async () => {
+    const res = await fetch("/api/export");
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ea-calendar.ics";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const handleShare = async () => {
