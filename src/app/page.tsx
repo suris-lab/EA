@@ -5,10 +5,15 @@ import Calendar from "@/components/Calendar";
 import NavMenu from "@/components/NavMenu";
 import Button from "@/components/Button";
 
-function DownloadIcon() {
+function CalendarPlusIcon() {
   return (
     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+      <line x1="12" y1="14" x2="12" y2="18" />
+      <line x1="10" y1="16" x2="14" y2="16" />
     </svg>
   );
 }
@@ -27,16 +32,17 @@ export default function Home() {
   const handleEventSaved = () => setRefreshKey((k) => k + 1);
 
   const handleExport = () => {
-    window.open("/api/export", "_blank");
+    const webcalUrl = `${window.location.origin}/api/export`;
+    window.location.href = webcalUrl;
   };
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/api/export`;
+    const url = "https://ea-calendar.vercel.app/";
     if (navigator.share) {
-      await navigator.share({ title: "EA Calendar", url });
+      await navigator.share({ title: "EA Calendar", text: "Check out my school events calendar", url });
     } else {
       await navigator.clipboard.writeText(url);
-      alert("Export link copied to clipboard!");
+      alert("Link copied to clipboard!");
     }
   };
 
@@ -58,8 +64,8 @@ export default function Home() {
               <Button variant="ghost" size="sm" icon={<ShareIcon />} onClick={handleShare}>
                 Share
               </Button>
-              <Button variant="secondary" size="sm" icon={<DownloadIcon />} onClick={handleExport}>
-                Export
+              <Button variant="secondary" size="sm" icon={<CalendarPlusIcon />} onClick={handleExport}>
+                Add to Calendar
               </Button>
             </div>
           </div>
