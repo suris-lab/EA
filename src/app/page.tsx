@@ -31,19 +31,6 @@ export default function Home() {
 
   const handleEventSaved = () => setRefreshKey((k) => k + 1);
 
-  const handleExport = async () => {
-    const res = await fetch("/api/export");
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "ea-calendar.ics";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
   const handleShare = async () => {
     const url = "https://ea-calendar.vercel.app/";
     if (navigator.share) {
@@ -57,28 +44,37 @@ export default function Home() {
   return (
     <>
       <NavMenu onEventSaved={handleEventSaved} />
-      <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <main className="mx-auto max-w-5xl px-4 py-4 sm:px-6 sm:py-8 lg:px-8">
         <div className="space-y-4 sm:space-y-6">
-          <div className="flex items-end justify-between">
+          {/* Desktop header */}
+          <div className="hidden sm:flex sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-lg font-bold tracking-tight text-text-primary sm:text-2xl">
+              <h2 className="text-2xl font-bold tracking-tight text-text-primary">
                 My Calendar
               </h2>
-              <p className="mt-0.5 text-xs text-text-secondary sm:mt-1 sm:text-sm">
+              <p className="mt-1 text-sm text-text-secondary">
                 Your upcoming school events at a glance.
               </p>
             </div>
-            <div className="flex gap-1.5 sm:gap-2">
-              <Button variant="ghost" size="sm" icon={<ShareIcon />} onClick={handleShare} className="hidden sm:inline-flex">
+            <div className="flex gap-2">
+              <Button variant="ghost" size="sm" icon={<ShareIcon />} onClick={handleShare}>
                 Share
               </Button>
-              <Button variant="ghost" size="sm" icon={<ShareIcon />} onClick={handleShare} className="sm:hidden" />
-              <Button variant="secondary" size="sm" icon={<CalendarPlusIcon />} onClick={handleExport} className="hidden sm:inline-flex">
+              <a href="/api/export" className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-medium text-text-primary shadow-sm transition-colors hover:bg-surface-dim active:bg-gray-100">
+                <CalendarPlusIcon />
                 Add to Calendar
-              </Button>
-              <Button variant="secondary" size="sm" icon={<CalendarPlusIcon />} onClick={handleExport} className="sm:hidden" />
+              </a>
             </div>
           </div>
+
+          {/* Mobile: compact action row, no header text */}
+          <div className="flex items-center justify-end gap-2 sm:hidden">
+            <Button variant="ghost" size="sm" icon={<ShareIcon />} onClick={handleShare} />
+            <a href="/api/export" className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface text-text-primary shadow-sm transition-colors active:bg-gray-100">
+              <CalendarPlusIcon />
+            </a>
+          </div>
+
           <Calendar refreshKey={refreshKey} onRefresh={handleEventSaved} />
         </div>
       </main>
