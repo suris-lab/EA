@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ events: data });
   }
 
-  const row = {
+  const row: Record<string, unknown> = {
     title: body.title,
     start_date: body.start_date,
     end_date: body.end_date || null,
@@ -93,8 +93,9 @@ export async function POST(request: NextRequest) {
     location: body.location || null,
     description: body.description || null,
     source: body.source || "manual",
-    series_id: body.series_id || null,
   };
+  if (body.series_id) row.series_id = body.series_id;
+  if (body.recurrence) row.recurrence = body.recurrence;
 
   const { data, error } = await supabase
     .from("events")

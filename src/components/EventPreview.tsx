@@ -11,6 +11,7 @@ interface EventPreviewProps {
   confirmLabel?: string;
   cancelLabel?: string;
   subtitle?: string;
+  error?: string | null;
 }
 
 function toDateValue(iso: string | null | undefined): string {
@@ -54,6 +55,7 @@ export default function EventPreview({
   confirmLabel = "Save Event",
   cancelLabel = "Cancel",
   subtitle,
+  error: externalError,
 }: EventPreviewProps) {
   const [title, setTitle] = useState(String(event.title || ""));
   const [date, setDate] = useState(toDateValue(event.start_date));
@@ -172,6 +174,9 @@ export default function EventPreview({
         </div>
 
         <div className="shrink-0 border-t border-border-light px-6 pb-6 pt-3">
+          {externalError && (
+            <p className="mb-3 rounded-lg bg-red-50 p-3 text-xs text-red-600">{externalError}</p>
+          )}
           <div className="flex justify-end gap-2">
             <Button variant="ghost" size="md" onClick={onCancel}>
               {cancelLabel}

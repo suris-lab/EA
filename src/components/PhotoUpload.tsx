@@ -111,33 +111,42 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
     setScanning(false);
   };
 
-  const saveEvent = async (eventData: {
-    title: string;
-    start_date: string;
-    end_date: string | null;
-    all_day: boolean;
-    location: string | null;
-    description: string | null;
-  }): Promise<boolean> => {
-    const res = await fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: eventData.title,
-        start_date: eventData.start_date,
-        end_date: eventData.end_date,
-        all_day: eventData.all_day,
-        location: eventData.location,
-        description: eventData.description,
-        source: "photo",
-      }),
-    });
-    return res.ok;
-  };
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const advanceOrFinish = (saved: boolean) => {
-    const newSavedCount = saved ? savedCount + 1 : savedCount;
-    if (saved) setSavedCount(newSavedCount);
+  const handleConfirmEvent = async (edited: CalendarEvent) => {
+    setSaveError(null);
+
+    const payload = {
+      title: edited.title,
+      start_date: edited.start_date,
+      end_date: edited.end_date || null,
+      all_day: edited.all_day ?? false,
+      location: edited.location || null,
+      description: edited.description || null,
+      source: "photo",
+    };
+
+    let ok = false;
+    try {
+      const res = await fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        setSaveError(`Save failed: ${errData.error || res.statusText}`);
+        return;
+      }
+      ok = true;
+    } catch (err) {
+      setSaveError(`Network error: ${err instanceof Error ? err.message : "unknown"}`);
+      return;
+    }
+
+    const newSavedCount = ok ? savedCount + 1 : savedCount;
+    if (ok) setSavedCount(newSavedCount);
 
     const nextIdx = currentEventIdx + 1;
     if (nextIdx < parsedEvents.length) {
@@ -148,20 +157,15 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
     }
   };
 
-  const handleConfirmEvent = async (edited: CalendarEvent) => {
-    const ok = await saveEvent({
-      title: edited.title,
-      start_date: edited.start_date,
-      end_date: edited.end_date || null,
-      all_day: edited.all_day ?? false,
-      location: edited.location || null,
-      description: edited.description || null,
-    });
-    advanceOrFinish(ok);
-  };
-
   const handleSkipEvent = () => {
-    advanceOrFinish(false);
+    setSaveError(null);
+    const nextIdx = currentEventIdx + 1;
+    if (nextIdx < parsedEvents.length) {
+      setCurrentEventIdx(nextIdx);
+    } else {
+      if (savedCount > 0) onSaved();
+      onClose();
+    }
   };
 
   if (parsedEvents.length > 0 && currentEventIdx < parsedEvents.length) {
@@ -175,6 +179,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
         onCancel={handleSkipEvent}
         confirmLabel={currentEventIdx < parsedEvents.length - 1 ? "Save & Next" : "Save Event"}
         cancelLabel={currentEventIdx < parsedEvents.length - 1 ? "Skip" : "Cancel"}
+        error={saveError}
         subtitle={parsedEvents.length > 1 ? `Event ${currentEventIdx + 1} of ${parsedEvents.length}` : undefined}
       />
     );
