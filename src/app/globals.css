@@ -369,3 +369,19 @@ body {
 .animate-slide-up {
   animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* Hero button press animation */
+.hero-btn {
+  transition: transform 150ms ease, box-shadow 150ms ease;
+  will-change: transform;
+}
+
+.hero-btn:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-btn:active {
+    transform: none;
+  }
+}

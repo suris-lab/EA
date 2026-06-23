@@ -53,7 +53,7 @@ export default function Home() {
   return (
     <>
       <NavMenu onEventSaved={handleEventSaved} />
-      <main className="mx-auto max-w-5xl px-4 py-4 sm:px-6 sm:py-8 lg:px-8">
+      <main className="mx-auto max-w-5xl px-4 pb-28 pt-4 sm:px-6 sm:pb-8 sm:pt-8 lg:px-8">
         <div className="space-y-4 sm:space-y-6">
           {/* Desktop header */}
           <div className="hidden sm:flex sm:items-end sm:justify-between">

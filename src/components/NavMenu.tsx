@@ -1,22 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Button from "./Button";
 import PhotoUpload from "./PhotoUpload";
 import EventForm from "./EventForm";
 
-function CameraIcon() {
+function CameraIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
-    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
   );
 }
 
-function PenIcon() {
+function PlusIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
-    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
     </svg>
   );
@@ -38,22 +38,28 @@ interface NavMenuProps {
 }
 
 export default function NavMenu({ onEventSaved }: NavMenuProps) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [showEventForm, setShowEventForm] = useState(false);
+  const scanTapRef = useRef(0);
+  const addTapRef = useRef(0);
 
   const handleUpload = () => {
+    const now = Date.now();
+    if (now - scanTapRef.current < 500) return;
+    scanTapRef.current = now;
     setShowPhotoUpload(true);
-    setMenuOpen(false);
   };
 
   const handleAddEvent = () => {
+    const now = Date.now();
+    if (now - addTapRef.current < 500) return;
+    addTapRef.current = now;
     setShowEventForm(true);
-    setMenuOpen(false);
   };
 
   return (
     <>
+      {/* Top nav bar */}
       <nav className="sticky top-0 z-50 border-b border-border-light bg-surface/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2.5">
@@ -64,48 +70,47 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
               <span className="text-lg font-bold leading-tight tracking-tight text-text-primary">
                 EA Calendar
               </span>
-              <span className="text-[10px] font-medium leading-tight text-text-muted">v0.1.4</span>
+              <span className="text-[10px] font-medium leading-tight text-text-muted">v0.1.5</span>
             </div>
           </div>
 
+          {/* Desktop buttons */}
           <div className="hidden items-center gap-3 sm:flex">
-            <Button variant="secondary" size="md" icon={<PenIcon />} onClick={handleAddEvent}>
+            <Button variant="secondary" size="md" icon={<PlusIcon />} onClick={handleAddEvent}>
               Add Event
             </Button>
             <Button variant="primary" size="md" icon={<CameraIcon />} onClick={handleUpload}>
               Scan Notice
             </Button>
           </div>
-
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="inline-flex items-center justify-center rounded-lg p-2 text-text-secondary transition-colors hover:bg-surface-dim sm:hidden"
-            aria-label="Toggle menu"
-            aria-expanded={menuOpen}
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              {menuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
         </div>
-
-        {menuOpen && (
-          <div className="animate-slide-down border-t border-border-light bg-surface px-4 pb-4 pt-3 sm:hidden">
-            <div className="flex flex-col gap-2">
-              <Button variant="primary" size="lg" icon={<CameraIcon />} onClick={handleUpload} className="w-full">
-                Scan Notice
-              </Button>
-              <Button variant="secondary" size="lg" icon={<PenIcon />} onClick={handleAddEvent} className="w-full">
-                Add Event
-              </Button>
-            </div>
-          </div>
-        )}
       </nav>
+
+      {/* Mobile fixed bottom action bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
+        <div className="border-t border-border-light bg-surface/90 px-4 py-3 backdrop-blur-xl">
+          <div className="mx-auto flex max-w-lg gap-3">
+            <button
+              onClick={handleAddEvent}
+              className="hero-btn flex flex-1 items-center justify-center gap-2 rounded-2xl border border-border bg-surface px-4 py-3.5 text-sm font-semibold text-text-primary shadow-sm"
+              aria-label="Add a new calendar event"
+              style={{ minHeight: 48 }}
+            >
+              <PlusIcon className="h-5 w-5" />
+              Add Event
+            </button>
+            <button
+              onClick={handleUpload}
+              className="hero-btn flex flex-[1.2] items-center justify-center gap-2 rounded-2xl bg-brand-500 px-4 py-3.5 text-sm font-semibold text-white shadow-md shadow-brand-500/30"
+              aria-label="Scan a school notice"
+              style={{ minHeight: 48 }}
+            >
+              <CameraIcon className="h-5 w-5" />
+              Scan Notice
+            </button>
+          </div>
+        </div>
+      </div>
 
       {showPhotoUpload && (
         <PhotoUpload onClose={() => setShowPhotoUpload(false)} onSaved={onEventSaved} />
