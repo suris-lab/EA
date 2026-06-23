@@ -60,9 +60,12 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white shadow-sm shadow-brand-500/25">
               <CalendarIcon />
             </div>
-            <span className="text-lg font-bold tracking-tight text-text-primary">
-              EA Calendar
-            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold leading-tight tracking-tight text-text-primary">
+                EA Calendar
+              </span>
+              <span className="text-[10px] font-medium leading-tight text-text-muted">v0.1.0</span>
+            </div>
           </div>
 
           <div className="hidden items-center gap-3 sm:flex">
