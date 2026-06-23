@@ -63,7 +63,7 @@ export default function Home() {
               </Button>
             </div>
           </div>
-          <Calendar refreshKey={refreshKey} />
+          <Calendar refreshKey={refreshKey} onRefresh={handleEventSaved} />
         </div>
       </main>
     </>

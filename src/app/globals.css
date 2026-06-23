@@ -152,6 +152,15 @@ body {
   flex-wrap: wrap;
 }
 
+.fc .fc-event {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.fc .fc-event:hover {
+  opacity: 0.85;
+}
+
 /* Modal animation */
 @keyframes modal-in {
   from {
