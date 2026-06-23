@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "title": "EA 日曆",
+    "uploadNotice": "上載通告",
+    "addEvent": "新增活動"
+  },
+  "calendar": {
+    "today": "今日",
+    "month": "月",
+    "week": "週",
+    "day": "日"
+  },
+  "photoUpload": {
+    "title": "上載學校通告",
+    "description": "拍攝或上載學校通告圖片，自動建立日曆活動。",
+    "cancel": "取消",
+    "upload": "上載"
+  },
+  "eventForm": {
+    "title": "新增活動",
+    "description": "手動新增重複或一次性活動。",
+    "eventTitle": "活動名稱",
+    "date": "日期",
+    "time": "時間",
+    "location": "地點",
+    "notes": "備註",
+    "repeat": "重複",
+    "cancel": "取消",
+    "save": "儲存活動"
+  },
+  "eventPreview": {
+    "title": "確認活動",
+    "cancel": "取消",
+    "save": "儲存活動"
+  },
+  "export": {
+    "export": "匯出日曆",
+    "share": "分享"
+  }
+}

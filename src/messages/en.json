@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "title": "EA Calendar",
+    "uploadNotice": "Upload Notice",
+    "addEvent": "Add Event"
+  },
+  "calendar": {
+    "today": "Today",
+    "month": "Month",
+    "week": "Week",
+    "day": "Day"
+  },
+  "photoUpload": {
+    "title": "Upload School Notice",
+    "description": "Take a photo or upload an image of a school notice to automatically create calendar events.",
+    "cancel": "Cancel",
+    "upload": "Upload"
+  },
+  "eventForm": {
+    "title": "Create Event",
+    "description": "Manually add a recurring or one-time event.",
+    "eventTitle": "Event Title",
+    "date": "Date",
+    "time": "Time",
+    "location": "Location",
+    "notes": "Notes",
+    "repeat": "Repeat",
+    "cancel": "Cancel",
+    "save": "Save Event"
+  },
+  "eventPreview": {
+    "title": "Confirm Event",
+    "cancel": "Cancel",
+    "save": "Save Event"
+  },
+  "export": {
+    "export": "Export Calendar",
+    "share": "Share"
+  }
+}
