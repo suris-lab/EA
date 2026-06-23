@@ -6,7 +6,7 @@ import Button from "./Button";
 
 interface EventPreviewProps {
   event: CalendarEvent;
-  onConfirm: (edited: CalendarEvent) => void;
+  onConfirm: (edited: CalendarEvent) => void | Promise<void>;
   onCancel: () => void;
   confirmLabel?: string;
   cancelLabel?: string;
@@ -15,10 +15,15 @@ interface EventPreviewProps {
 
 function toDateValue(iso: string | null | undefined): string {
   if (!iso) return "";
+  const match = String(iso).match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (match) return `${match[1]}-${match[2]}-${match[3]}`;
   try {
     const d = new Date(iso);
     if (isNaN(d.getTime())) return "";
-    return d.toISOString().slice(0, 10);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
   } catch {
     return "";
   }
@@ -26,10 +31,14 @@ function toDateValue(iso: string | null | undefined): string {
 
 function toTimeValue(iso: string | null | undefined): string {
   if (!iso) return "";
+  const match = String(iso).match(/T(\d{2}):(\d{2})/);
+  if (match) return `${match[1]}:${match[2]}`;
   try {
     const d = new Date(iso);
     if (isNaN(d.getTime())) return "";
-    return d.toISOString().slice(11, 16);
+    const h = String(d.getHours()).padStart(2, "0");
+    const m = String(d.getMinutes()).padStart(2, "0");
+    return `${h}:${m}`;
   } catch {
     return "";
   }
@@ -54,10 +63,14 @@ export default function EventPreview({
   const [allDay, setAllDay] = useState(Boolean(event.all_day));
   const [location, setLocation] = useState(String(event.location || ""));
   const [description, setDescription] = useState(String(event.description || ""));
+  const [saving, setSaving] = useState(false);
 
   const canSave = title.trim() && date;
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    if (!canSave) return;
+    setSaving(true);
+
     const startDate = allDay || !time
       ? `${date}T00:00:00`
       : `${date}T${time}:00`;
@@ -68,7 +81,7 @@ export default function EventPreview({
         : `${endDate}T${endTime}:00`
       : null;
 
-    onConfirm({
+    await onConfirm({
       ...event,
       title: title.trim(),
       start_date: startDate,
@@ -77,81 +90,90 @@ export default function EventPreview({
       location: location.trim() || null,
       description: description.trim() || null,
     });
+
+    setSaving(false);
   };
 
   return (
     <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center" onClick={onCancel}>
-      <div className="animate-modal-in w-full max-w-md rounded-t-2xl bg-surface p-6 shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
-        <div className="mb-1 flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-semibold text-text-primary">Confirm Event</h2>
-            {subtitle && <p className="text-xs text-text-muted">{subtitle}</p>}
-          </div>
-          <button onClick={onCancel} className="rounded-lg p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        <p className="mb-5 text-sm text-text-secondary">
-          Review and edit the details before saving.
-        </p>
-
-        <div className="mb-5 space-y-3">
-          <div>
-            <label className="mb-1 block text-xs font-medium text-text-secondary">Title</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input type="checkbox" id="previewAllDay" checked={allDay} onChange={(e) => setAllDay(e.target.checked)} className="h-4 w-4 rounded border-border text-brand-500 focus:ring-brand-400" />
-            <label htmlFor="previewAllDay" className="text-xs font-medium text-text-secondary">All day</label>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
+      <div className="animate-modal-in flex max-h-[90vh] w-full max-w-md flex-col rounded-t-2xl bg-surface shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="shrink-0 border-b border-border-light px-6 pb-3 pt-6">
+          <div className="flex items-center justify-between">
             <div>
-              <label className="mb-1 block text-xs font-medium text-text-secondary">Start Date</label>
-              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputClass} />
+              <h2 className="text-base font-semibold text-text-primary">Confirm Event</h2>
+              {subtitle && <p className="text-xs text-text-muted">{subtitle}</p>}
             </div>
-            {!allDay && (
-              <div>
-                <label className="mb-1 block text-xs font-medium text-text-secondary">Start Time</label>
-                <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputClass} />
-              </div>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-xs font-medium text-text-secondary">End Date</label>
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
-            </div>
-            {!allDay && (
-              <div>
-                <label className="mb-1 block text-xs font-medium text-text-secondary">End Time</label>
-                <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className={inputClass} />
-              </div>
-            )}
-          </div>
-
-          <div>
-            <label className="mb-1 block text-xs font-medium text-text-secondary">Location</label>
-            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Optional" className={inputClass} />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-xs font-medium text-text-secondary">Notes</label>
-            <textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Optional" className={`${inputClass} resize-none`} />
+            <button onClick={onCancel} className="rounded-lg p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
-          <Button variant="ghost" size="md" onClick={onCancel}>
-            {cancelLabel}
-          </Button>
-          <Button variant="primary" size="md" onClick={handleConfirm} disabled={!canSave}>
-            {confirmLabel}
-          </Button>
+        <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-4">
+          <p className="mb-4 text-sm text-text-secondary">
+            Review and edit the details before saving.
+          </p>
+
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-text-secondary">Title</label>
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="previewAllDay" checked={allDay} onChange={(e) => setAllDay(e.target.checked)} className="h-4 w-4 rounded border-border text-brand-500 focus:ring-brand-400" />
+              <label htmlFor="previewAllDay" className="text-xs font-medium text-text-secondary">All day</label>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-1 block text-xs font-medium text-text-secondary">Start Date</label>
+                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputClass} />
+              </div>
+              {!allDay && (
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-text-secondary">Start Time</label>
+                  <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputClass} />
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-1 block text-xs font-medium text-text-secondary">End Date</label>
+                <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
+              </div>
+              {!allDay && (
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-text-secondary">End Time</label>
+                  <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} className={inputClass} />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="mb-1 block text-xs font-medium text-text-secondary">Location</label>
+              <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Optional" className={inputClass} />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-xs font-medium text-text-secondary">Notes</label>
+              <textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Optional" className={`${inputClass} resize-none`} />
+            </div>
+          </div>
+        </div>
+
+        <div className="shrink-0 border-t border-border-light px-6 pb-6 pt-3">
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" size="md" onClick={onCancel}>
+              {cancelLabel}
+            </Button>
+            <Button variant="primary" size="md" onClick={handleConfirm} disabled={!canSave} loading={saving}>
+              {confirmLabel}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -110,22 +110,27 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
   };
 
   const handleConfirmEvent = async (edited: CalendarEvent) => {
+    const payload = {
+      title: edited.title,
+      start_date: edited.start_date,
+      end_date: edited.end_date || null,
+      all_day: edited.all_day ?? false,
+      location: edited.location || null,
+      description: edited.description || null,
+      source: "photo" as const,
+    };
+
     try {
-      await fetch("/api/events", {
+      const res = await fetch("/api/events", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: edited.title,
-          start_date: edited.start_date,
-          end_date: edited.end_date,
-          all_day: edited.all_day,
-          location: edited.location,
-          description: edited.description,
-          source: "photo",
-        }),
+        body: JSON.stringify(payload),
       });
-    } catch {
-      // continue to next event even if save fails
+      if (!res.ok) {
+        console.error("Failed to save event:", await res.text());
+      }
+    } catch (err) {
+      console.error("Network error saving event:", err);
     }
 
     const nextIdx = currentEventIdx + 1;
