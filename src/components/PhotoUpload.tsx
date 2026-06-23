@@ -63,12 +63,19 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
     setCurrentEventIdx(0);
   };
 
-  const handleConfirmEvent = async () => {
-    const evt = parsedEvents[currentEventIdx];
+  const handleConfirmEvent = async (edited: CalendarEvent) => {
     await fetch("/api/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...evt, source: "photo" }),
+      body: JSON.stringify({
+        title: edited.title,
+        start_date: edited.start_date,
+        end_date: edited.end_date,
+        all_day: edited.all_day,
+        location: edited.location,
+        description: edited.description,
+        source: "photo",
+      }),
     });
 
     if (currentEventIdx < parsedEvents.length - 1) {
