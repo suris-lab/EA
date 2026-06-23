@@ -50,18 +50,34 @@ Be generous — if there is ANY mention of a date, time, activity, deadline, or 
 
 Return a JSON array. Each object:
 {
-  "title": "string (event name)",
+  "title": "string (clear, concise event name)",
   "start_date": "YYYY-MM-DDTHH:mm:ss (use current year ${new Date().getFullYear()} if year not shown)",
   "end_date": "YYYY-MM-DDTHH:mm:ss or null",
   "all_day": true/false,
   "location": "string or null",
-  "description": "brief summary or null"
+  "description": "string or null — see rules below"
 }
 
-Rules:
+Title rules:
+- Use a clear, concise event name (e.g. "Sports Day", "Parent-Teacher Meeting")
+- Do not repeat the date, time or location in the title
+
+Description rules — this is the most important field to get right:
+- Write a concise, useful summary (1-3 sentences max)
+- Include: the main purpose, required actions or instructions, and who issued the notice (school name, department, teacher, organisation) if clearly identifiable
+- Do NOT repeat information already in title, start_date, end_date, or location
+- Do NOT copy the full notice text word-for-word
+- Do NOT include irrelevant disclaimers, repeated dates, phone numbers, fax numbers or generic administrative text
+- Do NOT invent information that is not in the notice
+- If there is nothing useful to add beyond what title/date/location already capture, set description to null
+- Keep the language matching the notice (Chinese notice → Chinese description, English → English)
+
+Date/time rules:
 - If only a date is shown with no time, set all_day to true and time to 00:00:00
 - If a time range like "2:00pm-4:00pm" is shown, set start_date and end_date accordingly
 - Handle Chinese (繁體/簡體) and English text
+
+General rules:
 - Include deadlines, submission dates, holidays, exams, activities
 - If the image is not a school notice but contains any date/event info, still extract it
 - Return [] only if there is absolutely nothing date-related in the image
