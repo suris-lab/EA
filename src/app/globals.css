@@ -218,14 +218,20 @@ body {
   }
 
   .ea-calendar .fc .fc-daygrid-day {
-    min-height: 3rem;
+    min-height: 3.75rem;
   }
 
   .ea-calendar .fc .fc-daygrid-day-frame {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.75rem;
+    min-height: 3.5rem;
+  }
+
+  .lunar-label {
+    font-size: 0.55rem;
+    line-height: 1;
+    white-space: nowrap;
   }
 
   .ea-calendar .fc .fc-daygrid-day-top {

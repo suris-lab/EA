@@ -1,6 +1,6 @@
 {
   "name": "ea-calendar",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -15,6 +15,7 @@
     "@fullcalendar/react": "^6.1.21",
     "@supabase/supabase-js": "^2.108.2",
     "ics": "^3.12.0",
+    "lunar-typescript": "^1.8.6",
     "next": "^15.3.0",
     "next-intl": "^4.13.0",
     "openai": "^6.44.0",
