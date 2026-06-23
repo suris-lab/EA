@@ -1,14 +1,14 @@
 export interface CalendarEvent {
   id: string;
   title: string;
-  startDate: string;
-  endDate?: string;
-  allDay?: boolean;
-  location?: string;
-  description?: string;
-  recurrence?: RecurrenceRule;
+  start_date: string;
+  end_date?: string | null;
+  all_day?: boolean;
+  location?: string | null;
+  description?: string | null;
+  recurrence?: RecurrenceRule | null;
   source: "manual" | "photo";
-  createdAt: string;
+  created_at: string;
 }
 
 export interface RecurrenceRule {
@@ -17,4 +17,15 @@ export interface RecurrenceRule {
   endDate?: string;
   count?: number;
   daysOfWeek?: number[];
+}
+
+export interface CreateEventPayload {
+  title: string;
+  start_date: string;
+  end_date?: string | null;
+  all_day?: boolean;
+  location?: string | null;
+  description?: string | null;
+  recurrence?: RecurrenceRule | null;
+  source: "manual" | "photo";
 }

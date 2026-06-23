@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import NavMenu from "@/components/NavMenu";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -22,10 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen bg-surface-dim font-[family-name:var(--font-inter)] text-text-primary antialiased">
-        <NavMenu />
-        <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-          {children}
-        </main>
+        {children}
       </body>
     </html>
   );

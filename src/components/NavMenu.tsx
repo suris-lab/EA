@@ -34,7 +34,11 @@ function CalendarIcon() {
   );
 }
 
-export default function NavMenu() {
+interface NavMenuProps {
+  onEventSaved: () => void;
+}
+
+export default function NavMenu({ onEventSaved }: NavMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [showEventForm, setShowEventForm] = useState(false);
@@ -53,7 +57,6 @@ export default function NavMenu() {
     <>
       <nav className="sticky top-0 z-50 border-b border-border-light bg-surface/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-          {/* Logo */}
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white shadow-sm shadow-brand-500/25">
               <CalendarIcon />
@@ -63,7 +66,6 @@ export default function NavMenu() {
             </span>
           </div>
 
-          {/* Desktop actions */}
           <div className="hidden items-center gap-3 sm:flex">
             <LanguageSwitcher />
             <div className="h-5 w-px bg-border" />
@@ -75,7 +77,6 @@ export default function NavMenu() {
             </Button>
           </div>
 
-          {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="inline-flex items-center justify-center rounded-lg p-2 text-text-secondary transition-colors hover:bg-surface-dim sm:hidden"
@@ -92,7 +93,6 @@ export default function NavMenu() {
           </button>
         </div>
 
-        {/* Mobile dropdown */}
         {menuOpen && (
           <div className="animate-slide-down border-t border-border-light bg-surface px-4 pb-4 pt-3 sm:hidden">
             <div className="flex flex-col gap-2">
@@ -111,10 +111,10 @@ export default function NavMenu() {
       </nav>
 
       {showPhotoUpload && (
-        <PhotoUpload onClose={() => setShowPhotoUpload(false)} />
+        <PhotoUpload onClose={() => setShowPhotoUpload(false)} onSaved={onEventSaved} />
       )}
       {showEventForm && (
-        <EventForm onClose={() => setShowEventForm(false)} />
+        <EventForm onClose={() => setShowEventForm(false)} onSaved={onEventSaved} />
       )}
     </>
   );
