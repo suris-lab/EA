@@ -49,24 +49,26 @@ export default function Home() {
   return (
     <>
       <NavMenu onEventSaved={handleEventSaved} />
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="space-y-6">
+      <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div className="space-y-4 sm:space-y-6">
           <div className="flex items-end justify-between">
             <div>
-              <h2 className="text-xl font-bold tracking-tight text-text-primary sm:text-2xl">
+              <h2 className="text-lg font-bold tracking-tight text-text-primary sm:text-2xl">
                 My Calendar
               </h2>
-              <p className="mt-1 text-sm text-text-secondary">
+              <p className="mt-0.5 text-xs text-text-secondary sm:mt-1 sm:text-sm">
                 Your upcoming school events at a glance.
               </p>
             </div>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm" icon={<ShareIcon />} onClick={handleShare}>
+            <div className="flex gap-1.5 sm:gap-2">
+              <Button variant="ghost" size="sm" icon={<ShareIcon />} onClick={handleShare} className="hidden sm:inline-flex">
                 Share
               </Button>
-              <Button variant="secondary" size="sm" icon={<CalendarPlusIcon />} onClick={handleExport}>
+              <Button variant="ghost" size="sm" icon={<ShareIcon />} onClick={handleShare} className="sm:hidden" />
+              <Button variant="secondary" size="sm" icon={<CalendarPlusIcon />} onClick={handleExport} className="hidden sm:inline-flex">
                 Add to Calendar
               </Button>
+              <Button variant="secondary" size="sm" icon={<CalendarPlusIcon />} onClick={handleExport} className="sm:hidden" />
             </div>
           </div>
           <Calendar refreshKey={refreshKey} onRefresh={handleEventSaved} />
