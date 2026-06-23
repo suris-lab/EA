@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Button from "./Button";
 
 interface EventFormProps {
@@ -50,6 +50,26 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
   const [recurrence, setRecurrence] = useState("none");
   const [recurrenceEnd, setRecurrenceEnd] = useState("");
   const [saving, setSaving] = useState(false);
+  const [recentLocations, setRecentLocations] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("/api/events")
+      .then((r) => r.json())
+      .then((data) => {
+        const locs: string[] = [];
+        const seen = new Set<string>();
+        for (const e of [...(data.events ?? [])].reverse()) {
+          const loc = e.location?.trim();
+          if (loc && !seen.has(loc.toLowerCase())) {
+            seen.add(loc.toLowerCase());
+            locs.push(loc);
+            if (locs.length >= 4) break;
+          }
+        }
+        setRecentLocations(locs);
+      })
+      .catch(() => {});
+  }, []);
 
   const applyDuration = useCallback((startDate: string, startTime: string, minutes: number) => {
     if (!startDate || !startTime) return;
@@ -259,6 +279,24 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
 
             <div>
               <label className="mb-1 block text-xs font-medium text-text-secondary">Location</label>
+              {recentLocations.length > 0 && (
+                <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1">
+                  {recentLocations.map((loc) => (
+                    <button
+                      key={loc}
+                      type="button"
+                      onClick={() => setLocation(loc)}
+                      className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+                        location === loc
+                          ? "bg-brand-500 text-white shadow-sm shadow-brand-500/25"
+                          : "border border-border bg-surface text-text-secondary active:bg-gray-100"
+                      }`}
+                    >
+                      {loc}
+                    </button>
+                  ))}
+                </div>
+              )}
               <input type="text" placeholder="e.g. School Hall" value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} />
             </div>
 
