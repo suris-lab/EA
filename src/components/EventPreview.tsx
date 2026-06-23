@@ -1,6 +1,7 @@
 "use client";
 
 import type { CalendarEvent } from "@/types/event";
+import Button from "./Button";
 
 interface EventPreviewProps {
   event: CalendarEvent;
@@ -14,8 +15,8 @@ export default function EventPreview({
   onCancel,
 }: EventPreviewProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onCancel}>
+      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <h2 className="mb-4 text-lg font-semibold">Confirm Event</h2>
         <div className="mb-4 space-y-2 text-sm">
           <p>
@@ -42,18 +43,12 @@ export default function EventPreview({
           )}
         </div>
         <div className="flex justify-end gap-2">
-          <button
-            onClick={onCancel}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50"
-          >
+          <Button variant="ghost" size="md" onClick={onCancel}>
             Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-          >
+          </Button>
+          <Button variant="primary" size="md" onClick={onConfirm}>
             Save Event
-          </button>
+          </Button>
         </div>
       </div>
     </div>
