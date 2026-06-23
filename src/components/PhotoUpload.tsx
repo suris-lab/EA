@@ -30,12 +30,35 @@ function PhotoLibraryIcon() {
   );
 }
 
+interface ParsedEvent {
+  title?: string;
+  start_date?: string;
+  end_date?: string | null;
+  all_day?: boolean;
+  location?: string | null;
+  description?: string | null;
+}
+
+function toCalendarEvent(raw: ParsedEvent): CalendarEvent {
+  return {
+    id: "",
+    title: String(raw.title || "Untitled"),
+    start_date: String(raw.start_date || ""),
+    end_date: raw.end_date ? String(raw.end_date) : null,
+    all_day: Boolean(raw.all_day),
+    location: raw.location ? String(raw.location) : null,
+    description: raw.description ? String(raw.description) : null,
+    source: "photo",
+    created_at: "",
+  };
+}
+
 export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [parsedEvents, setParsedEvents] = useState<CalendarEvent[]>([]);
+  const [parsedEvents, setParsedEvents] = useState<ParsedEvent[]>([]);
   const [currentEventIdx, setCurrentEventIdx] = useState(0);
   const [showSourcePicker, setShowSourcePicker] = useState(false);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -87,22 +110,27 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
   };
 
   const handleConfirmEvent = async (edited: CalendarEvent) => {
-    await fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: edited.title,
-        start_date: edited.start_date,
-        end_date: edited.end_date,
-        all_day: edited.all_day,
-        location: edited.location,
-        description: edited.description,
-        source: "photo",
-      }),
-    });
+    try {
+      await fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: edited.title,
+          start_date: edited.start_date,
+          end_date: edited.end_date,
+          all_day: edited.all_day,
+          location: edited.location,
+          description: edited.description,
+          source: "photo",
+        }),
+      });
+    } catch {
+      // continue to next event even if save fails
+    }
 
-    if (currentEventIdx < parsedEvents.length - 1) {
-      setCurrentEventIdx((i) => i + 1);
+    const nextIdx = currentEventIdx + 1;
+    if (nextIdx < parsedEvents.length) {
+      setCurrentEventIdx(nextIdx);
     } else {
       onSaved();
       onClose();
@@ -110,32 +138,22 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
   };
 
   const handleSkipEvent = () => {
-    if (currentEventIdx < parsedEvents.length - 1) {
-      setCurrentEventIdx((i) => i + 1);
+    const nextIdx = currentEventIdx + 1;
+    if (nextIdx < parsedEvents.length) {
+      setCurrentEventIdx(nextIdx);
     } else {
       if (currentEventIdx > 0) onSaved();
       onClose();
     }
   };
 
-  if (parsedEvents.length > 0) {
-    const raw = parsedEvents[currentEventIdx] as unknown as Record<string, unknown>;
-    const asCalendarEvent: CalendarEvent = {
-      id: "",
-      title: (raw.title as string) || "Untitled",
-      start_date: (raw.start_date as string) || "",
-      end_date: (raw.end_date as string) || null,
-      all_day: (raw.all_day as boolean) ?? false,
-      location: (raw.location as string) || null,
-      description: (raw.description as string) || null,
-      source: "photo",
-      created_at: "",
-    };
+  if (parsedEvents.length > 0 && currentEventIdx < parsedEvents.length) {
+    const calEvent = toCalendarEvent(parsedEvents[currentEventIdx]);
 
     return (
       <EventPreview
-        key={currentEventIdx}
-        event={asCalendarEvent}
+        key={`preview-${currentEventIdx}`}
+        event={calEvent}
         onConfirm={handleConfirmEvent}
         onCancel={handleSkipEvent}
         confirmLabel={currentEventIdx < parsedEvents.length - 1 ? "Save & Next" : "Save Event"}
@@ -161,21 +179,8 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
         </p>
 
         {/* Hidden file inputs */}
-        <input
-          ref={cameraInputRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={handleInputChange}
-        />
-        <input
-          ref={libraryInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleInputChange}
-        />
+        <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleInputChange} />
+        <input ref={libraryInputRef} type="file" accept="image/*" className="hidden" onChange={handleInputChange} />
 
         {preview ? (
           <div className="mb-5">

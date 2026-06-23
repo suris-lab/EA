@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Button from "./Button";
-import LanguageSwitcher from "./LanguageSwitcher";
 import PhotoUpload from "./PhotoUpload";
 import EventForm from "./EventForm";
 
@@ -67,8 +66,6 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
           </div>
 
           <div className="hidden items-center gap-3 sm:flex">
-            <LanguageSwitcher />
-            <div className="h-5 w-px bg-border" />
             <Button variant="secondary" size="md" icon={<PenIcon />} onClick={handleAddEvent}>
               Add Event
             </Button>
@@ -102,9 +99,6 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
               <Button variant="secondary" size="lg" icon={<PenIcon />} onClick={handleAddEvent} className="w-full">
                 Add Event
               </Button>
-              <div className="mt-1 flex justify-center">
-                <LanguageSwitcher />
-              </div>
             </div>
           </div>
         )}

@@ -46,14 +46,14 @@ export default function EventPreview({
   cancelLabel = "Cancel",
   subtitle,
 }: EventPreviewProps) {
-  const [title, setTitle] = useState(event.title);
+  const [title, setTitle] = useState(String(event.title || ""));
   const [date, setDate] = useState(toDateValue(event.start_date));
   const [time, setTime] = useState(toTimeValue(event.start_date));
   const [endDate, setEndDate] = useState(toDateValue(event.end_date));
   const [endTime, setEndTime] = useState(toTimeValue(event.end_date));
-  const [allDay, setAllDay] = useState(event.all_day ?? false);
-  const [location, setLocation] = useState(event.location ?? "");
-  const [description, setDescription] = useState(event.description ?? "");
+  const [allDay, setAllDay] = useState(Boolean(event.all_day));
+  const [location, setLocation] = useState(String(event.location || ""));
+  const [description, setDescription] = useState(String(event.description || ""));
 
   const canSave = title.trim() && date;
 
