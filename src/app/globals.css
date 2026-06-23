@@ -1,1 +1,194 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-50: #eef4ff;
+  --color-brand-100: #d9e5ff;
+  --color-brand-200: #bcd0ff;
+  --color-brand-300: #8eb1ff;
+  --color-brand-400: #5985ff;
+  --color-brand-500: #3362fc;
+  --color-brand-600: #1d42f1;
+  --color-brand-700: #1530de;
+  --color-brand-800: #1829b4;
+  --color-brand-900: #19278e;
+  --color-brand-950: #141b56;
+
+  --color-surface: #ffffff;
+  --color-surface-dim: #f8f9fc;
+  --color-surface-bright: #ffffff;
+  --color-border: #e5e7eb;
+  --color-border-light: #f1f3f5;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* FullCalendar theme overrides */
+:root {
+  --fc-border-color: var(--color-border-light);
+  --fc-button-bg-color: var(--color-brand-500);
+  --fc-button-border-color: var(--color-brand-500);
+  --fc-button-hover-bg-color: var(--color-brand-600);
+  --fc-button-hover-border-color: var(--color-brand-600);
+  --fc-button-active-bg-color: var(--color-brand-700);
+  --fc-button-active-border-color: var(--color-brand-700);
+  --fc-today-bg-color: color-mix(in srgb, var(--color-brand-100), transparent 50%);
+  --fc-neutral-bg-color: var(--color-surface-dim);
+  --fc-page-bg-color: var(--color-surface);
+  --fc-event-bg-color: var(--color-brand-500);
+  --fc-event-border-color: var(--color-brand-600);
+  --fc-event-text-color: #fff;
+}
+
+.fc {
+  --fc-small-font-size: 0.8rem;
+  font-family: inherit;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.fc .fc-button {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.4rem 0.85rem;
+  border-radius: 0.5rem;
+  text-transform: capitalize;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease;
+}
+
+.fc .fc-button:focus {
+  box-shadow: 0 0 0 2px var(--color-brand-200);
+}
+
+.fc .fc-button-group > .fc-button {
+  border-radius: 0;
+}
+
+.fc .fc-button-group > .fc-button:first-child {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.fc .fc-button-group > .fc-button:last-child {
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.fc .fc-col-header-cell {
+  padding: 0.6rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-dim);
+}
+
+.fc .fc-daygrid-day-number {
+  font-size: 0.825rem;
+  font-weight: 500;
+  padding: 0.4rem 0.55rem;
+  color: var(--color-text-secondary);
+}
+
+.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+  background: var(--color-brand-500);
+  color: #fff;
+  border-radius: 9999px;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-weight: 600;
+}
+
+.fc .fc-daygrid-day {
+  transition: background 0.15s ease;
+}
+
+.fc .fc-daygrid-day:hover {
+  background: var(--color-surface-dim);
+}
+
+.fc .fc-scrollgrid {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border-light);
+}
+
+.fc .fc-scrollgrid td:last-of-type {
+  border-right: none;
+}
+
+.fc .fc-scrollgrid tr:last-child td {
+  border-bottom: none;
+}
+
+.fc .fc-toolbar.fc-header-toolbar {
+  margin-bottom: 1.25rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Modal animation */
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-modal-in {
+  animation: modal-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-backdrop-in {
+  animation: backdrop-in 0.2s ease-out;
+}
+
+/* Nav slide-down */
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.2s ease-out;
+}

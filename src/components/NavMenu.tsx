@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Button from "./Button";
+import LanguageSwitcher from "./LanguageSwitcher";
 import PhotoUpload from "./PhotoUpload";
 import EventForm from "./EventForm";
 
@@ -17,7 +18,18 @@ function CameraIcon() {
 function PenIcon() {
   return (
     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zM19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+    </svg>
+  );
+}
+
+function CalendarIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
     </svg>
   );
 }
@@ -39,30 +51,38 @@ export default function NavMenu() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <h1 className="text-xl font-extrabold tracking-tight text-indigo-600 sm:text-2xl">
-            EA Calendar
-          </h1>
+      <nav className="sticky top-0 z-50 border-b border-border-light bg-surface/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+          {/* Logo */}
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white shadow-sm shadow-brand-500/25">
+              <CalendarIcon />
+            </div>
+            <span className="text-lg font-bold tracking-tight text-text-primary">
+              EA Calendar
+            </span>
+          </div>
 
-          {/* Desktop buttons */}
-          <div className="hidden gap-2 sm:flex">
-            <Button variant="primary" size="md" icon={<CameraIcon />} onClick={handleUpload}>
-              Upload Notice
-            </Button>
+          {/* Desktop actions */}
+          <div className="hidden items-center gap-3 sm:flex">
+            <LanguageSwitcher />
+            <div className="h-5 w-px bg-border" />
             <Button variant="secondary" size="md" icon={<PenIcon />} onClick={handleAddEvent}>
               Add Event
+            </Button>
+            <Button variant="primary" size="md" icon={<CameraIcon />} onClick={handleUpload}>
+              Scan Notice
             </Button>
           </div>
 
           {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="inline-flex items-center justify-center rounded-lg p-2 text-gray-600 hover:bg-gray-100 sm:hidden"
+            className="inline-flex items-center justify-center rounded-lg p-2 text-text-secondary transition-colors hover:bg-surface-dim sm:hidden"
             aria-label="Toggle menu"
             aria-expanded={menuOpen}
           >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               {menuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -74,14 +94,17 @@ export default function NavMenu() {
 
         {/* Mobile dropdown */}
         {menuOpen && (
-          <div className="border-t border-gray-100 bg-white px-4 pb-4 pt-2 sm:hidden">
+          <div className="animate-slide-down border-t border-border-light bg-surface px-4 pb-4 pt-3 sm:hidden">
             <div className="flex flex-col gap-2">
-              <Button variant="primary" size="md" icon={<CameraIcon />} onClick={handleUpload} className="w-full">
-                Upload Notice
+              <Button variant="primary" size="lg" icon={<CameraIcon />} onClick={handleUpload} className="w-full">
+                Scan Notice
               </Button>
-              <Button variant="secondary" size="md" icon={<PenIcon />} onClick={handleAddEvent} className="w-full">
+              <Button variant="secondary" size="lg" icon={<PenIcon />} onClick={handleAddEvent} className="w-full">
                 Add Event
               </Button>
+              <div className="mt-1 flex justify-center">
+                <LanguageSwitcher />
+              </div>
             </div>
           </div>
         )}

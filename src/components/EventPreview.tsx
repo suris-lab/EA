@@ -9,39 +9,45 @@ interface EventPreviewProps {
   onCancel: () => void;
 }
 
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="w-16 shrink-0 text-xs font-medium uppercase tracking-wide text-text-muted">
+        {label}
+      </span>
+      <span className="text-sm text-text-primary">{value}</span>
+    </div>
+  );
+}
+
 export default function EventPreview({
   event,
   onConfirm,
   onCancel,
 }: EventPreviewProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onCancel}>
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-        <h2 className="mb-4 text-lg font-semibold">Confirm Event</h2>
-        <div className="mb-4 space-y-2 text-sm">
-          <p>
-            <span className="font-medium">Title:</span> {event.title}
-          </p>
-          <p>
-            <span className="font-medium">Date:</span> {event.startDate}
-          </p>
-          {event.endDate && (
-            <p>
-              <span className="font-medium">End:</span> {event.endDate}
-            </p>
-          )}
-          {event.location && (
-            <p>
-              <span className="font-medium">Location:</span> {event.location}
-            </p>
-          )}
-          {event.description && (
-            <p>
-              <span className="font-medium">Details:</span>{" "}
-              {event.description}
-            </p>
-          )}
+    <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center" onClick={onCancel}>
+      <div className="animate-modal-in w-full max-w-md rounded-t-2xl bg-surface p-6 shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="mb-1 flex items-center justify-between">
+          <h2 className="text-base font-semibold text-text-primary">Confirm Event</h2>
+          <button onClick={onCancel} className="rounded-lg p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
+        <p className="mb-5 text-sm text-text-secondary">
+          Review the details before saving.
+        </p>
+
+        <div className="mb-5 space-y-3 rounded-xl border border-border-light bg-surface-dim p-4">
+          <DetailRow label="Title" value={event.title} />
+          <DetailRow label="Date" value={event.startDate} />
+          {event.endDate && <DetailRow label="End" value={event.endDate} />}
+          {event.location && <DetailRow label="Place" value={event.location} />}
+          {event.description && <DetailRow label="Notes" value={event.description} />}
+        </div>
+
         <div className="flex justify-end gap-2">
           <Button variant="ghost" size="md" onClick={onCancel}>
             Cancel

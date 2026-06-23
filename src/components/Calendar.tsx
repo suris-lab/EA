@@ -6,7 +6,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 
 export default function Calendar() {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+    <div className="overflow-hidden rounded-2xl border border-border-light bg-surface p-4 shadow-sm sm:p-6">
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
@@ -19,6 +19,8 @@ export default function Calendar() {
         events={[]}
         editable={false}
         selectable={true}
+        dayMaxEvents={3}
+        fixedWeekCount={false}
       />
     </div>
   );
