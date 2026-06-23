@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Button from "./Button";
 
 interface EventFormProps {
@@ -9,23 +9,32 @@ interface EventFormProps {
 }
 
 const DURATIONS = [
-  { label: "30m", minutes: 30 },
-  { label: "1hr", minutes: 60 },
-  { label: "1.5hr", minutes: 90 },
-  { label: "2hr", minutes: 120 },
+  { label: "Drop by", minutes: 15 },
+  { label: "30 min", minutes: 30 },
+  { label: "1 hr", minutes: 60 },
+  { label: "1.5 hr", minutes: 90 },
+  { label: "2 hr", minutes: 120 },
 ];
 
-function addMinutes(timeStr: string, minutes: number): string {
+function addMinutesToDateTime(dateStr: string, timeStr: string, minutes: number): { date: string; time: string } {
+  const [y, mo, d] = dateStr.split("-").map(Number);
   const [h, m] = timeStr.split(":").map(Number);
-  const total = h * 60 + m + minutes;
-  const newH = Math.floor(total / 60) % 24;
-  const newM = total % 60;
-  return `${String(newH).padStart(2, "0")}:${String(newM).padStart(2, "0")}`;
+  const dt = new Date(y, mo - 1, d, h, m + minutes);
+  const outDate = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+  const outTime = `${String(dt.getHours()).padStart(2, "0")}:${String(dt.getMinutes()).padStart(2, "0")}`;
+  return { date: outDate, time: outTime };
 }
 
-function timeToMinutes(t: string): number {
-  const [h, m] = t.split(":").map(Number);
-  return h * 60 + m;
+function toTimestamp(dateStr: string, timeStr: string): number {
+  if (!dateStr) return 0;
+  const [y, mo, d] = dateStr.split("-").map(Number);
+  if (!timeStr) return new Date(y, mo - 1, d).getTime();
+  const [h, m] = timeStr.split(":").map(Number);
+  return new Date(y, mo - 1, d, h, m).getTime();
+}
+
+function minutesBetween(d1: string, t1: string, d2: string, t2: string): number {
+  return Math.round((toTimestamp(d2, t2) - toTimestamp(d1, t1)) / 60000);
 }
 
 export default function EventForm({ onClose, onSaved }: EventFormProps) {
@@ -42,32 +51,73 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
   const [recurrenceEnd, setRecurrenceEnd] = useState("");
   const [saving, setSaving] = useState(false);
 
+  const applyDuration = useCallback((startDate: string, startTime: string, minutes: number) => {
+    if (!startDate || !startTime) return;
+    const result = addMinutesToDateTime(startDate, startTime, minutes);
+    setEndDate(result.date);
+    setEndTime(result.time);
+  }, []);
+
   const handleDuration = (minutes: number) => {
-    if (!time) return;
     setSelectedDuration(minutes);
-    const newEnd = addMinutes(time, minutes);
-    setEndTime(newEnd);
-    if (!endDate) setEndDate(date);
+    if (date && time) {
+      applyDuration(date, time, minutes);
+    }
+  };
+
+  const handleDateChange = (val: string) => {
+    setDate(val);
+    if (selectedDuration && time) {
+      applyDuration(val, time, selectedDuration);
+    } else if (endDate && endTime && time) {
+      const gap = minutesBetween(date, time, endDate, endTime);
+      if (gap > 0) {
+        const result = addMinutesToDateTime(val, time, gap);
+        setEndDate(result.date);
+        setEndTime(result.time);
+      }
+    }
   };
 
   const handleTimeChange = (val: string) => {
     setTime(val);
-    setSelectedDuration(null);
+    if (selectedDuration && date) {
+      applyDuration(date, val, selectedDuration);
+    } else if (endDate && endTime && date) {
+      const gap = minutesBetween(date, time, endDate, endTime);
+      if (gap > 0) {
+        const result = addMinutesToDateTime(date, val, gap);
+        setEndDate(result.date);
+        setEndTime(result.time);
+      }
+    }
+  };
+
+  const handleEndDateChange = (val: string) => {
+    setEndDate(val);
+    if (selectedDuration && date && time) {
+      const actual = minutesBetween(date, time, val, endTime || time);
+      if (actual !== selectedDuration) setSelectedDuration(null);
+    }
   };
 
   const handleEndTimeChange = (val: string) => {
     setEndTime(val);
-    setSelectedDuration(null);
+    if (selectedDuration && date && time) {
+      const actual = minutesBetween(date, time, endDate || date, val);
+      if (actual !== selectedDuration) setSelectedDuration(null);
+    }
   };
 
   // Validation
-  const endBeforeStart = !allDay && date && endDate && time && endTime && (
-    endDate < date || (endDate === date && timeToMinutes(endTime) <= timeToMinutes(time))
-  );
+  const hasEnd = !allDay && endDate && endTime && date && time;
+  const endBeforeStart = hasEnd && toTimestamp(endDate, endTime) <= toTimestamp(date, time);
 
-  const recurrenceEndInvalid = recurrence !== "none" && recurrenceEnd && (
-    endDate ? recurrenceEnd <= endDate : recurrenceEnd <= date
-  );
+  const hasRecEnd = recurrence !== "none" && recurrenceEnd;
+  const effectiveEndDate = endDate || date;
+  const effectiveEndTime = endTime || time || "23:59";
+  const recurrenceEndInvalid = hasRecEnd && effectiveEndDate &&
+    toTimestamp(recurrenceEnd, "23:59") <= toTimestamp(effectiveEndDate, effectiveEndTime);
 
   const canSave = title.trim() && date && !endBeforeStart && !recurrenceEndInvalid;
 
@@ -120,7 +170,6 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
   return (
     <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center" onClick={onClose}>
       <div className="animate-modal-in flex max-h-[90vh] w-full max-w-md flex-col rounded-t-2xl bg-surface shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
-        {/* Fixed header */}
         <div className="shrink-0 border-b border-border-light px-6 pb-3 pt-6">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-text-primary">New Event</h2>
@@ -132,7 +181,6 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
           </div>
         </div>
 
-        {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-4">
           <div className="space-y-3">
             <div>
@@ -146,20 +194,21 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
             </div>
 
             {/* Duration quick-select */}
-            {!allDay && time && (
+            {!allDay && (
               <div>
                 <label className="mb-1.5 block text-xs font-medium text-text-secondary">Duration</label>
-                <div className="flex gap-2">
+                <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="Duration">
                   {DURATIONS.map((d) => (
                     <button
                       key={d.minutes}
                       type="button"
                       onClick={() => handleDuration(d.minutes)}
-                      className={`flex-1 rounded-lg py-2 text-xs font-medium transition-all ${
+                      className={`shrink-0 rounded-full px-3 py-2 text-xs font-medium transition-all ${
                         selectedDuration === d.minutes
                           ? "bg-brand-500 text-white shadow-sm shadow-brand-500/25"
-                          : "border border-border bg-surface text-text-secondary hover:bg-surface-dim active:bg-gray-100"
+                          : "border border-border bg-surface text-text-secondary active:bg-gray-100"
                       }`}
+                      style={{ minHeight: 44, minWidth: 44 }}
                     >
                       {d.label}
                     </button>
@@ -171,7 +220,7 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="mb-1 block text-xs font-medium text-text-secondary">Start Date</label>
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputClass} />
+                <input type="date" value={date} onChange={(e) => handleDateChange(e.target.value)} className={inputClass} />
               </div>
               {!allDay && (
                 <div>
@@ -188,7 +237,7 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
                   type="date"
                   value={endDate}
                   min={date || undefined}
-                  onChange={(e) => setEndDate(e.target.value)}
+                  onChange={(e) => handleEndDateChange(e.target.value)}
                   className={endBeforeStart ? errorInputClass : inputClass}
                 />
               </div>
@@ -205,7 +254,7 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
               )}
             </div>
             {endBeforeStart && (
-              <p className="text-xs text-red-500">End time must be after start time.</p>
+              <p className="text-xs text-red-500">End time must be later than start time.</p>
             )}
 
             <div>
@@ -234,10 +283,9 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
                   onChange={(e) => setRecurrenceEnd(e.target.value)}
                   className={recurrenceEndInvalid ? errorInputClass : inputClass}
                 />
-                {recurrenceEndInvalid && (
-                  <p className="mt-1 text-xs text-red-500">Must be after the event end date.</p>
-                )}
-                {!recurrenceEndInvalid && (
+                {recurrenceEndInvalid ? (
+                  <p className="mt-1 text-xs text-red-500">Repeat until must be later than the event end time.</p>
+                ) : (
                   <p className="mt-1 text-xs text-text-muted">Leave empty to repeat for 1 year</p>
                 )}
               </div>
@@ -250,7 +298,6 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
           </div>
         </div>
 
-        {/* Fixed footer */}
         <div className="shrink-0 border-t border-border-light px-6 pb-6 pt-3">
           <div className="flex justify-end gap-2">
             <Button variant="ghost" size="md" onClick={onClose}>
