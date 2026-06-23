@@ -166,6 +166,20 @@ body {
   border-bottom: none;
 }
 
+/* HK Public Holiday cells — desktop */
+.fc .hk-holiday-cell {
+  background: color-mix(in srgb, #fee2e2, transparent 40%);
+}
+
+.fc .hk-holiday-cell .fc-daygrid-day-number {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.fc .hk-holiday-cell.fc-day-today {
+  background: color-mix(in srgb, #fecaca, transparent 30%);
+}
+
 /* Events */
 .fc .fc-event {
   cursor: pointer;
@@ -279,6 +293,23 @@ body {
 
   .ea-calendar .fc .fc-daygrid-day.fc-day-today .selected-date .selected-date-number {
     background: var(--color-brand-700);
+  }
+
+  /* Holiday date number — red on mobile */
+  .ea-calendar .fc .fc-daygrid-day .holiday-date-number {
+    color: #dc2626;
+    font-weight: 600;
+  }
+
+  /* Holiday cell background on mobile */
+  .ea-calendar .fc .hk-holiday-cell {
+    background: color-mix(in srgb, #fee2e2, transparent 60%);
+  }
+
+  /* Selected holiday — brand circle overrides red */
+  .ea-calendar .fc .hk-holiday-cell .selected-date-number {
+    background: var(--color-brand-500);
+    color: #fff;
   }
 }
 
