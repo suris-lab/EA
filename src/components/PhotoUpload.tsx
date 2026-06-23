@@ -37,6 +37,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
   const [error, setError] = useState<string | null>(null);
   const [parsedEvents, setParsedEvents] = useState<CalendarEvent[]>([]);
   const [currentEventIdx, setCurrentEventIdx] = useState(0);
+  const [showSourcePicker, setShowSourcePicker] = useState(false);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const libraryInputRef = useRef<HTMLInputElement>(null);
 
@@ -183,40 +184,51 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
             </button>
           </div>
         ) : (
-          <>
-            {/* Two source buttons */}
-            <div className="mb-5 grid grid-cols-2 gap-3">
-              <button
-                onClick={() => cameraInputRef.current?.click()}
-                className="flex flex-col items-center gap-2 rounded-xl border-2 border-dashed border-border bg-surface-dim p-6 text-center transition-colors hover:border-brand-300 hover:bg-brand-50 active:bg-brand-100"
-              >
-                <CameraIcon />
-                <span className="text-sm font-medium text-text-primary">Take Photo</span>
-              </button>
-              <button
-                onClick={() => libraryInputRef.current?.click()}
-                className="flex flex-col items-center gap-2 rounded-xl border-2 border-dashed border-border bg-surface-dim p-6 text-center transition-colors hover:border-brand-300 hover:bg-brand-50 active:bg-brand-100"
-              >
-                <PhotoLibraryIcon />
-                <span className="text-sm font-medium text-text-primary">Photo Library</span>
-              </button>
-            </div>
+          <div
+            className="relative mb-5 cursor-pointer rounded-xl border-2 border-dashed border-border bg-surface-dim p-8 text-center transition-colors hover:border-brand-300 hover:bg-brand-50 active:bg-brand-100"
+            onClick={() => setShowSourcePicker(true)}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
+          >
+            <PhotoLibraryIcon />
+            <p className="mt-3 text-sm font-medium text-text-primary">
+              Tap to add a photo
+            </p>
+            <p className="mt-1 text-xs text-text-muted">
+              PNG, JPG up to 10 MB
+            </p>
+          </div>
+        )}
 
-            {/* Desktop drag-and-drop */}
-            <div
-              className="mb-5 hidden cursor-pointer rounded-xl border-2 border-dashed border-border bg-surface-dim p-8 text-center transition-colors hover:border-brand-300 hover:bg-brand-50 sm:block"
-              onClick={() => libraryInputRef.current?.click()}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={handleDrop}
-            >
-              <p className="text-sm font-medium text-text-primary">
-                Drop image here or click to upload
-              </p>
-              <p className="mt-1 text-xs text-text-muted">
-                PNG, JPG up to 10 MB
-              </p>
+        {/* Source picker action sheet */}
+        {showSourcePicker && (
+          <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center" onClick={() => setShowSourcePicker(false)}>
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="animate-slide-up relative z-10 w-full max-w-sm px-4 pb-8 sm:pb-4" onClick={(e) => e.stopPropagation()}>
+              <div className="overflow-hidden rounded-2xl bg-surface shadow-xl">
+                <button
+                  onClick={() => { setShowSourcePicker(false); cameraInputRef.current?.click(); }}
+                  className="flex w-full items-center gap-3 border-b border-border-light px-5 py-4 text-left transition-colors active:bg-surface-dim"
+                >
+                  <CameraIcon />
+                  <span className="text-sm font-medium text-text-primary">Take Photo</span>
+                </button>
+                <button
+                  onClick={() => { setShowSourcePicker(false); libraryInputRef.current?.click(); }}
+                  className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors active:bg-surface-dim"
+                >
+                  <PhotoLibraryIcon />
+                  <span className="text-sm font-medium text-text-primary">Choose from Library</span>
+                </button>
+              </div>
+              <button
+                onClick={() => setShowSourcePicker(false)}
+                className="mt-2 w-full rounded-2xl bg-surface py-4 text-center text-sm font-semibold text-brand-500 shadow-xl transition-colors active:bg-surface-dim"
+              >
+                Cancel
+              </button>
             </div>
-          </>
+          </div>
         )}
 
         {error && (
