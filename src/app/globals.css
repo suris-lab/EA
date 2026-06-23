@@ -218,14 +218,14 @@ body {
   }
 
   .ea-calendar .fc .fc-daygrid-day {
-    min-height: 4rem;
+    min-height: 4.5rem;
   }
 
   .ea-calendar .fc .fc-daygrid-day-frame {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 3.75rem;
+    min-height: 4.25rem;
   }
 
   .ea-calendar .fc .fc-daygrid-day-top {
