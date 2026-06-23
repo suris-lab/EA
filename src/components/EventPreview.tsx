@@ -16,7 +16,9 @@ interface EventPreviewProps {
 function toDateValue(iso: string | null | undefined): string {
   if (!iso) return "";
   try {
-    return new Date(iso).toISOString().slice(0, 10);
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    return d.toISOString().slice(0, 10);
   } catch {
     return "";
   }
@@ -25,7 +27,9 @@ function toDateValue(iso: string | null | undefined): string {
 function toTimeValue(iso: string | null | undefined): string {
   if (!iso) return "";
   try {
-    return new Date(iso).toISOString().slice(11, 16);
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    return d.toISOString().slice(11, 16);
   } catch {
     return "";
   }

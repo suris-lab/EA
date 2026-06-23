@@ -119,21 +119,22 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
   };
 
   if (parsedEvents.length > 0) {
-    const evt = parsedEvents[currentEventIdx];
+    const raw = parsedEvents[currentEventIdx] as unknown as Record<string, unknown>;
     const asCalendarEvent: CalendarEvent = {
       id: "",
-      title: evt.title || "Untitled",
-      start_date: evt.start_date || "",
-      end_date: evt.end_date,
-      all_day: evt.all_day,
-      location: evt.location,
-      description: evt.description,
+      title: (raw.title as string) || "Untitled",
+      start_date: (raw.start_date as string) || "",
+      end_date: (raw.end_date as string) || null,
+      all_day: (raw.all_day as boolean) ?? false,
+      location: (raw.location as string) || null,
+      description: (raw.description as string) || null,
       source: "photo",
       created_at: "",
     };
 
     return (
       <EventPreview
+        key={currentEventIdx}
         event={asCalendarEvent}
         onConfirm={handleConfirmEvent}
         onCancel={handleSkipEvent}
