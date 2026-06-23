@@ -169,8 +169,10 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
     }
   };
 
-  const hasEnd = !allDay && endDate && endTime && date && time;
-  const endBeforeStart = hasEnd && toTimestamp(endDate, endTime) <= toTimestamp(date, time);
+  const endDateBeforeStart = allDay && date && endDate && endDate < date;
+  const endTimeBeforeStart = !allDay && date && endDate && time && endTime &&
+    toTimestamp(endDate, endTime) <= toTimestamp(date, time);
+  const endBeforeStart = endDateBeforeStart || endTimeBeforeStart;
   const canSave = title.trim() && date && !endBeforeStart;
 
   const handleSave = async () => {
@@ -335,7 +337,9 @@ export default function EventDetail({ event, onClose, onUpdated }: EventDetailPr
                 )}
               </div>
               {endBeforeStart && (
-                <p className="text-xs text-red-500">End time must be later than start time.</p>
+                <p className="text-xs text-red-500">
+                  {allDay ? "End date must be the same as or later than start date." : "End time must be later than start time."}
+                </p>
               )}
 
               <div>
