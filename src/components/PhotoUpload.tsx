@@ -11,11 +11,21 @@ interface PhotoUploadProps {
   onSaved: () => void;
 }
 
-function UploadIcon() {
+function CameraIcon() {
   return (
-    <svg className="mx-auto h-10 w-10 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  );
+}
+
+function PhotoLibraryIcon() {
+  return (
+    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <circle cx="8.5" cy="8.5" r="1.5" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 15l-5-5L5 21" />
     </svg>
   );
 }
@@ -27,12 +37,19 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
   const [error, setError] = useState<string | null>(null);
   const [parsedEvents, setParsedEvents] = useState<CalendarEvent[]>([]);
   const [currentEventIdx, setCurrentEventIdx] = useState(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const libraryInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (f: File) => {
     setFile(f);
     setPreview(URL.createObjectURL(f));
     setError(null);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (f) handleFile(f);
+    e.target.value = "";
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -49,18 +66,23 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
     const formData = new FormData();
     formData.append("image", file);
 
-    const res = await fetch("/api/recognize", { method: "POST", body: formData });
-    const data = await res.json();
+    try {
+      const res = await fetch("/api/recognize", { method: "POST", body: formData });
+      const data = await res.json();
 
-    setScanning(false);
+      if (!res.ok || data.error || !data.events?.length) {
+        setError(data.error || "No events found in this image. Try a clearer photo.");
+        setScanning(false);
+        return;
+      }
 
-    if (!res.ok || !data.events?.length) {
-      setError(data.error || "No events found in this image. Try a clearer photo.");
-      return;
+      setParsedEvents(data.events);
+      setCurrentEventIdx(0);
+    } catch {
+      setError("Network error. Please check your connection and try again.");
     }
 
-    setParsedEvents(data.events);
-    setCurrentEventIdx(0);
+    setScanning(false);
   };
 
   const handleConfirmEvent = async (edited: CalendarEvent) => {
@@ -133,43 +155,68 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
           </button>
         </div>
         <p className="mb-5 text-sm text-text-secondary">
-          Upload or photograph a school notice to automatically extract events.
+          Take a photo or choose from your library to extract events.
         </p>
 
+        {/* Hidden file inputs */}
         <input
-          ref={fileInputRef}
+          ref={cameraInputRef}
           type="file"
           accept="image/*"
           capture="environment"
           className="hidden"
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) handleFile(f);
-          }}
+          onChange={handleInputChange}
+        />
+        <input
+          ref={libraryInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleInputChange}
         />
 
         {preview ? (
           <div className="mb-5">
             <Image src={preview} alt="Notice preview" width={400} height={240} className="w-full rounded-xl border border-border-light object-contain" style={{ maxHeight: 240 }} unoptimized />
-            <button onClick={() => { setFile(null); setPreview(null); }} className="mt-2 text-xs font-medium text-brand-500 hover:text-brand-600">
+            <button onClick={() => { setFile(null); setPreview(null); setError(null); }} className="mt-2 text-xs font-medium text-brand-500 hover:text-brand-600">
               Choose different image
             </button>
           </div>
         ) : (
-          <div
-            className="mb-5 cursor-pointer rounded-xl border-2 border-dashed border-border bg-surface-dim p-8 text-center transition-colors hover:border-brand-300 hover:bg-brand-50"
-            onClick={() => fileInputRef.current?.click()}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleDrop}
-          >
-            <UploadIcon />
-            <p className="mt-3 text-sm font-medium text-text-primary">
-              Drop image here or tap to upload
-            </p>
-            <p className="mt-1 text-xs text-text-muted">
-              PNG, JPG up to 10 MB
-            </p>
-          </div>
+          <>
+            {/* Two source buttons */}
+            <div className="mb-5 grid grid-cols-2 gap-3">
+              <button
+                onClick={() => cameraInputRef.current?.click()}
+                className="flex flex-col items-center gap-2 rounded-xl border-2 border-dashed border-border bg-surface-dim p-6 text-center transition-colors hover:border-brand-300 hover:bg-brand-50 active:bg-brand-100"
+              >
+                <CameraIcon />
+                <span className="text-sm font-medium text-text-primary">Take Photo</span>
+              </button>
+              <button
+                onClick={() => libraryInputRef.current?.click()}
+                className="flex flex-col items-center gap-2 rounded-xl border-2 border-dashed border-border bg-surface-dim p-6 text-center transition-colors hover:border-brand-300 hover:bg-brand-50 active:bg-brand-100"
+              >
+                <PhotoLibraryIcon />
+                <span className="text-sm font-medium text-text-primary">Photo Library</span>
+              </button>
+            </div>
+
+            {/* Desktop drag-and-drop */}
+            <div
+              className="mb-5 hidden cursor-pointer rounded-xl border-2 border-dashed border-border bg-surface-dim p-8 text-center transition-colors hover:border-brand-300 hover:bg-brand-50 sm:block"
+              onClick={() => libraryInputRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDrop}
+            >
+              <p className="text-sm font-medium text-text-primary">
+                Drop image here or click to upload
+              </p>
+              <p className="mt-1 text-xs text-text-muted">
+                PNG, JPG up to 10 MB
+              </p>
+            </div>
+          </>
         )}
 
         {error && (
