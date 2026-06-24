@@ -1,4 +1,4 @@
-export type EventCategory = "school" | "tutor" | "sports" | "medical" | "family" | "other";
+export type EventCategory = "school" | "tutor" | "medical" | "family" | "other";
 
 export const CATEGORIES: { value: EventCategory; label: string; color: string; dot: string }[] = [
   { value: "school", label: "School", color: "bg-blue-500", dot: "bg-blue-500" },
@@ -6,7 +6,6 @@ export const CATEGORIES: { value: EventCategory; label: string; color: string; d
   { value: "medical", label: "Medical", color: "bg-orange-500", dot: "bg-orange-500" },
   { value: "family", label: "Family", color: "bg-pink-500", dot: "bg-pink-500" },
   { value: "other", label: "Other", color: "bg-gray-400", dot: "bg-gray-400" },
-  { value: "sports", label: "Others", color: "bg-green-500", dot: "bg-green-500" },
 ];
 
 export function getCategoryColor(cat: EventCategory | string | undefined | null): string {
