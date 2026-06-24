@@ -97,7 +97,7 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
         <div className="shrink-0 border-b border-border-light px-6 pb-3 pt-6">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-text-primary">New Event</h2>
-            <button onClick={onClose} className="rounded-lg p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
+            <button onClick={onClose} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -110,7 +110,7 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
         </div>
 
         <div className="shrink-0 border-t border-border-light px-6 pb-6 pt-3">
-          {saveError && <p className="mb-3 rounded-lg bg-red-50 p-3 text-xs text-red-600">{saveError}</p>}
+          {saveError && <p className="mb-3 rounded-2xl bg-red-50 p-3 text-xs text-red-600">{saveError}</p>}
           {holidayWarning.length > 0 ? (
             <HolidayReminder holidays={holidayWarning} onContinue={doSave} onGoBack={() => setHolidayWarning([])} saving={saving} />
           ) : (

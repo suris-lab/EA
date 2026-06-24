@@ -97,7 +97,7 @@ export default function EventPreview({
               <h2 className="text-base font-semibold text-text-primary">Confirm Event</h2>
               {subtitle && <p className="text-xs text-text-muted">{subtitle}</p>}
             </div>
-            <button onClick={onCancel} className="rounded-lg p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
+            <button onClick={onCancel} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -111,7 +111,7 @@ export default function EventPreview({
         </div>
 
         <div className="shrink-0 border-t border-border-light px-6 pb-6 pt-3">
-          {externalError && <p className="mb-3 rounded-lg bg-red-50 p-3 text-xs text-red-600">{externalError}</p>}
+          {externalError && <p className="mb-3 rounded-2xl bg-red-50 p-3 text-xs text-red-600">{externalError}</p>}
           {holidayWarning.length > 0 ? (
             <HolidayReminder holidays={holidayWarning} onContinue={doConfirm} onGoBack={() => setHolidayWarning([])} saving={saving} />
           ) : (

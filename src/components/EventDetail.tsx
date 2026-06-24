@@ -92,7 +92,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
         <div className="shrink-0 border-b border-border-light px-6 pb-3 pt-6">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-text-primary">{editing ? "Edit Event" : "Event Details"}</h2>
-            <button onClick={onClose} className="rounded-lg p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
+            <button onClick={onClose} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -104,7 +104,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
           {editing ? (
             <EventFormFields form={form} showRecurrence={false} />
           ) : (
-            <div className="event-detail-content space-y-3 rounded-xl border border-border-light bg-surface-dim p-4">
+            <div className="event-detail-content space-y-3 rounded-2xl border border-border-light bg-surface-dim p-4">
               <div className="flex items-center gap-2">
                 <div className={`h-3 w-3 shrink-0 rounded-full ${dotColor}`} />
                 <span className="text-base font-semibold text-text-primary">{event.title}</span>
@@ -164,11 +164,11 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
           )}
 
           {deleteMode === "single" && (
-            <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3">
+            <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-3">
               <p className="text-xs font-medium text-red-700">Delete this event? This cannot be undone.</p>
               <div className="mt-2 flex gap-2">
                 <Button variant="ghost" size="sm" onClick={() => setDeleteMode(null)}>Keep</Button>
-                <button onClick={() => handleDelete(false)} disabled={deleting} className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:bg-red-300">
+                <button onClick={() => handleDelete(false)} disabled={deleting} className="rounded-2xl bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:bg-red-300">
                   {deleting ? "Deleting..." : "Delete"}
                 </button>
               </div>
@@ -176,13 +176,13 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
           )}
 
           {deleteMode === "prompt" && (
-            <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4">
+            <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4">
               <p className="mb-3 text-sm font-medium text-red-700">This is a recurring event.</p>
               <div className="flex flex-col gap-2">
-                <button onClick={() => handleDelete(false)} disabled={deleting} className="flex w-full items-center rounded-lg border border-red-200 bg-surface px-4 py-3 text-left text-sm active:bg-red-100">
+                <button onClick={() => handleDelete(false)} disabled={deleting} className="flex w-full items-center rounded-2xl border border-red-200 bg-surface px-4 py-3 text-left text-sm active:bg-red-100">
                   <div><p className="font-medium text-text-primary">Delete this event only</p><p className="text-xs text-text-secondary">Other events in the series will remain.</p></div>
                 </button>
-                <button onClick={() => handleDelete(true)} disabled={deleting} className="flex w-full items-center rounded-lg border border-red-200 bg-surface px-4 py-3 text-left text-sm active:bg-red-100">
+                <button onClick={() => handleDelete(true)} disabled={deleting} className="flex w-full items-center rounded-2xl border border-red-200 bg-surface px-4 py-3 text-left text-sm active:bg-red-100">
                   <div><p className="font-medium text-red-600">Delete all events in this series</p><p className="text-xs text-text-secondary">This will remove every occurrence.</p></div>
                 </button>
                 <button onClick={() => setDeleteMode(null)} className="mt-1 text-center text-xs font-medium text-text-secondary">Cancel</button>

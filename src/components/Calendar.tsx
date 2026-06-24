@@ -396,7 +396,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
                 : `${MONTHS[currentMonth]} ${currentYear}`}
             </h4>
             {selectedDate && (
-              <button onClick={() => setSelectedDate(null)} className="flex h-8 items-center rounded-full bg-surface-dim px-3 text-xs font-medium text-brand-500 active:bg-gray-100">Show all</button>
+              <button onClick={() => setSelectedDate(null)} className="rounded-2xl bg-surface-dim px-4 py-2 text-xs font-semibold text-brand-500 transition-all active:bg-gray-100">Show all</button>
             )}
           </div>
 
@@ -413,13 +413,13 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           {/* Search */}
           <div className="mt-2 flex items-center gap-2">
             <div className="relative flex-1">
-              <svg className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <circle cx="11" cy="11" r="8" /><path strokeLinecap="round" d="m21 21-4.3-4.3" />
               </svg>
               <input type="text" value={searchQuery} onChange={(e) => handleSearchChange(e.target.value)} placeholder="Search events..."
-                className="w-full rounded-lg border border-border bg-surface py-2 pl-9 pr-8 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100" />
+                className="w-full rounded-2xl border border-border bg-surface-dim py-3 pl-10 pr-9 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-400 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand-100" />
               {searchQuery && (
-                <button onClick={() => { setSearchQuery(""); setDebouncedQuery(""); }} className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-text-muted hover:text-text-secondary">
+                <button onClick={() => { setSearchQuery(""); setDebouncedQuery(""); }} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-text-muted hover:text-text-secondary">
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               )}
@@ -427,14 +427,14 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           </div>
 
           {/* Category filter */}
-          <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1">
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
             <button onClick={() => setCategoryFilter(null)}
-              className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-all ${!categoryFilter ? "bg-brand-500 text-white" : "border border-border bg-surface text-text-secondary active:bg-gray-100"}`}>
+              className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${!categoryFilter ? "bg-brand-500 text-white shadow-sm" : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"}`}>
               All
             </button>
             {CATEGORIES.map((cat) => (
               <button key={cat.value} onClick={() => setCategoryFilter(categoryFilter === cat.value ? null : cat.value)}
-                className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-all ${categoryFilter === cat.value ? `${cat.color} text-white` : "border border-border bg-surface text-text-secondary active:bg-gray-100"}`}>
+                className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${categoryFilter === cat.value ? `${cat.color} text-white shadow-sm` : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"}`}>
                 {cat.label}
               </button>
             ))}
@@ -470,7 +470,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
                     <p className="text-xs text-red-400">{item.holiday.nameCN}</p>
                     <div className="mt-0.5 flex items-center gap-2 text-xs text-text-secondary">
                       {!selectedDate && <span>{new Date(item.holiday.date + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}</span>}
-                      <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-medium text-red-600">HK Public Holiday</span>
+                      <span className="inline-flex items-center rounded-2xl bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-600">HK Public Holiday</span>
                     </div>
                   </div>
                 </button>

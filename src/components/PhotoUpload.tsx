@@ -192,7 +192,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
       <div className="animate-modal-in w-full max-w-md rounded-t-2xl bg-surface p-6 shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-1 flex items-center justify-between">
           <h2 className="text-base font-semibold text-text-primary">Scan School Notice</h2>
-          <button onClick={onClose} className="rounded-lg p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
+          <button onClick={onClose} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -207,14 +207,14 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
 
         {preview ? (
           <div className="mb-5">
-            <Image src={preview} alt="Notice preview" width={400} height={240} className="w-full rounded-xl border border-border-light object-contain" style={{ maxHeight: 240 }} unoptimized />
+            <Image src={preview} alt="Notice preview" width={400} height={240} className="w-full rounded-2xl border border-border-light object-contain" style={{ maxHeight: 240 }} unoptimized />
             <button onClick={() => { setFile(null); setPreview(null); setError(null); }} className="mt-2 text-xs font-medium text-brand-500 hover:text-brand-600">
               Choose different image
             </button>
           </div>
         ) : (
           <div
-            className="relative mb-5 cursor-pointer rounded-xl border-2 border-dashed border-border bg-surface-dim p-8 text-center transition-colors hover:border-brand-300 hover:bg-brand-50 active:bg-brand-100"
+            className="relative mb-5 cursor-pointer rounded-2xl border-2 border-dashed border-border bg-surface-dim p-8 text-center transition-colors hover:border-brand-300 hover:bg-brand-50 active:bg-brand-100"
             onClick={() => setShowSourcePicker(true)}
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
@@ -247,7 +247,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
         )}
 
         {error && (
-          <p className="mb-4 rounded-lg bg-red-50 p-3 text-xs text-red-600">{error}</p>
+          <p className="mb-4 rounded-2xl bg-red-50 p-3 text-xs text-red-600">{error}</p>
         )}
 
         <div className="flex justify-end gap-2">

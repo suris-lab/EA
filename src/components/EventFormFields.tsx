@@ -221,7 +221,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
           <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
             {recentLocations.map((loc) => (
               <button key={loc} type="button" onClick={() => form.set("location", loc)}
-                className={`shrink-0 rounded-2xl px-3 py-1.5 text-xs font-medium transition-all ${
+                className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${
                   form.location === loc ? "bg-brand-500 text-white shadow-sm" : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"
                 }`}>
                 {loc}
@@ -253,9 +253,9 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
           <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Duration">
             {DURATIONS.map((d) => (
               <button key={d.minutes} type="button" onClick={() => form.handleDuration(d.minutes)}
-                className={`shrink-0 rounded-2xl px-3 py-2.5 text-xs font-semibold transition-all ${
+                className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${
                   form.selectedDuration === d.minutes ? "bg-brand-500 text-white shadow-sm" : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"
-                }`} style={{ minHeight: 44 }}>
+                }`} style={{ minHeight: 40 }}>
                 {d.label}
               </button>
             ))}
