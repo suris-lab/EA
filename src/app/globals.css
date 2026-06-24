@@ -157,7 +157,7 @@ body {
 
 /* Day cells */
 .fc .fc-daygrid-day {
-  min-height: 8rem;
+  min-height: 16rem;
   transition: background 0.12s ease;
 }
 
