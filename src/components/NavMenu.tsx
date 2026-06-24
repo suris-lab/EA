@@ -110,7 +110,7 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
               <span className="text-lg font-bold leading-tight tracking-tight text-text-primary">
                 EA Calendar
               </span>
-              <span className="text-[10px] font-medium leading-tight text-text-muted">v0.4.3</span>
+              <span className="text-[10px] font-medium leading-tight text-text-muted">v0.4.4</span>
             </div>
           </div>
 
@@ -123,57 +123,62 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
               Subscribe
             </Button>
             <div className="mx-1 h-5 w-px bg-border" />
-            <Button variant="secondary" size="md" icon={<PlusIcon />} onClick={handleAddEvent}>
+            <button onClick={handleAddEvent}
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-text-primary shadow-sm transition-all hover:bg-surface-dim hover:shadow-md active:scale-[0.98]">
+              <PlusIcon className="h-4 w-4" />
               Add Event
-            </Button>
-            <Button variant="primary" size="md" icon={<CameraIcon />} onClick={handleUpload}>
+            </button>
+            <button onClick={handleUpload}
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-b from-brand-400 to-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-brand-500/30 transition-all hover:shadow-lg hover:shadow-brand-500/40 active:scale-[0.98]">
+              <CameraIcon className="h-4 w-4" />
               Scan Notice
-            </Button>
+            </button>
           </div>
         </div>
       </nav>
 
       {/* Mobile fixed bottom action bar */}
       <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
-        <div className="border-t border-border-light bg-surface/90 px-4 py-2.5 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-lg items-center gap-2">
-            {/* Utility buttons */}
+        <div className="bg-surface/95 px-4 pb-2 pt-3 backdrop-blur-xl">
+          {/* Shadow line */}
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+          <div className="mx-auto flex max-w-lg gap-3">
+            {/* Add Event */}
             <button
-              onClick={handleShare}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface text-text-secondary active:bg-surface-dim"
-              aria-label="Share calendar"
+              onClick={handleAddEvent}
+              className="hero-btn group flex flex-1 items-center justify-center gap-2 rounded-2xl border border-border bg-surface px-4 py-3.5 shadow-sm"
+              aria-label="Add a new calendar event"
             >
-              <ShareIcon className="h-5 w-5" />
-            </button>
-            <button
-              onClick={handleExport}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface text-text-secondary active:bg-surface-dim"
-              aria-label="Subscribe to calendar"
-            >
-              <CalendarPlusIcon className="h-5 w-5" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-surface-dim text-text-secondary transition-colors group-active:bg-gray-200">
+                <PlusIcon className="h-5 w-5" />
+              </div>
+              <span className="text-sm font-semibold text-text-primary">Add Event</span>
             </button>
 
-            {/* Primary actions */}
-            <div className="flex flex-1 gap-2">
-              <button
-                onClick={handleAddEvent}
-                className="hero-btn flex flex-1 items-center justify-center gap-1.5 rounded-2xl border border-border bg-surface px-3 py-3 text-sm font-semibold text-text-primary shadow-sm"
-                aria-label="Add a new calendar event"
-                style={{ minHeight: 44 }}
-              >
-                <PlusIcon className="h-4 w-4" />
-                Add Event
-              </button>
-              <button
-                onClick={handleUpload}
-                className="hero-btn flex flex-[1.2] items-center justify-center gap-1.5 rounded-2xl bg-brand-500 px-3 py-3 text-sm font-semibold text-white shadow-md shadow-brand-500/30"
-                aria-label="Scan a school notice"
-                style={{ minHeight: 44 }}
-              >
-                <CameraIcon className="h-4 w-4" />
-                Scan Notice
-              </button>
-            </div>
+            {/* Scan Notice */}
+            <button
+              onClick={handleUpload}
+              className="hero-btn group flex flex-[1.15] items-center justify-center gap-2 rounded-2xl bg-gradient-to-b from-brand-400 to-brand-600 px-4 py-3.5 shadow-lg shadow-brand-500/25"
+              aria-label="Scan a school notice"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/15 text-white transition-colors group-active:bg-white/25">
+                <CameraIcon className="h-5 w-5" />
+              </div>
+              <span className="text-sm font-semibold text-white">Scan Notice</span>
+            </button>
+          </div>
+
+          {/* Utility row */}
+          <div className="mx-auto mt-2 flex max-w-lg justify-center gap-6">
+            <button onClick={handleShare} className="flex items-center gap-1.5 py-1 text-xs font-medium text-text-muted transition-colors active:text-text-secondary" aria-label="Share calendar">
+              <ShareIcon className="h-3.5 w-3.5" />
+              <span>Share</span>
+            </button>
+            <button onClick={handleExport} className="flex items-center gap-1.5 py-1 text-xs font-medium text-text-muted transition-colors active:text-text-secondary" aria-label="Subscribe to calendar">
+              <CalendarPlusIcon className="h-3.5 w-3.5" />
+              <span>Subscribe</span>
+            </button>
           </div>
         </div>
       </div>
