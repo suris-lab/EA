@@ -1,15 +1,23 @@
 export type EventCategory = "school" | "tutor" | "medical" | "family" | "other";
 
-export const CATEGORIES: { value: EventCategory; label: string; color: string; dot: string }[] = [
-  { value: "school", label: "School", color: "bg-blue-500", dot: "bg-blue-500" },
-  { value: "tutor", label: "Playgroup", color: "bg-purple-500", dot: "bg-purple-500" },
-  { value: "medical", label: "Medical", color: "bg-orange-500", dot: "bg-orange-500" },
-  { value: "family", label: "Family", color: "bg-pink-500", dot: "bg-pink-500" },
-  { value: "other", label: "Other", color: "bg-gray-400", dot: "bg-gray-400" },
+export const CATEGORIES: { value: EventCategory; label: string; color: string; dot: string; hex: string }[] = [
+  { value: "school", label: "School", color: "bg-blue-500", dot: "bg-blue-500", hex: "#3b82f6" },
+  { value: "tutor", label: "Playgroup", color: "bg-purple-500", dot: "bg-purple-500", hex: "#a855f7" },
+  { value: "medical", label: "Medical", color: "bg-orange-500", dot: "bg-orange-500", hex: "#f97316" },
+  { value: "family", label: "Family", color: "bg-pink-500", dot: "bg-pink-500", hex: "#ec4899" },
+  { value: "other", label: "Other", color: "bg-gray-400", dot: "bg-gray-400", hex: "#9ca3af" },
 ];
 
 export function getCategoryColor(cat: EventCategory | string | undefined | null): string {
   return CATEGORIES.find((c) => c.value === cat)?.dot ?? "bg-brand-500";
+}
+
+export function getCategoryHex(cat: EventCategory | string | undefined | null): string {
+  return CATEGORIES.find((c) => c.value === cat)?.hex ?? "#3362fc";
+}
+
+export function getCategoryLabel(cat: EventCategory | string | undefined | null): string {
+  return CATEGORIES.find((c) => c.value === cat)?.label ?? "Other";
 }
 
 export interface CalendarEvent {

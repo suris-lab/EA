@@ -6,7 +6,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import type { EventClickArg, DatesSetArg, DayCellContentArg, EventDropArg } from "@fullcalendar/core";
 import type { CalendarEvent } from "@/types/event";
-import { CATEGORIES, getCategoryColor } from "@/types/event";
+import { CATEGORIES, getCategoryColor, getCategoryHex } from "@/types/event";
 import { toLocalDate, eventLocalDate, eventsOnDate, formatEventDate, formatEventTime } from "@/lib/date-utils";
 import { getHKHolidays, getHolidayMap, type HKHoliday } from "@/lib/hk-holidays";
 import { getLunarInfo, getLunarInfoFromDateStr } from "@/lib/lunar";
@@ -128,10 +128,10 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
   const holidayMap = useMemo(() => getHolidayMap(currentYear), [currentYear]);
 
   const fcEvents = events.map((e) => ({
-    id: e.id, title: e.title, start: e.start_date,
+    id: e.id, title: e.title || "Untitled", start: e.start_date,
     end: e.end_date ?? undefined, allDay: e.all_day ?? false,
-    backgroundColor: getCategoryColor(e.category).replace("bg-", ""),
-    classNames: [`cat-${e.category || "school"}`],
+    backgroundColor: getCategoryHex(e.category),
+    borderColor: getCategoryHex(e.category),
   }));
 
   const displayItems = useMemo(

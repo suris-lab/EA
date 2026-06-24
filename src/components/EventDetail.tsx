@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { CalendarEvent } from "@/types/event";
-import { getCategoryColor } from "@/types/event";
+import { getCategoryColor, getCategoryLabel } from "@/types/event";
 import { toDateValue, toTimeValue } from "@/lib/date-utils";
 import Button from "./Button";
 import EventFormFields, { useFormState } from "./EventFormFields";
@@ -153,7 +153,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
                 {event.category && (
                   <div className="flex items-center gap-2">
                     <div className={`h-2.5 w-2.5 rounded-full ${dotColor}`} />
-                    <span className="text-xs capitalize">{event.category}</span>
+                    <span className="text-xs">{getCategoryLabel(event.category)}</span>
                   </div>
                 )}
                 <div className="inline-block rounded-full bg-surface px-2 py-0.5 text-xs text-text-muted">
