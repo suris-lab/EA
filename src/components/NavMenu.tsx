@@ -110,8 +110,18 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
               <span className="text-lg font-bold leading-tight tracking-tight text-text-primary">
                 EA Calendar
               </span>
-              <span className="text-[10px] font-medium leading-tight text-text-muted">v0.4.4</span>
+              <span className="text-[10px] font-medium leading-tight text-text-muted">v0.4.5</span>
             </div>
+          </div>
+
+          {/* Mobile utility buttons */}
+          <div className="flex items-center gap-1 sm:hidden">
+            <button onClick={handleShare} className="flex h-9 w-9 items-center justify-center rounded-lg text-text-muted transition-colors active:bg-surface-dim" aria-label="Share calendar">
+              <ShareIcon className="h-4 w-4" />
+            </button>
+            <button onClick={handleExport} className="flex h-9 w-9 items-center justify-center rounded-lg text-text-muted transition-colors active:bg-surface-dim" aria-label="Subscribe to calendar">
+              <CalendarPlusIcon className="h-4 w-4" />
+            </button>
           </div>
 
           {/* Desktop buttons */}
@@ -166,18 +176,6 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
                 <CameraIcon className="h-5 w-5" />
               </div>
               <span className="text-sm font-semibold text-white">Scan Notice</span>
-            </button>
-          </div>
-
-          {/* Utility row */}
-          <div className="mx-auto mt-2 flex max-w-lg justify-center gap-6">
-            <button onClick={handleShare} className="flex items-center gap-1.5 py-1 text-xs font-medium text-text-muted transition-colors active:text-text-secondary" aria-label="Share calendar">
-              <ShareIcon className="h-3.5 w-3.5" />
-              <span>Share</span>
-            </button>
-            <button onClick={handleExport} className="flex items-center gap-1.5 py-1 text-xs font-medium text-text-muted transition-colors active:text-text-secondary" aria-label="Subscribe to calendar">
-              <CalendarPlusIcon className="h-3.5 w-3.5" />
-              <span>Subscribe</span>
             </button>
           </div>
         </div>
