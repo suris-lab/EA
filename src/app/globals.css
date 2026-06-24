@@ -157,8 +157,22 @@ body {
 
 /* Day cells */
 .fc .fc-daygrid-day {
-  min-height: 32rem;
   transition: background 0.12s ease;
+}
+
+@media (min-width: 640px) {
+  .fc .fc-daygrid-day {
+    min-height: 32rem !important;
+  }
+
+  .fc .fc-daygrid-body td,
+  .fc .fc-daygrid-body tr {
+    height: auto !important;
+  }
+
+  .fc .fc-scrollgrid-sync-table {
+    height: auto !important;
+  }
 }
 
 .fc .fc-daygrid-day-top {
