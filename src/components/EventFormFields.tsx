@@ -263,32 +263,26 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
         </div>
       )}
 
-      {/* Start date/time */}
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Start Date</label>
+      {/* Start */}
+      <div>
+        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Start</label>
+        <div className="space-y-2">
           <input type="date" value={form.date} onChange={(e) => form.handleDateChange(e.target.value)} className={inputClass} />
-        </div>
-        {!form.allDay && (
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Start Time</label>
+          {!form.allDay && (
             <input type="time" value={form.time} onChange={(e) => form.handleTimeChange(e.target.value)} className={inputClass} />
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      {/* End date/time */}
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">End Date</label>
+      {/* End */}
+      <div>
+        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">End</label>
+        <div className="space-y-2">
           <input type="date" value={form.endDate} min={form.date || undefined} onChange={(e) => form.handleEndDateChange(e.target.value)} className={form.endBeforeStart ? errorInputClass : inputClass} />
-        </div>
-        {!form.allDay && (
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">End Time</label>
+          {!form.allDay && (
             <input type="time" value={form.endTime} onChange={(e) => form.handleEndTimeChange(e.target.value)} className={form.endBeforeStart ? errorInputClass : inputClass} />
-          </div>
-        )}
+          )}
+        </div>
       </div>
       {form.endBeforeStart && (
         <p className="text-xs text-red-500">{form.allDay ? "End date must be the same as or later than start date." : "End time must be later than start time."}</p>
