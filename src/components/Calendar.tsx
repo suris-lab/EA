@@ -370,7 +370,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           initialView="dayGridMonth"
           headerToolbar={isMobile ? false : { left: "prev,next today", center: "title", right: "dayGridMonth,dayGridWeek" }}
           height={isMobile ? "auto" : undefined}
-          contentHeight={isMobile ? undefined : 900}
+          contentHeight={isMobile ? undefined : 450}
           events={fcEvents}
           eventClick={handleEventClick}
           dateClick={handleDateClick}
