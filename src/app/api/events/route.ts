@@ -134,6 +134,7 @@ export async function POST(request: NextRequest) {
     location: body.location || null,
     description: body.description || null,
     source: body.source || "manual",
+    category: body.category || "school",
   };
   if (body.series_id) row.series_id = body.series_id;
   if (body.recurrence) row.recurrence = body.recurrence;

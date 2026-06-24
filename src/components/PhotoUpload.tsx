@@ -123,6 +123,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
       all_day: edited.all_day ?? false,
       location: edited.location || null,
       description: edited.description || null,
+      category: edited.category || "school",
       source: "photo",
     };
     if (edited.recurrence) payload.recurrence = edited.recurrence;
