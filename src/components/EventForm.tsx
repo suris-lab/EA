@@ -352,38 +352,49 @@ export default function EventForm({ onClose, onSaved }: EventFormProps) {
 
             {recurrence !== "none" && (
               <>
-                {/* Interval */}
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-text-secondary">
-                    Every
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input type="number" min={1} max={99} value={recInterval} onChange={(e) => setRecInterval(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-16 rounded-lg border border-border bg-surface px-3 py-2 text-center text-sm text-text-primary focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100" />
-                    <span className="text-sm text-text-secondary">
-                      {recurrence === "daily" ? (recInterval === 1 ? "day" : "days") :
-                       recurrence === "weekly" ? (recInterval === 1 ? "week" : "weeks") :
-                       recurrence === "monthly" ? (recInterval === 1 ? "month" : "months") :
-                       (recInterval === 1 ? "year" : "years")}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Weekly day selector */}
-                {recurrence === "weekly" && (
+                {/* Weekly: combined layout */}
+                {recurrence === "weekly" ? (
+                  <>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-text-secondary">Repeat on</label>
+                      <div className="flex gap-1">
+                        {WEEKDAYS.map((wd) => (
+                          <button key={wd.value} type="button" onClick={() => toggleDay(wd.value)}
+                            className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-semibold transition-all ${
+                              recDays.includes(wd.value)
+                                ? "bg-brand-500 text-white shadow-sm shadow-brand-500/25"
+                                : "border border-border bg-surface text-text-secondary active:bg-gray-100"
+                            }`}>
+                            {wd.short}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    {recInterval > 1 && (
+                      <p className="text-xs text-text-muted">Repeats every {recInterval} weeks</p>
+                    )}
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-text-secondary">Frequency</label>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-text-secondary">Every</span>
+                        <input type="number" min={1} max={99} value={recInterval} onChange={(e) => setRecInterval(Math.max(1, parseInt(e.target.value) || 1))}
+                          className="w-14 rounded-lg border border-border bg-surface px-2 py-2 text-center text-sm text-text-primary focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100" />
+                        <span className="text-sm text-text-secondary">{recInterval === 1 ? "week" : "weeks"}</span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
                   <div>
-                    <label className="mb-1.5 block text-xs font-medium text-text-secondary">On these days</label>
-                    <div className="flex gap-1">
-                      {WEEKDAYS.map((wd) => (
-                        <button key={wd.value} type="button" onClick={() => toggleDay(wd.value)}
-                          className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-semibold transition-all ${
-                            recDays.includes(wd.value)
-                              ? "bg-brand-500 text-white shadow-sm shadow-brand-500/25"
-                              : "border border-border bg-surface text-text-secondary active:bg-gray-100"
-                          }`}>
-                          {wd.short}
-                        </button>
-                      ))}
+                    <label className="mb-1 block text-xs font-medium text-text-secondary">Frequency</label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-text-secondary">Every</span>
+                      <input type="number" min={1} max={99} value={recInterval} onChange={(e) => setRecInterval(Math.max(1, parseInt(e.target.value) || 1))}
+                        className="w-14 rounded-lg border border-border bg-surface px-2 py-2 text-center text-sm text-text-primary focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100" />
+                      <span className="text-sm text-text-secondary">
+                        {recurrence === "daily" ? (recInterval === 1 ? "day" : "days") :
+                         recurrence === "monthly" ? (recInterval === 1 ? "month" : "months") :
+                         (recInterval === 1 ? "year" : "years")}
+                      </span>
                     </div>
                   </div>
                 )}
