@@ -10,6 +10,7 @@ const DURATIONS = [
   { label: "1 hr", minutes: 60 },
   { label: "1.5 hr", minutes: 90 },
   { label: "2 hr", minutes: 120 },
+  { label: "3 hr", minutes: 180 },
 ];
 
 const WEEKDAYS = [
