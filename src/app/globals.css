@@ -60,6 +60,17 @@ input, select, textarea {
   font-size: 16px !important;
 }
 
+/* Force date/time inputs to fill container width */
+input[type="date"],
+input[type="time"] {
+  display: block;
+  width: 100% !important;
+  min-width: 0;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 body {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
