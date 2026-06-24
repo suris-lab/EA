@@ -369,8 +369,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           headerToolbar={isMobile ? false : { left: "prev,next today", center: "title", right: "dayGridMonth,dayGridWeek" }}
-          height={isMobile ? "auto" : undefined}
-          contentHeight={isMobile ? undefined : 900}
+          height={isMobile ? "auto" : "calc(100vh - 140px)"}
           expandRows={!isMobile}
           events={fcEvents}
           eventClick={handleEventClick}
