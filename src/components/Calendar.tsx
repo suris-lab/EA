@@ -373,7 +373,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           editable={!isMobile}
           eventDrop={handleEventDrop}
           selectable={true}
-          dayMaxEvents={isMobile ? 0 : 3}
+          dayMaxEvents={isMobile ? 0 : 4}
           fixedWeekCount={false}
           eventClassNames="cursor-pointer"
           dayCellContent={isMobile ? dayCellContent : undefined}
