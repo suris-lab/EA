@@ -371,7 +371,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           headerToolbar={isMobile ? false : { left: "prev,next today", center: "title", right: "dayGridMonth,dayGridWeek" }}
           height={isMobile ? "auto" : undefined}
           contentHeight={isMobile ? undefined : 900}
-          expandRows={isMobile ? undefined : false}
+          expandRows={!isMobile}
           events={fcEvents}
           eventClick={handleEventClick}
           dateClick={handleDateClick}

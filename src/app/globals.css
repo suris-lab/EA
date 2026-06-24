@@ -160,11 +160,6 @@ body {
   transition: background 0.12s ease;
 }
 
-@media (min-width: 640px) {
-  .fc .fc-daygrid-day {
-    min-height: 5.5rem;
-  }
-}
 
 .fc .fc-daygrid-day-top {
   padding: 6px 8px 2px;
