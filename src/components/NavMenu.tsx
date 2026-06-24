@@ -101,7 +101,7 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
     <>
       {/* Top nav bar */}
       <nav className="sticky top-0 z-50 border-b border-border-light bg-surface/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between px-4 py-3 sm:px-6 lg:px-10">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white shadow-sm shadow-brand-500/25">
               <CalendarIcon />
@@ -110,7 +110,7 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
               <span className="text-lg font-bold leading-tight tracking-tight text-text-primary">
                 EA Calendar
               </span>
-              <span className="text-[10px] font-medium leading-tight text-text-muted">v0.5.6</span>
+              <span className="text-[10px] font-medium leading-tight text-text-muted">v0.5.7</span>
             </div>
           </div>
 

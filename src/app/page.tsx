@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <>
       <NavMenu onEventSaved={handleEventSaved} />
-      <main className="mx-auto max-w-5xl px-4 pb-28 pt-2 sm:px-6 sm:pb-8 sm:pt-6 lg:px-8">
+      <main className="px-4 pb-28 pt-2 sm:px-6 sm:pb-8 sm:pt-6 lg:px-10">
         {/* Desktop header */}
         <div className="mb-6 hidden sm:block">
           <h2 className="text-2xl font-bold tracking-tight text-text-primary">My Calendar</h2>

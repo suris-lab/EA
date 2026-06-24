@@ -172,21 +172,29 @@ body {
   padding: 0;
 }
 
-.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
-  background: var(--color-brand-500);
-  color: #fff;
-  font-weight: 600;
-  border-radius: 9999px;
-  width: 1.65rem;
-  height: 1.65rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .fc .fc-daygrid-day.fc-day-other .fc-daygrid-day-number {
   color: var(--color-text-muted);
   opacity: 0.5;
+}
+
+/* Desktop-only today circle */
+@media (min-width: 640px) {
+  .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+    background: var(--color-brand-500);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 9999px;
+    width: 1.65rem;
+    height: 1.65rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fc .hk-holiday-cell.fc-day-today .fc-daygrid-day-number {
+    background: #dc2626;
+    color: #fff;
+  }
 }
 
 .fc .fc-daygrid-day:hover {
@@ -223,10 +231,7 @@ body {
   font-weight: 600;
 }
 
-.fc .hk-holiday-cell.fc-day-today .fc-daygrid-day-number {
-  background: #dc2626;
-  color: #fff;
-}
+
 
 /* Events — Apple Calendar style: colored left border, clean text */
 .fc .fc-event {
