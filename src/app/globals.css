@@ -38,6 +38,18 @@ html {
   -ms-touch-action: pan-x pan-y;
 }
 
+/* Disable text selection on UI, keep it on content areas */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea, [contenteditable],
+.event-detail-content {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 /* Prevent iOS Safari zoom on input focus (font-size < 16px triggers zoom) */
 input, select, textarea {
   font-size: 16px !important;

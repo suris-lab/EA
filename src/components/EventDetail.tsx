@@ -104,7 +104,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
           {editing ? (
             <EventFormFields form={form} showRecurrence={false} />
           ) : (
-            <div className="space-y-3 rounded-xl border border-border-light bg-surface-dim p-4">
+            <div className="event-detail-content space-y-3 rounded-xl border border-border-light bg-surface-dim p-4">
               <div className="flex items-center gap-2">
                 <div className={`h-3 w-3 shrink-0 rounded-full ${dotColor}`} />
                 <span className="text-base font-semibold text-text-primary">{event.title}</span>
