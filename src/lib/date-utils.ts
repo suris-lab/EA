@@ -1,3 +1,9 @@
+export function buildLocalISO(dateStr: string, timeStr?: string): string {
+  const [y, mo, d] = dateStr.split("-").map(Number);
+  const [h, m] = timeStr ? timeStr.split(":").map(Number) : [0, 0];
+  return new Date(y, mo - 1, d, h, m).toISOString();
+}
+
 export function toLocalDate(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");

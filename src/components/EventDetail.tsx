@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { CalendarEvent } from "@/types/event";
 import { getCategoryColor, getCategoryLabel } from "@/types/event";
-import { toDateValue, toTimeValue } from "@/lib/date-utils";
+import { toDateValue, toTimeValue, buildLocalISO } from "@/lib/date-utils";
 import Button from "./Button";
 import EventFormFields, { useFormState } from "./EventFormFields";
 
@@ -37,9 +37,9 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
     if (!form.canSave || saving) return;
     setSaving(true);
 
-    const startDate = form.allDay || !form.time ? `${form.date}T00:00:00` : `${form.date}T${form.time}:00`;
+    const startDate = buildLocalISO(form.date, form.allDay || !form.time ? undefined : form.time);
     const endDateStr = form.endDate
-      ? form.allDay || !form.endTime ? `${form.endDate}T23:59:59` : `${form.endDate}T${form.endTime}:00`
+      ? buildLocalISO(form.endDate, form.allDay || !form.endTime ? "23:59" : form.endTime)
       : null;
 
     await fetch("/api/events", {
