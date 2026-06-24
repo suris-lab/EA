@@ -266,10 +266,10 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       {/* Start */}
       <div>
         <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Start</label>
-        <div className="space-y-2">
-          <input type="date" value={form.date} onChange={(e) => form.handleDateChange(e.target.value)} className={inputClass} />
+        <div className={`flex gap-2 ${form.allDay ? "" : ""}`}>
+          <input type="date" value={form.date} onChange={(e) => form.handleDateChange(e.target.value)} className={`${inputClass} ${!form.allDay ? "flex-[1.2]" : ""}`} />
           {!form.allDay && (
-            <input type="time" value={form.time} onChange={(e) => form.handleTimeChange(e.target.value)} className={inputClass} />
+            <input type="time" value={form.time} onChange={(e) => form.handleTimeChange(e.target.value)} className={`${inputClass} flex-1`} />
           )}
         </div>
       </div>
@@ -277,10 +277,10 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       {/* End */}
       <div>
         <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">End</label>
-        <div className="space-y-2">
-          <input type="date" value={form.endDate} min={form.date || undefined} onChange={(e) => form.handleEndDateChange(e.target.value)} className={form.endBeforeStart ? errorInputClass : inputClass} />
+        <div className="flex gap-2">
+          <input type="date" value={form.endDate} min={form.date || undefined} onChange={(e) => form.handleEndDateChange(e.target.value)} className={`${form.endBeforeStart ? errorInputClass : inputClass} ${!form.allDay ? "flex-[1.2]" : ""}`} />
           {!form.allDay && (
-            <input type="time" value={form.endTime} onChange={(e) => form.handleEndTimeChange(e.target.value)} className={form.endBeforeStart ? errorInputClass : inputClass} />
+            <input type="time" value={form.endTime} onChange={(e) => form.handleEndTimeChange(e.target.value)} className={`${form.endBeforeStart ? errorInputClass : inputClass} flex-1`} />
           )}
         </div>
       </div>
