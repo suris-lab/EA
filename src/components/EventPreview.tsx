@@ -27,9 +27,7 @@ function toDateValue(iso: string | null | undefined): string {
     const m = String(d.getMonth() + 1).padStart(2, "0");
     const day = String(d.getDate()).padStart(2, "0");
     return `${y}-${m}-${day}`;
-  } catch {
-    return "";
-  }
+  } catch { return ""; }
 }
 
 function toTimeValue(iso: string | null | undefined): string {
@@ -39,25 +37,22 @@ function toTimeValue(iso: string | null | undefined): string {
   try {
     const d = new Date(iso);
     if (isNaN(d.getTime())) return "";
-    const h = String(d.getHours()).padStart(2, "0");
-    const m = String(d.getMinutes()).padStart(2, "0");
-    return `${h}:${m}`;
-  } catch {
-    return "";
-  }
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  } catch { return ""; }
 }
+
+const WEEKDAYS = [
+  { short: "S", value: 0 }, { short: "M", value: 1 }, { short: "T", value: 2 },
+  { short: "W", value: 3 }, { short: "T", value: 4 }, { short: "F", value: 5 }, { short: "S", value: 6 },
+];
 
 const inputClass =
   "w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100";
 
 export default function EventPreview({
-  event,
-  onConfirm,
-  onCancel,
-  confirmLabel = "Save Event",
-  cancelLabel = "Cancel",
-  subtitle,
-  error: externalError,
+  event, onConfirm, onCancel,
+  confirmLabel = "Save Event", cancelLabel = "Cancel",
+  subtitle, error: externalError,
 }: EventPreviewProps) {
   const [title, setTitle] = useState(String(event.title || ""));
   const [date, setDate] = useState(toDateValue(event.start_date));
@@ -67,10 +62,19 @@ export default function EventPreview({
   const [allDay, setAllDay] = useState(Boolean(event.all_day));
   const [location, setLocation] = useState(String(event.location || ""));
   const [description, setDescription] = useState(String(event.description || ""));
+  const [recurrence, setRecurrence] = useState("none");
+  const [recInterval, setRecInterval] = useState(1);
+  const [recDays, setRecDays] = useState<number[]>([]);
+  const [recEndMode, setRecEndMode] = useState<"date" | "none">("date");
+  const [recurrenceEnd, setRecurrenceEnd] = useState("");
   const [saving, setSaving] = useState(false);
   const [holidayWarning, setHolidayWarning] = useState<HKHoliday[]>([]);
 
   const canSave = title.trim() && date;
+
+  const toggleDay = (day: number) => {
+    setRecDays((prev) => prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]);
+  };
 
   const handleConfirmClick = () => {
     if (!canSave || saving) return;
@@ -83,16 +87,22 @@ export default function EventPreview({
   };
 
   const doConfirm = async () => {
+    if (saving) return;
     setSaving(true);
 
-    const startDate = allDay || !time
-      ? `${date}T00:00:00`
-      : `${date}T${time}:00`;
-
+    const startDate = allDay || !time ? `${date}T00:00:00` : `${date}T${time}:00`;
     const endDateStr = endDate
-      ? allDay || !endTime
-        ? `${endDate}T23:59:59`
-        : `${endDate}T${endTime}:00`
+      ? allDay || !endTime ? `${endDate}T23:59:59` : `${endDate}T${endTime}:00`
+      : null;
+
+    const recurrenceObj = recurrence !== "none"
+      ? {
+          frequency: recurrence,
+          interval: recInterval,
+          ...(recurrence === "weekly" && recDays.length > 0 ? { daysOfWeek: recDays } : {}),
+          ...(recEndMode === "none" ? { noEnd: true } : {}),
+          ...(recEndMode === "date" && recurrenceEnd ? { endDate: recurrenceEnd } : {}),
+        }
       : null;
 
     const edited: CalendarEvent = {
@@ -103,6 +113,7 @@ export default function EventPreview({
       all_day: allDay,
       location: location.trim() || null,
       description: description.trim() || null,
+      recurrence: recurrenceObj as CalendarEvent["recurrence"],
       source: event.source || "photo",
       created_at: event.created_at || "",
     };
@@ -132,9 +143,7 @@ export default function EventPreview({
         </div>
 
         <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-4">
-          <p className="mb-4 text-sm text-text-secondary">
-            Review and edit the details before saving.
-          </p>
+          <p className="mb-4 text-sm text-text-secondary">Review and edit the details before saving.</p>
 
           <div className="space-y-3">
             <div>
@@ -178,6 +187,71 @@ export default function EventPreview({
               <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Optional" className={inputClass} />
             </div>
 
+            {/* Recurrence */}
+            <div>
+              <label className="mb-1 block text-xs font-medium text-text-secondary">Repeat</label>
+              <select value={recurrence} onChange={(e) => { setRecurrence(e.target.value); if (e.target.value !== "weekly") setRecDays([]); }} className={inputClass}>
+                <option value="none">Does not repeat</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </div>
+
+            {recurrence !== "none" && (
+              <>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-text-secondary">Every</label>
+                  <div className="flex items-center gap-2">
+                    <input type="number" min={1} max={99} value={recInterval} onChange={(e) => setRecInterval(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-16 rounded-lg border border-border bg-surface px-3 py-2 text-center text-sm text-text-primary focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100" />
+                    <span className="text-sm text-text-secondary">
+                      {recurrence === "daily" ? (recInterval === 1 ? "day" : "days") :
+                       recurrence === "weekly" ? (recInterval === 1 ? "week" : "weeks") :
+                       recurrence === "monthly" ? (recInterval === 1 ? "month" : "months") :
+                       (recInterval === 1 ? "year" : "years")}
+                    </span>
+                  </div>
+                </div>
+
+                {recurrence === "weekly" && (
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium text-text-secondary">On these days</label>
+                    <div className="flex gap-1">
+                      {WEEKDAYS.map((wd) => (
+                        <button key={wd.value} type="button" onClick={() => toggleDay(wd.value)}
+                          className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-semibold transition-all ${
+                            recDays.includes(wd.value)
+                              ? "bg-brand-500 text-white shadow-sm shadow-brand-500/25"
+                              : "border border-border bg-surface text-text-secondary active:bg-gray-100"
+                          }`}>
+                          {wd.short}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-text-secondary">Ends</label>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="previewRecEnd" checked={recEndMode === "date"} onChange={() => setRecEndMode("date")} className="h-4 w-4 border-border text-brand-500 focus:ring-brand-400" />
+                      <span className="text-xs text-text-secondary">On date</span>
+                    </label>
+                    {recEndMode === "date" && (
+                      <input type="date" value={recurrenceEnd} min={endDate || date || undefined} onChange={(e) => setRecurrenceEnd(e.target.value)} className={`${inputClass} ml-6`} />
+                    )}
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="previewRecEnd" checked={recEndMode === "none"} onChange={() => setRecEndMode("none")} className="h-4 w-4 border-border text-brand-500 focus:ring-brand-400" />
+                      <span className="text-xs text-text-secondary">No end date</span>
+                    </label>
+                  </div>
+                </div>
+              </>
+            )}
+
             <div>
               <label className="mb-1 block text-xs font-medium text-text-secondary">Notes</label>
               <textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Optional" className={`${inputClass} resize-none`} />
@@ -190,20 +264,11 @@ export default function EventPreview({
             <p className="mb-3 rounded-lg bg-red-50 p-3 text-xs text-red-600">{externalError}</p>
           )}
           {holidayWarning.length > 0 ? (
-            <HolidayReminder
-              holidays={holidayWarning}
-              onContinue={doConfirm}
-              onGoBack={() => setHolidayWarning([])}
-              saving={saving}
-            />
+            <HolidayReminder holidays={holidayWarning} onContinue={doConfirm} onGoBack={() => setHolidayWarning([])} saving={saving} />
           ) : (
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" size="md" onClick={onCancel}>
-                {cancelLabel}
-              </Button>
-              <Button variant="primary" size="md" onClick={handleConfirmClick} disabled={!canSave} loading={saving}>
-                {confirmLabel}
-              </Button>
+              <Button variant="ghost" size="md" onClick={onCancel} disabled={saving}>{cancelLabel}</Button>
+              <Button variant="primary" size="md" onClick={handleConfirmClick} disabled={!canSave} loading={saving}>{confirmLabel}</Button>
             </div>
           )}
         </div>

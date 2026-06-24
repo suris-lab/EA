@@ -15,8 +15,10 @@ export interface CalendarEvent {
 export interface RecurrenceRule {
   frequency: "daily" | "weekly" | "monthly" | "yearly";
   interval: number;
+  daysOfWeek?: number[];
   endDate?: string;
   count?: number;
+  noEnd?: boolean;
 }
 
 export interface CreateEventPayload {

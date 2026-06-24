@@ -116,7 +116,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
   const handleConfirmEvent = async (edited: CalendarEvent) => {
     setSaveError(null);
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       title: edited.title,
       start_date: edited.start_date,
       end_date: edited.end_date || null,
@@ -125,6 +125,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
       description: edited.description || null,
       source: "photo",
     };
+    if (edited.recurrence) payload.recurrence = edited.recurrence;
 
     let ok = false;
     try {

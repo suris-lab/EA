@@ -26,41 +26,78 @@ function generateOccurrences(
     ? new Date(body.end_date).getTime() - start.getTime()
     : 0;
 
-  const maxOccurrences = recurrence.count || 52;
+  const maxOccurrences = recurrence.noEnd ? 200 : (recurrence.count || 200);
   const endLimit = recurrence.endDate
-    ? new Date(recurrence.endDate)
-    : new Date(start.getFullYear() + 1, start.getMonth(), start.getDate());
+    ? new Date(recurrence.endDate + "T23:59:59")
+    : recurrence.noEnd
+      ? new Date(start.getFullYear() + 2, start.getMonth(), start.getDate())
+      : new Date(start.getFullYear() + 1, start.getMonth(), start.getDate());
 
-  for (let i = 0; i < maxOccurrences; i++) {
-    const occStart = new Date(start);
+  if (recurrence.frequency === "weekly" && recurrence.daysOfWeek && recurrence.daysOfWeek.length > 0) {
+    const interval = recurrence.interval || 1;
+    const targetDays = new Set(recurrence.daysOfWeek);
+    const weekStart = new Date(start);
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
-    switch (recurrence.frequency) {
-      case "daily":
-        occStart.setDate(occStart.getDate() + i * (recurrence.interval || 1));
-        break;
-      case "weekly":
-        occStart.setDate(occStart.getDate() + i * 7 * (recurrence.interval || 1));
-        break;
-      case "monthly":
-        occStart.setMonth(occStart.getMonth() + i * (recurrence.interval || 1));
-        break;
-      case "yearly":
-        occStart.setFullYear(occStart.getFullYear() + i * (recurrence.interval || 1));
-        break;
+    for (let week = 0; occurrences.length < maxOccurrences; week++) {
+      const weekBase = new Date(weekStart);
+      weekBase.setDate(weekBase.getDate() + week * 7 * interval);
+
+      if (weekBase > endLimit && week > 0) break;
+
+      for (const dow of Array.from(targetDays).sort()) {
+        const occDate = new Date(weekBase);
+        occDate.setDate(occDate.getDate() + dow);
+        occDate.setHours(start.getHours(), start.getMinutes(), start.getSeconds());
+
+        if (occDate < start) continue;
+        if (occDate > endLimit) break;
+        if (occurrences.length >= maxOccurrences) break;
+
+        const occEnd = duration
+          ? new Date(occDate.getTime() + duration).toISOString()
+          : null;
+
+        occurrences.push({
+          ...body,
+          start_date: occDate.toISOString(),
+          end_date: occEnd,
+          series_id: seriesId,
+        });
+      }
     }
+  } else {
+    for (let i = 0; i < maxOccurrences; i++) {
+      const occStart = new Date(start);
 
-    if (occStart > endLimit) break;
+      switch (recurrence.frequency) {
+        case "daily":
+          occStart.setDate(occStart.getDate() + i * (recurrence.interval || 1));
+          break;
+        case "weekly":
+          occStart.setDate(occStart.getDate() + i * 7 * (recurrence.interval || 1));
+          break;
+        case "monthly":
+          occStart.setMonth(occStart.getMonth() + i * (recurrence.interval || 1));
+          break;
+        case "yearly":
+          occStart.setFullYear(occStart.getFullYear() + i * (recurrence.interval || 1));
+          break;
+      }
 
-    const occEnd = duration
-      ? new Date(occStart.getTime() + duration).toISOString()
-      : null;
+      if (occStart > endLimit) break;
 
-    occurrences.push({
-      ...body,
-      start_date: occStart.toISOString(),
-      end_date: occEnd,
-      series_id: seriesId,
-    });
+      const occEnd = duration
+        ? new Date(occStart.getTime() + duration).toISOString()
+        : null;
+
+      occurrences.push({
+        ...body,
+        start_date: occStart.toISOString(),
+        end_date: occEnd,
+        series_id: seriesId,
+      });
+    }
   }
 
   return occurrences;
@@ -72,6 +109,10 @@ export async function POST(request: NextRequest) {
   if (body.recurrence && body.recurrence.frequency) {
     const seriesId = crypto.randomUUID();
     const occurrences = generateOccurrences(body, body.recurrence, seriesId);
+
+    if (occurrences.length === 0) {
+      return NextResponse.json({ error: "No occurrences generated. Check your recurrence settings." }, { status: 400 });
+    }
 
     const { data, error } = await supabase
       .from("events")
