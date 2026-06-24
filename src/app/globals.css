@@ -31,11 +31,16 @@
   src: url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 }
 
+html, body {
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
 html {
   scroll-behavior: smooth;
   -webkit-tap-highlight-color: transparent;
-  touch-action: pan-x pan-y;
-  -ms-touch-action: pan-x pan-y;
+  touch-action: pan-y;
+  -ms-touch-action: pan-y;
 }
 
 /* Disable text selection on UI, keep it on content areas */
