@@ -99,12 +99,16 @@ body {
   font-family: inherit;
 }
 
-/* Toolbar — desktop */
+/* =============================================
+   Desktop calendar — Apple Calendar style
+   ============================================= */
+
+/* Toolbar */
 .fc .fc-toolbar-title {
-  font-size: 1.15rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: var(--color-text-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .fc .fc-button {
@@ -113,7 +117,7 @@ body {
   padding: 0.4rem 0.85rem;
   border-radius: 0.5rem;
   text-transform: capitalize;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: none;
   transition: all 0.15s ease;
 }
 
@@ -134,46 +138,59 @@ body {
 }
 
 .fc .fc-toolbar.fc-header-toolbar {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
   gap: 0.75rem;
   flex-wrap: wrap;
 }
 
-/* Day header */
+/* Column headers */
 .fc .fc-col-header-cell {
-  padding: 0.6rem 0;
-  font-size: 0.75rem;
+  padding: 0.75rem 0;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-secondary);
-  background: var(--color-surface-dim);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  background: transparent;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
-/* Day cells — desktop */
+/* Day cells */
 .fc .fc-daygrid-day {
-  min-height: 6.5rem;
-  transition: background 0.15s ease;
+  min-height: 8rem;
+  transition: background 0.12s ease;
+}
+
+.fc .fc-daygrid-day-top {
+  padding: 6px 8px 2px;
 }
 
 .fc .fc-daygrid-day-number {
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.5rem 0.65rem;
-  color: var(--color-text-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  padding: 0;
 }
 
 .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
-  color: var(--color-brand-600);
-  font-weight: 700;
+  background: var(--color-brand-500);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 9999px;
+  width: 1.65rem;
+  height: 1.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .fc .fc-daygrid-day.fc-day-other .fc-daygrid-day-number {
   color: var(--color-text-muted);
+  opacity: 0.5;
 }
 
 .fc .fc-daygrid-day:hover {
-  background: var(--color-surface-dim);
+  background: color-mix(in srgb, var(--color-surface-dim), transparent 30%);
 }
 
 /* Grid */
@@ -181,6 +198,11 @@ body {
   border-radius: 1rem;
   overflow: hidden;
   border: 1px solid var(--color-border-light);
+}
+
+.fc .fc-scrollgrid td,
+.fc .fc-scrollgrid th {
+  border-color: var(--color-border-light);
 }
 
 .fc .fc-scrollgrid td:last-of-type {
@@ -193,7 +215,7 @@ body {
 
 /* HK Public Holiday cells — desktop */
 .fc .hk-holiday-cell {
-  background: color-mix(in srgb, #fee2e2, transparent 40%);
+  background: color-mix(in srgb, #fee2e2, transparent 50%);
 }
 
 .fc .hk-holiday-cell .fc-daygrid-day-number {
@@ -201,30 +223,48 @@ body {
   font-weight: 600;
 }
 
-.fc .hk-holiday-cell.fc-day-today {
-  background: color-mix(in srgb, #fecaca, transparent 30%);
+.fc .hk-holiday-cell.fc-day-today .fc-daygrid-day-number {
+  background: #dc2626;
+  color: #fff;
 }
 
-/* Events — desktop */
+/* Events — Apple Calendar style: colored left border, clean text */
 .fc .fc-event {
   cursor: pointer;
-  border-radius: 0.5rem;
-  padding: 3px 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  line-height: 1.4;
-  margin-bottom: 2px;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  background: transparent !important;
+  border: none !important;
+  border-left: 3px solid var(--fc-event-bg-color, var(--color-brand-500)) !important;
+  border-radius: 0 !important;
+  padding: 2px 6px 2px 8px;
+  margin: 0 4px 1px 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  transition: background 0.12s ease;
 }
 
 .fc .fc-event:hover {
-  opacity: 0.9;
-  transform: scale(1.01);
+  background: var(--color-surface-dim) !important;
 }
 
 .fc .fc-event .fc-event-title {
-  white-space: normal;
-  overflow: visible;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fc .fc-event .fc-event-time {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 400;
+  margin-right: 4px;
+}
+
+.fc .fc-event.fc-event-start {
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
 }
 
 .fc .fc-daygrid-event-dot {
@@ -232,14 +272,37 @@ body {
 }
 
 .fc .fc-daygrid-day-events {
-  padding: 0 4px 4px;
+  padding: 0 0 4px;
+  margin-top: 0;
+}
+
+.fc .fc-daygrid-event-harness {
+  margin: 0;
 }
 
 .fc .fc-daygrid-more-link {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: var(--color-brand-500);
-  padding: 2px 6px;
+  padding: 1px 8px;
+  margin: 0 4px;
+}
+
+/* All-day events — subtle filled style */
+.fc .fc-event.fc-daygrid-block-event {
+  background: color-mix(in srgb, var(--fc-event-bg-color, var(--color-brand-500)), transparent 85%) !important;
+  border-left: 3px solid var(--fc-event-bg-color, var(--color-brand-500)) !important;
+  padding: 3px 8px 3px 8px;
+  border-radius: 4px !important;
+}
+
+.fc .fc-event.fc-daygrid-block-event .fc-event-title {
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.fc .fc-event.fc-daygrid-block-event:hover {
+  background: color-mix(in srgb, var(--fc-event-bg-color, var(--color-brand-500)), transparent 75%) !important;
 }
 
 /* =============================================

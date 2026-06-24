@@ -127,12 +127,16 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
   const holidays = useMemo(() => getHKHolidays(currentYear), [currentYear]);
   const holidayMap = useMemo(() => getHolidayMap(currentYear), [currentYear]);
 
-  const fcEvents = events.map((e) => ({
-    id: e.id, title: e.title || "Untitled", start: e.start_date,
-    end: e.end_date ?? undefined, allDay: e.all_day ?? false,
-    backgroundColor: getCategoryHex(e.category),
-    borderColor: getCategoryHex(e.category),
-  }));
+  const fcEvents = events.map((e) => {
+    const hex = getCategoryHex(e.category);
+    return {
+      id: e.id, title: e.title || "Untitled", start: e.start_date,
+      end: e.end_date ?? undefined, allDay: e.all_day ?? false,
+      borderColor: hex,
+      backgroundColor: hex,
+      textColor: "#111827",
+    };
+  });
 
   const displayItems = useMemo(
     () => getDisplayItems(events, holidays, currentYear, currentMonth, selectedDate, debouncedQuery, categoryFilter),
@@ -373,11 +377,13 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           editable={!isMobile}
           eventDrop={handleEventDrop}
           selectable={true}
-          dayMaxEvents={isMobile ? 0 : 4}
+          dayMaxEvents={isMobile ? 0 : 5}
           fixedWeekCount={false}
           eventClassNames="cursor-pointer"
           dayCellContent={isMobile ? dayCellContent : undefined}
           eventDisplay={isMobile ? "none" : "auto"}
+          displayEventTime={!isMobile}
+          eventTimeFormat={{ hour: "numeric", minute: "2-digit", meridiem: "short" }}
           dayCellClassNames={(arg) => {
             const dateStr = toLocalDate(arg.date);
             return holidayMap.has(dateStr) ? ["hk-holiday-cell"] : [];
