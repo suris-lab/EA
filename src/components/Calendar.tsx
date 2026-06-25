@@ -410,7 +410,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           slotDuration="00:30:00"
           slotLabelInterval="01:00:00"
           slotLabelFormat={{ hour: "numeric", minute: "2-digit", meridiem: "short" }}
-          scrollTime="08:00:00"
+          scrollTime={(() => { const h = Math.max(0, new Date().getHours() - 1); return `${String(h).padStart(2, "0")}:00:00`; })()}
           allDaySlot={true}
           allDayText="All day"
           nowIndicator={true}
@@ -437,7 +437,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
                 : `${MONTHS[currentMonth]} ${currentYear}`}
             </h4>
             {selectedDate && (
-              <button onClick={() => setSelectedDate(null)} className="rounded-2xl bg-surface-dim px-4 py-2 text-xs font-semibold text-brand-500 transition-all active:bg-gray-100">Show all</button>
+              <button onClick={() => setSelectedDate(null)} className="rounded-xl bg-surface-dim px-4 py-1.5 text-[13px] font-medium text-brand-500 transition-all active:opacity-70">Show all</button>
             )}
           </div>
 
@@ -458,7 +458,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
                 <circle cx="11" cy="11" r="8" /><path strokeLinecap="round" d="m21 21-4.3-4.3" />
               </svg>
               <input type="text" value={searchQuery} onChange={(e) => handleSearchChange(e.target.value)} placeholder="Search events..."
-                className="w-full rounded-2xl border border-border bg-surface-dim py-3 pl-10 pr-9 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-400 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand-100" />
+                className="w-full h-10 rounded-xl bg-surface-dim pl-10 pr-9 text-[15px] text-text-primary placeholder:text-text-muted focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
               {searchQuery && (
                 <button onClick={() => { setSearchQuery(""); setDebouncedQuery(""); }} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-text-muted hover:text-text-secondary">
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" /></svg>

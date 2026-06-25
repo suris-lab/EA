@@ -14,7 +14,7 @@ const variantStyles = {
   primary:
     "bg-brand-500 text-white hover:bg-brand-600 active:opacity-70 disabled:opacity-30",
   secondary:
-    "border border-border-light bg-surface text-text-primary hover:bg-surface-dim active:opacity-70 disabled:opacity-30",
+    "bg-surface-dim text-text-primary hover:bg-border-light active:opacity-70 disabled:opacity-30",
   ghost:
     "text-brand-500 hover:bg-surface-dim active:opacity-70 disabled:opacity-30",
   destructive:

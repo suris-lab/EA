@@ -127,17 +127,17 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
           <div className="h-[5px] w-9 rounded-full bg-border" />
         </div>
 
-        {/* Apple-style header: Cancel — Title — Done */}
+        {/* Header: ✕ — Title — ✓ */}
         <div className="flex items-center justify-between px-4 pb-2 pt-1">
-          <button onClick={onClose} disabled={saving} className="min-w-[60px] text-left text-[17px] font-normal text-brand-500 active:opacity-60">
-            Cancel 取消
+          <button onClick={onClose} disabled={saving} className="flex h-8 w-8 items-center justify-center rounded-full text-text-muted active:bg-surface-dim">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
-          <span className="text-[17px] font-semibold text-text-primary">
-            <BiText text={L.newEvent} />
-          </span>
+          <span className="text-[17px] font-semibold text-text-primary text-center">{L.newEvent}</span>
           <button onClick={handleSaveClick} disabled={!form.canSave || saving}
-            className="min-w-[60px] text-right text-[17px] font-semibold text-brand-500 disabled:opacity-30 active:opacity-60">
-            {saving ? "..." : "Done 完成"}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-brand-500 disabled:opacity-30 active:bg-surface-dim">
+            {saving
+              ? <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+              : <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
           </button>
         </div>
 

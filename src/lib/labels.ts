@@ -9,9 +9,10 @@ export function BiText({ text, className }: { text: string; className?: string }
   const [en, zh] = text.split("\n");
   return React.createElement(
     "span",
-    { className: `inline-flex flex-col leading-snug ${className || ""}` },
-    React.createElement("span", null, en),
-    React.createElement("span", { className: "text-[0.82em] opacity-65" }, zh)
+    { className: className || "" },
+    en,
+    " ",
+    React.createElement("span", { className: "text-[0.85em] opacity-50" }, zh)
   );
 }
 
@@ -87,7 +88,7 @@ export const L = {
 
   prepReminder: bi("Preparation Reminder", "準備提醒"),
   tapZoneHint: bi("Tap a zone to add items", "點選區域以新增物品"),
-  strollerLabel: bi("Baby cart / Stroller", "嬰兒車"),
+  strollerLabel: bi("Stroller", "嬰兒車"),
   addCustomPlaceholder: "Add custom item...\n新增自訂項目...",
 
   catSchool: bi("School", "學校"),

@@ -48,8 +48,8 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
 
   const showStroller = Array.isArray(preparation.stroller);
   const strollerHasItems = showStroller && preparation.stroller!.length > 0;
-  const vb = showStroller ? "-3 -2 100 56" : "-3 -2 66 56";
-  const svgW = showStroller ? 250 : 168;
+  const vb = showStroller ? "-3 -2 100 56" : "-2 -2 68 56";
+  const svgW = showStroller ? 230 : 160;
 
   return (
     <div className="flex justify-center py-3">

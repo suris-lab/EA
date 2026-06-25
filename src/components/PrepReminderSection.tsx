@@ -254,7 +254,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
         <BiText text={L.prepReminder} />
       </label>
 
-      <div className="rounded-2xl border border-border-light bg-surface-dim p-4">
+      <div className="rounded-2xl bg-surface-dim p-4">
         <p className="mb-2 text-center text-[11px] text-text-muted"><BiText text={L.tapZoneHint} /></p>
 
         <KidIllustration
@@ -273,7 +273,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
             style={
               showStroller
                 ? { backgroundColor: hex, color: "#fff" }
-                : { border: "1px solid var(--color-border)", color: "var(--color-text-secondary)" }
+                : { border: "1px solid var(--color-border-light)", color: "var(--color-text-secondary)" }
             }
           >
             <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -288,7 +288,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
 
         {/* Zone editing panel */}
         {activeZone && (
-          <div className="animate-slide-down mt-3 rounded-2xl border border-border-light bg-surface p-3">
+          <div className="animate-slide-down mt-3 rounded-2xl bg-surface p-3">
             <div className="mb-2 flex items-center justify-between">
               <span className="text-[15px] font-semibold text-text-primary">{getZoneLabel(activeZone)}</span>
               <button
@@ -312,14 +312,14 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
                       className="rounded-l-full h-9 px-3 text-[13px] font-semibold transition-all"
                       style={selected
                         ? { backgroundColor: hex, color: "#fff" }
-                        : { border: "1px solid var(--color-border)", borderRight: "none", color: "var(--color-text-secondary)" }}>
+                        : { border: "1px solid var(--color-border-light)", borderRight: "none", color: "var(--color-text-secondary)" }}>
                       {preset.label}
                     </button>
                     <button type="button" onClick={() => hidePreset(activeZone, preset.id)}
                       className="rounded-r-full h-9 px-2 text-[13px] transition-all"
                       style={selected
                         ? { backgroundColor: hex, color: "#fff", opacity: 0.8 }
-                        : { border: "1px solid var(--color-border)", borderLeft: "none", color: "var(--color-text-muted)" }}>
+                        : { border: "1px solid var(--color-border-light)", borderLeft: "none", color: "var(--color-text-muted)" }}>
                       ×
                     </button>
                   </span>
@@ -333,14 +333,14 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
                       className="rounded-l-full h-9 px-3 text-[13px] font-semibold transition-all"
                       style={selected
                         ? { backgroundColor: hex, color: "#fff" }
-                        : { border: "1px solid var(--color-border)", borderRight: "none", color: "var(--color-text-secondary)" }}>
+                        : { border: "1px solid var(--color-border-light)", borderRight: "none", color: "var(--color-text-secondary)" }}>
                       {item.label}
                     </button>
                     <button type="button" onClick={() => deleteCustom(activeZone, item.id)}
                       className="rounded-r-full h-9 px-2 text-[13px] transition-all"
                       style={selected
                         ? { backgroundColor: hex, color: "#fff", opacity: 0.8 }
-                        : { border: "1px solid var(--color-border)", borderLeft: "none", color: "var(--color-text-muted)" }}>
+                        : { border: "1px solid var(--color-border-light)", borderLeft: "none", color: "var(--color-text-muted)" }}>
                       ×
                     </button>
                   </span>
@@ -380,7 +380,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
                     addCustomItem(activeZone);
                   }
                 }}
-                className="flex-1 rounded-xl h-11 border border-border-light bg-surface px-4 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                className="flex-1 rounded-xl h-11 bg-surface px-4 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
               <button
                 type="button"

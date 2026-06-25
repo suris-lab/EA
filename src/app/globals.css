@@ -137,14 +137,27 @@ body {
 
 /* Column headers */
 .fc .fc-col-header-cell {
-  padding: 0.75rem 0;
+  padding: 0.5rem 0;
   font-size: 0.7rem;
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
   background: transparent;
-  border-bottom: 1px solid var(--color-border-light);
+  border: none;
+}
+
+.fc .fc-col-header-cell a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.fc .fc-col-header-cell .fc-col-header-cell-cushion {
+  padding: 4px 0;
 }
 
 /* Desktop calendar container constraints */
@@ -332,7 +345,7 @@ body {
 }
 
 .fc .fc-timegrid-col {
-  border-right: 1px solid var(--color-border-light);
+  border-right: 1px solid color-mix(in srgb, var(--color-border-light), transparent 50%);
 }
 
 .fc .fc-timegrid-event {

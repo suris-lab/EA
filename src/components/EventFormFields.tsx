@@ -192,8 +192,8 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       .catch(() => {});
   }, []);
 
-  const inputClass = "w-full h-11 rounded-xl border border-border-light bg-surface px-4 text-[15px] text-text-primary placeholder:text-text-muted transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20";
-  const errorInputClass = "w-full h-11 rounded-xl border border-[#FF3B30]/40 bg-surface px-4 text-[15px] text-text-primary transition-colors focus:border-[#FF3B30] focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/20";
+  const inputClass = "w-full h-11 rounded-xl bg-surface px-4 text-[15px] text-text-primary placeholder:text-text-muted transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500/20";
+  const errorInputClass = "w-full h-11 rounded-xl bg-surface px-4 text-[15px] text-text-primary transition-colors ring-2 ring-[#FF3B30]/30 focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/40";
 
   return (
     <div className="space-y-4">
@@ -210,7 +210,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
           {CATEGORIES.map((cat) => (
             <button key={cat.value} type="button" onClick={() => form.set("category", cat.value)}
               className={`shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${
-                form.category === cat.value ? `${cat.color} text-white` : "border border-border-light bg-surface text-text-secondary active:opacity-70"
+                form.category === cat.value ? `${cat.color} text-white` : "bg-surface-dim text-text-secondary active:opacity-70"
               }`}>
               {cat.label}
             </button>
@@ -226,7 +226,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
             {recentLocations.map((loc) => (
               <button key={loc} type="button" onClick={() => form.set("location", form.location === loc ? "" : loc)}
                 className={`group shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${
-                  form.location === loc ? "bg-brand-500 text-white" : "border border-border-light bg-surface text-text-secondary active:opacity-70"
+                  form.location === loc ? "bg-brand-500 text-white" : "bg-surface-dim text-text-secondary active:opacity-70"
                 }`}>
                 <span className="flex items-center gap-1.5">
                   {loc}
@@ -253,7 +253,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                 localStorage.setItem("ea-recent-locations", JSON.stringify(updated));
                 localStorage.setItem("ea-locations-custom", "1");
               }}
-              className="shrink-0 h-11 rounded-xl border border-brand-300 bg-brand-50 px-4 text-[13px] font-semibold text-brand-600 transition-all active:opacity-70"
+              className="shrink-0 h-11 rounded-xl bg-brand-50 px-4 text-[13px] font-semibold text-brand-600 transition-all active:opacity-70"
             >
               {L.save}
             </button>
@@ -262,8 +262,8 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       </div>
 
       {/* All day toggle */}
-      <div className="flex items-center justify-between rounded-xl bg-surface px-4 h-11">
-        <span className="text-[15px] font-medium text-text-primary"><BiText text={L.allDay} /></span>
+      <div className="flex items-center justify-between px-1 h-11">
+        <span className="text-[15px] font-medium text-text-primary">{L.allDay}</span>
         <button
           type="button"
           role="switch"
@@ -283,7 +283,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
             {DURATIONS.map((d) => (
               <button key={d.minutes} type="button" onClick={() => form.handleDuration(d.minutes)}
                 className={`shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${
-                  form.selectedDuration === d.minutes ? "bg-brand-500 text-white" : "border border-border-light bg-surface text-text-secondary active:opacity-70"
+                  form.selectedDuration === d.minutes ? "bg-brand-500 text-white" : "bg-surface-dim text-text-secondary active:opacity-70"
                 }`}>
                 {d.label}
               </button>
@@ -341,7 +341,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                       {[{ s: "S", v: 0 }, { s: "M", v: 1 }, { s: "T", v: 2 }, { s: "W", v: 3 }, { s: "T", v: 4 }, { s: "F", v: 5 }, { s: "S", v: 6 }].map((wd) => (
                         <button key={wd.v} type="button" onClick={() => form.toggleDay(wd.v)}
                           className={`flex h-9 w-9 items-center justify-center rounded-full text-[13px] font-bold transition-all ${
-                            form.recDays.includes(wd.v) ? "bg-brand-500 text-white" : "border border-border-light bg-surface text-text-secondary active:opacity-70"
+                            form.recDays.includes(wd.v) ? "bg-brand-500 text-white" : "bg-surface-dim text-text-secondary active:opacity-70"
                           }`}>{wd.s}</button>
                       ))}
                     </div>
@@ -351,7 +351,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                     <div className="flex items-center gap-2">
                       <span className="text-[15px] text-text-secondary"><BiText text={L.every} /></span>
                       <input type="number" min={1} max={99} value={form.recInterval} onChange={(e) => form.set("recInterval", Math.max(1, parseInt(e.target.value) || 1))}
-                        className="w-16 h-11 rounded-xl border border-border-light bg-surface px-3 text-center text-[15px] text-text-primary focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
+                        className="w-16 h-11 rounded-xl bg-surface px-3 text-center text-[15px] text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
                       <span className="text-[15px] text-text-secondary">{form.recInterval === 1 ? "week 週" : "weeks 週"}</span>
                     </div>
                   </div>
@@ -362,7 +362,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                   <div className="flex items-center gap-2">
                     <span className="text-[15px] text-text-secondary"><BiText text={L.every} /></span>
                     <input type="number" min={1} max={99} value={form.recInterval} onChange={(e) => form.set("recInterval", Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-16 rounded-2xl border border-border bg-surface-dim px-3 py-3 text-center text-sm text-text-primary focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100" />
+                      className="w-16 h-11 rounded-xl bg-surface px-3 text-center text-[15px] text-text-primary focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
                     <span className="text-[15px] text-text-secondary">
                       {form.recurrence === "daily" ? (form.recInterval === 1 ? "day 日" : "days 日") :
                        form.recurrence === "monthly" ? (form.recInterval === 1 ? "month 月" : "months 月") :
@@ -420,7 +420,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       {/* Notes */}
       <div>
         <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.notes} /></label>
-        <textarea rows={3} placeholder={L.notesPlaceholder} value={form.description} onChange={(e) => form.set("description", e.target.value)} className={`${inputClass} resize-none`} />
+        <textarea rows={4} placeholder={L.notesPlaceholder} value={form.description} onChange={(e) => form.set("description", e.target.value)} className="w-full rounded-xl bg-surface px-4 py-3 text-[15px] text-text-primary placeholder:text-text-muted transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500/20 resize-none" />
       </div>
     </div>
   );
