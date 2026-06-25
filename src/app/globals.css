@@ -550,6 +550,10 @@ body {
     font-weight: 600;
   }
 
+  .date-cell-selected .lunar-label {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
   /* Today + selected — red circle */
   .ea-calendar .fc .fc-day-today .date-cell-selected {
     background: #FF3B30;
@@ -563,6 +567,10 @@ body {
   .ea-calendar .fc .fc-day-today .date-cell-content:not(.date-cell-selected) .date-cell-number {
     color: #fff;
     font-weight: 600;
+  }
+
+  .ea-calendar .fc .fc-day-today .date-cell-content:not(.date-cell-selected) .lunar-label {
+    color: rgba(255, 255, 255, 0.8) !important;
   }
 
   /* Holiday date number — red */

@@ -57,7 +57,7 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
             <span className="text-[17px] font-semibold tracking-[-0.01em] text-text-primary">
               EA Calendar
             </span>
-            <span className="text-[10px] font-medium text-text-muted">v1.0.0</span>
+            <span className="text-[10px] font-medium text-text-muted">v1.0.1</span>
           </div>
 
           {/* Mobile: share + subscribe */}
@@ -108,19 +108,19 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
       {/* Mobile fixed bottom toolbar — Apple style */}
       <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
         <div className="border-t border-border bg-surface/95 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-lg items-center justify-around px-6 py-1.5">
-            <button onClick={handleAddEvent} className="flex flex-col items-center gap-0.5 px-4 py-1 active:opacity-60" aria-label="Add event">
-              <svg className="h-[22px] w-[22px] text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="mx-auto flex max-w-lg items-center justify-around px-6 py-2">
+            <button onClick={handleAddEvent} className="flex flex-col items-center gap-1 px-5 py-1.5 active:opacity-60" aria-label="Add event">
+              <svg className="h-7 w-7 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
-              <span className="text-[10px] font-medium text-brand-500">Add 新增</span>
+              <span className="text-[11px] font-medium text-brand-500">Add 新增</span>
             </button>
-            <button onClick={handleUpload} className="flex flex-col items-center gap-0.5 px-4 py-1 active:opacity-60" aria-label="Scan notice">
-              <svg className="h-[22px] w-[22px] text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <button onClick={handleUpload} className="flex flex-col items-center gap-1 px-5 py-1.5 active:opacity-60" aria-label="Scan notice">
+              <svg className="h-7 w-7 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span className="text-[10px] font-medium text-brand-500">Scan 掃描</span>
+              <span className="text-[11px] font-medium text-brand-500">Scan 掃描</span>
             </button>
           </div>
         </div>
