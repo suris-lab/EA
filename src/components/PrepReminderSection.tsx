@@ -6,6 +6,17 @@ import { getCategoryHex } from "@/types/event";
 import { PREP_PRESETS, ZONE_LABELS, ZONE_ORDER, STROLLER_PRESETS, STROLLER_LABEL } from "@/lib/prep-presets";
 import KidIllustration, { type ActiveZone } from "./KidIllustration";
 
+const STORAGE_KEY = "ea-custom-prep";
+
+function loadSavedCustoms(): Record<string, { id: string; label: string }[]> {
+  if (typeof window === "undefined") return {};
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch { return {}; }
+}
+
+function saveCustoms(data: Record<string, { id: string; label: string }[]>) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
 interface PrepReminderSectionProps {
   category: EventCategory;
   preparation: PreparationData;
@@ -15,6 +26,7 @@ interface PrepReminderSectionProps {
 export default function PrepReminderSection({ category, preparation, onUpdate }: PrepReminderSectionProps) {
   const [activeZone, setActiveZone] = useState<ActiveZone>(null);
   const [customInput, setCustomInput] = useState("");
+  const [savedCustoms, setSavedCustoms] = useState<Record<string, { id: string; label: string }[]>>(loadSavedCustoms);
   const prevCategory = useRef(category);
 
   useEffect(() => {
@@ -50,6 +62,11 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
     return [];
   };
 
+  const getSavedCustomsForZone = (zone: ActiveZone): { id: string; label: string }[] => {
+    if (!zone) return [];
+    return savedCustoms[zone] || [];
+  };
+
   const getZoneLabel = (zone: ActiveZone) => {
     if (zone === "stroller") return STROLLER_LABEL;
     if (zone) return ZONE_LABELS[zone];
@@ -62,6 +79,22 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
     const newItems = exists
       ? items.filter((i) => i.id !== preset.id)
       : [...items, { id: preset.id, label: preset.label }];
+
+    if (zone === "stroller") {
+      onUpdate({ ...preparation, stroller: newItems });
+    } else if (zone) {
+      const updated = { ...preparation, [zone]: newItems };
+      if (newItems.length === 0) delete updated[zone as PrepZone];
+      onUpdate(updated);
+    }
+  };
+
+  const toggleCustom = (zone: ActiveZone, item: { id: string; label: string }) => {
+    const items = getZoneItems(zone);
+    const exists = items.some((i) => i.id === item.id);
+    const newItems = exists
+      ? items.filter((i) => i.id !== item.id)
+      : [...items, { id: item.id, label: item.label, isCustom: true }];
 
     if (zone === "stroller") {
       onUpdate({ ...preparation, stroller: newItems });
@@ -85,13 +118,19 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
     } else {
       onUpdate({ ...preparation, [zone]: newItems });
     }
+
+    const updated = { ...savedCustoms };
+    updated[zone] = [...(updated[zone] || []), { id, label }];
+    setSavedCustoms(updated);
+    saveCustoms(updated);
+
     setCustomInput("");
   };
 
-  const removeItem = (zone: ActiveZone, itemId: string) => {
+  const deleteCustom = (zone: ActiveZone, itemId: string) => {
     if (!zone) return;
-    const newItems = getZoneItems(zone).filter((i) => i.id !== itemId);
 
+    const newItems = getZoneItems(zone).filter((i) => i.id !== itemId);
     if (zone === "stroller") {
       onUpdate({ ...preparation, stroller: newItems });
     } else {
@@ -99,6 +138,12 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
       if (newItems.length === 0) delete updated[zone as PrepZone];
       onUpdate(updated);
     }
+
+    const updated = { ...savedCustoms };
+    updated[zone] = (updated[zone] || []).filter((i) => i.id !== itemId);
+    if (updated[zone].length === 0) delete updated[zone];
+    setSavedCustoms(updated);
+    saveCustoms(updated);
   };
 
   const handleZoneTap = (zone: PrepZone | "stroller") => {
@@ -123,6 +168,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
 
   const currentPresets = getZonePresets(activeZone);
   const currentItems = getZoneItems(activeZone);
+  const currentSavedCustoms = getSavedCustomsForZone(activeZone);
 
   return (
     <div>
@@ -178,7 +224,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
               </button>
             </div>
 
-            {/* Preset pills */}
+            {/* Preset pills + saved custom pills */}
             <div className="mb-3 flex flex-wrap gap-2">
               {currentPresets.map((preset) => {
                 const selected = currentItems.some((i) => i.id === preset.id);
@@ -198,27 +244,40 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
                   </button>
                 );
               })}
-            </div>
 
-            {/* Custom items */}
-            {currentItems.filter((i) => i.isCustom).length > 0 && (
-              <div className="mb-3 flex flex-wrap gap-2">
-                {currentItems.filter((i) => i.isCustom).map((item) => (
-                  <span
-                    key={item.id}
-                    className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-white"
-                    style={{ backgroundColor: hex }}
-                  >
-                    {item.label}
-                    <button type="button" onClick={() => removeItem(activeZone, item.id)} className="ml-0.5 opacity-80 hover:opacity-100">
-                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
+              {/* Saved custom items as toggleable pills with delete */}
+              {currentSavedCustoms.map((item) => {
+                const selected = currentItems.some((i) => i.id === item.id);
+                return (
+                  <span key={item.id} className="inline-flex items-center gap-0.5">
+                    <button
+                      type="button"
+                      onClick={() => toggleCustom(activeZone, item)}
+                      className="rounded-l-2xl px-3 py-1.5 text-xs font-semibold transition-all"
+                      style={
+                        selected
+                          ? { backgroundColor: hex, color: "#fff" }
+                          : { border: "1px solid var(--color-border)", borderRight: "none", color: "var(--color-text-secondary)" }
+                      }
+                    >
+                      {item.label}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteCustom(activeZone, item.id)}
+                      className="rounded-r-2xl px-1.5 py-1.5 text-xs transition-all"
+                      style={
+                        selected
+                          ? { backgroundColor: hex, color: "#fff", opacity: 0.8 }
+                          : { border: "1px solid var(--color-border)", borderLeft: "none", color: "var(--color-text-muted)" }
+                      }
+                    >
+                      ×
                     </button>
                   </span>
-                ))}
-              </div>
-            )}
+                );
+              })}
+            </div>
 
             {/* Add custom input */}
             <div className="flex gap-2">

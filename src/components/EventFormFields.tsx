@@ -176,6 +176,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
   });
 
   useEffect(() => {
+    if (localStorage.getItem("ea-locations-custom")) return;
     fetch("/api/events")
       .then((r) => r.json())
       .then((data) => {
@@ -230,7 +231,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                 <span className="flex items-center gap-1.5">
                   {loc}
                   <span
-                    onClick={(e) => { e.stopPropagation(); const updated = recentLocations.filter((l) => l !== loc); setRecentLocations(updated); localStorage.setItem("ea-recent-locations", JSON.stringify(updated)); if (form.location === loc) form.set("location", ""); }}
+                    onClick={(e) => { e.stopPropagation(); const updated = recentLocations.filter((l) => l !== loc); setRecentLocations(updated); localStorage.setItem("ea-recent-locations", JSON.stringify(updated)); localStorage.setItem("ea-locations-custom", "1"); if (form.location === loc) form.set("location", ""); }}
                     className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] leading-none transition-colors ${form.location === loc ? "bg-white/25 text-white" : "bg-gray-200 text-gray-500"}`}
                   >
                     ×
@@ -250,6 +251,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                 const updated = [loc, ...recentLocations].slice(0, 6);
                 setRecentLocations(updated);
                 localStorage.setItem("ea-recent-locations", JSON.stringify(updated));
+                localStorage.setItem("ea-locations-custom", "1");
               }}
               className="shrink-0 rounded-2xl border border-brand-300 bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-600 transition-all active:bg-brand-100"
             >
