@@ -356,11 +356,11 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
                 </p>
                 <div className="flex gap-2">
                   <button type="button" onClick={acceptSuggestion}
-                    className="rounded-lg bg-brand-500 px-3 py-1.5 text-xs font-semibold text-white">
+                    className="rounded-xl bg-brand-500 px-3 py-1.5 text-xs font-semibold text-white">
                     Accept 接受
                   </button>
                   <button type="button" onClick={rejectSuggestion}
-                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-text-secondary">
+                    className="rounded-xl border border-border-light px-3 py-1.5 text-xs font-semibold text-text-secondary">
                     Keep original 保留原文
                   </button>
                 </div>
@@ -380,13 +380,13 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
                     addCustomItem(activeZone);
                   }
                 }}
-                className="flex-1 rounded-full h-11 border border-border-light bg-surface px-4 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                className="flex-1 rounded-xl h-11 border border-border-light bg-surface px-4 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
               <button
                 type="button"
                 onClick={() => addCustomItem(activeZone)}
                 disabled={!customInput.trim() && !suggestion}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-500 text-white transition-opacity disabled:opacity-40"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-500 text-white transition-opacity disabled:opacity-40"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -398,7 +398,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
             <div className="mt-2 flex items-center justify-end gap-2">
               <span className="text-[10px] text-text-muted">Auto-translate 自動翻譯</span>
               <button type="button" role="switch" aria-checked={suggestEnabled} onClick={toggleSuggest}
-                className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${suggestEnabled ? "bg-brand-500" : "bg-gray-300"}`}>
+                className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${suggestEnabled ? "bg-[#34C759]" : "bg-gray-300"}`}>
                 <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${suggestEnabled ? "translate-x-[18px]" : "translate-x-[2px]"}`} />
               </button>
             </div>

@@ -192,8 +192,8 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       .catch(() => {});
   }, []);
 
-  const inputClass = "w-full h-11 rounded-full border border-border-light bg-surface px-4 text-[15px] text-text-primary placeholder:text-text-muted transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20";
-  const errorInputClass = "w-full h-11 rounded-full border border-[#FF3B30]/40 bg-surface px-4 text-[15px] text-text-primary transition-colors focus:border-[#FF3B30] focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/20";
+  const inputClass = "w-full h-11 rounded-xl border border-border-light bg-surface px-4 text-[15px] text-text-primary placeholder:text-text-muted transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20";
+  const errorInputClass = "w-full h-11 rounded-xl border border-[#FF3B30]/40 bg-surface px-4 text-[15px] text-text-primary transition-colors focus:border-[#FF3B30] focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/20";
 
   return (
     <div className="space-y-4">
@@ -253,7 +253,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                 localStorage.setItem("ea-recent-locations", JSON.stringify(updated));
                 localStorage.setItem("ea-locations-custom", "1");
               }}
-              className="shrink-0 h-11 rounded-full border border-brand-300 bg-brand-50 px-4 text-[13px] font-semibold text-brand-600 transition-all active:opacity-70"
+              className="shrink-0 h-11 rounded-xl border border-brand-300 bg-brand-50 px-4 text-[13px] font-semibold text-brand-600 transition-all active:opacity-70"
             >
               {L.save}
             </button>
@@ -262,7 +262,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       </div>
 
       {/* All day toggle */}
-      <div className="flex items-center justify-between rounded-full bg-surface px-4 h-11">
+      <div className="flex items-center justify-between rounded-xl bg-surface px-4 h-11">
         <span className="text-[15px] font-medium text-text-primary"><BiText text={L.allDay} /></span>
         <button
           type="button"
@@ -351,7 +351,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                     <div className="flex items-center gap-2">
                       <span className="text-[15px] text-text-secondary"><BiText text={L.every} /></span>
                       <input type="number" min={1} max={99} value={form.recInterval} onChange={(e) => form.set("recInterval", Math.max(1, parseInt(e.target.value) || 1))}
-                        className="w-16 h-11 rounded-full border border-border-light bg-surface px-3 text-center text-[15px] text-text-primary focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
+                        className="w-16 h-11 rounded-xl border border-border-light bg-surface px-3 text-center text-[15px] text-text-primary focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
                       <span className="text-[15px] text-text-secondary">{form.recInterval === 1 ? "week 週" : "weeks 週"}</span>
                     </div>
                   </div>
@@ -375,13 +375,13 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
               {/* End mode — pill toggle */}
               <div>
                 <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.ends} /></label>
-                <div className="mb-3 inline-flex rounded-full bg-surface p-1">
+                <div className="mb-3 inline-flex rounded-full bg-surface-dim p-0.5">
                   <button type="button" onClick={() => form.set("recEndMode", "date")}
-                    className={`h-8 rounded-full px-4 text-[13px] font-semibold transition-all ${form.recEndMode === "date" ? "bg-brand-500 text-white" : "text-text-secondary"}`}>
+                    className={`h-7 rounded-full px-4 text-[13px] font-medium transition-all ${form.recEndMode === "date" ? "bg-surface text-text-primary shadow-sm" : "text-text-secondary"}`}>
                     {L.onDate}
                   </button>
                   <button type="button" onClick={() => form.set("recEndMode", "none")}
-                    className={`h-8 rounded-full px-4 text-[13px] font-semibold transition-all ${form.recEndMode === "none" ? "bg-brand-500 text-white" : "text-text-secondary"}`}>
+                    className={`h-7 rounded-full px-4 text-[13px] font-medium transition-all ${form.recEndMode === "none" ? "bg-surface text-text-primary shadow-sm" : "text-text-secondary"}`}>
                     {L.noEnd}
                   </button>
                 </div>
@@ -403,7 +403,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
               </div>
 
               {form.recSummary && (
-                <div className="rounded-full bg-brand-50 px-4 py-2.5 text-[13px] font-medium text-brand-700">{form.recSummary}</div>
+                <div className="rounded-xl bg-brand-50 px-4 py-2.5 text-[13px] font-medium text-brand-700">{form.recSummary}</div>
               )}
             </>
           )}

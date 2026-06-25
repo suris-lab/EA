@@ -324,7 +324,22 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
     <>
       {/* Mobile header */}
       {isMobile && (
-        <div className="mb-3 flex items-center justify-center" ref={calendarContainerRef}>
+        <div className="mb-3" ref={calendarContainerRef}>
+          {/* Month / Week toggle — own row */}
+          <div className="mb-2 flex justify-center">
+            <div className="inline-flex rounded-full bg-surface-dim p-0.5">
+              <button onClick={() => switchMobileView("month")}
+                className={`h-7 rounded-full px-4 text-[13px] font-medium transition-all ${mobileView === "month" ? "bg-surface text-text-primary shadow-sm" : "text-text-secondary"}`}>
+                Month
+              </button>
+              <button onClick={() => switchMobileView("week")}
+                className={`h-7 rounded-full px-4 text-[13px] font-medium transition-all ${mobileView === "week" ? "bg-surface text-text-primary shadow-sm" : "text-text-secondary"}`}>
+                Week
+              </button>
+            </div>
+          </div>
+
+          {/* Month/Year nav */}
           <div className="flex w-full items-center">
             <button onClick={() => navigate("prev")} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-text-secondary active:bg-surface-dim" aria-label="Previous month">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
@@ -339,7 +354,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
                       <div className="max-h-72 overflow-y-auto overscroll-contain py-1">
                         {MONTHS.map((m, i) => (
                           <button key={m} onClick={() => handleMonthSelect(i)} role="option" aria-selected={i === currentMonth}
-                            className={`flex h-11 w-full items-center px-4 text-sm active:bg-surface-dim ${i === currentMonth ? "font-semibold text-brand-500" : "text-text-primary"}`}>
+                            className={`flex h-11 w-full items-center px-4 text-[15px] active:bg-surface-dim ${i === currentMonth ? "font-semibold text-brand-500" : "text-text-primary"}`}>
                             {m}{i === currentMonth && <svg className="ml-auto h-4 w-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                           </button>
                         ))}
@@ -357,7 +372,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
                       <div className="max-h-72 overflow-y-auto overscroll-contain py-1">
                         {yearOptions.map((y) => (
                           <button key={y} onClick={() => handleYearSelect(y)} role="option" aria-selected={y === currentYear}
-                            className={`flex h-11 w-full items-center justify-center text-sm active:bg-surface-dim ${y === currentYear ? "font-semibold text-brand-500" : "text-text-primary"}`}>{y}</button>
+                            className={`flex h-11 w-full items-center justify-center text-[15px] active:bg-surface-dim ${y === currentYear ? "font-semibold text-brand-500" : "text-text-primary"}`}>{y}</button>
                         ))}
                       </div>
                     </div>
@@ -368,19 +383,6 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
             <button onClick={() => navigate("next")} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-text-secondary active:bg-surface-dim" aria-label="Next month">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
             </button>
-          </div>
-          {/* Month / Week toggle */}
-          <div className="mt-2 flex justify-center">
-            <div className="inline-flex rounded-full bg-surface p-1">
-              <button onClick={() => switchMobileView("month")}
-                className={`h-8 rounded-full px-5 text-[13px] font-semibold transition-all ${mobileView === "month" ? "bg-brand-500 text-white" : "text-text-secondary"}`}>
-                Month 月
-              </button>
-              <button onClick={() => switchMobileView("week")}
-                className={`h-8 rounded-full px-5 text-[13px] font-semibold transition-all ${mobileView === "week" ? "bg-brand-500 text-white" : "text-text-secondary"}`}>
-                Week 週
-              </button>
-            </div>
           </div>
         </div>
       )}

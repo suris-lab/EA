@@ -92,7 +92,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
 
   return (
     <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center" onClick={onClose}>
-      <div className="animate-modal-in flex max-h-[92vh] w-full max-w-lg flex-col rounded-t-[12px] bg-surface-dim shadow-2xl sm:rounded-[12px]" onClick={(e) => e.stopPropagation()}>
+      <div className="animate-modal-in flex max-h-[92vh] w-full max-w-lg flex-col rounded-t-2xl bg-surface-dim shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-center pt-2 pb-1 sm:hidden">
           <div className="h-[5px] w-9 rounded-full bg-border" />
         </div>
@@ -127,7 +127,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
           ) : (
             <>
               {/* Event detail — grouped rows */}
-              <div className="overflow-hidden rounded-[10px] bg-surface">
+              <div className="overflow-hidden rounded-xl bg-surface">
                 <div className="flex items-center gap-2.5 border-b border-border-light px-4 py-3">
                   <div className={`h-3 w-3 shrink-0 rounded-full ${dotColor}`} />
                   <span className="text-[17px] font-semibold text-text-primary">{event.title}</span>
@@ -170,20 +170,20 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
 
               {/* Description */}
               {event.description && (
-                <div className="mt-3 overflow-hidden rounded-[10px] bg-surface">
+                <div className="mt-3 overflow-hidden rounded-xl bg-surface">
                   <div className="event-detail-content px-4 py-3 text-[15px] text-text-primary whitespace-pre-line">{event.description}</div>
                 </div>
               )}
 
               {/* Preparation */}
               {event.preparation && (
-                <div className="mt-3 overflow-hidden rounded-[10px] bg-surface px-4 py-3">
+                <div className="mt-3 overflow-hidden rounded-xl bg-surface px-4 py-3">
                   <PrepItemsDisplay preparation={event.preparation} category={event.category} />
                 </div>
               )}
 
               {/* Meta */}
-              <div className="mt-3 overflow-hidden rounded-[10px] bg-surface divide-y divide-border-light">
+              <div className="mt-3 overflow-hidden rounded-xl bg-surface divide-y divide-border-light">
                 {event.category && (
                   <div className="flex items-center gap-2.5 px-4 py-3 text-[15px]">
                     <div className={`h-2.5 w-2.5 rounded-full ${dotColor}`} />
@@ -207,7 +207,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
           )}
 
           {deleteMode === "single" && (
-            <div className="mt-4 overflow-hidden rounded-[10px] bg-surface">
+            <div className="mt-4 overflow-hidden rounded-xl bg-surface">
               <p className="px-4 py-3 text-[15px] text-[#FF3B30]">{L.deletePrompt}</p>
               <div className="flex border-t border-border-light">
                 <button onClick={() => setDeleteMode(null)} className="flex-1 border-r border-border-light py-3 text-center text-[17px] font-normal text-brand-500">{L.keep}</button>
@@ -217,7 +217,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
           )}
 
           {deleteMode === "prompt" && (
-            <div className="mt-4 overflow-hidden rounded-[10px] bg-surface">
+            <div className="mt-4 overflow-hidden rounded-xl bg-surface">
               <p className="px-4 py-3 text-[15px] font-medium text-[#FF3B30]">{L.recurringWarning}</p>
               <button onClick={() => handleDelete(false)} disabled={deleting} className="w-full border-t border-border-light px-4 py-3 text-left text-[15px] text-text-primary active:bg-surface-dim">
                 <BiText text={L.deleteThisOnly} />
