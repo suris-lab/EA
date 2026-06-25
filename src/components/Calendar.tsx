@@ -371,13 +371,13 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           </div>
           {/* Month / Week toggle */}
           <div className="mt-2 flex justify-center">
-            <div className="inline-flex rounded-lg border border-border bg-surface-dim p-0.5">
+            <div className="inline-flex rounded-full bg-surface p-1">
               <button onClick={() => switchMobileView("month")}
-                className={`rounded-md px-4 py-1.5 text-xs font-semibold transition-all ${mobileView === "month" ? "bg-brand-500 text-white shadow-sm" : "text-text-secondary"}`}>
+                className={`h-8 rounded-full px-5 text-[13px] font-semibold transition-all ${mobileView === "month" ? "bg-brand-500 text-white" : "text-text-secondary"}`}>
                 Month 月
               </button>
               <button onClick={() => switchMobileView("week")}
-                className={`rounded-md px-4 py-1.5 text-xs font-semibold transition-all ${mobileView === "week" ? "bg-brand-500 text-white shadow-sm" : "text-text-secondary"}`}>
+                className={`h-8 rounded-full px-5 text-[13px] font-semibold transition-all ${mobileView === "week" ? "bg-brand-500 text-white" : "text-text-secondary"}`}>
                 Week 週
               </button>
             </div>

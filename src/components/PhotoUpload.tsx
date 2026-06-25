@@ -202,7 +202,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
       <div className="animate-modal-in w-full max-w-md rounded-t-2xl bg-surface p-6 shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-1 flex items-center justify-between">
           <h2 className="text-base font-semibold text-text-primary">Scan Notice 掃描通告</h2>
-          <button onClick={onClose} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
+          <button onClick={onClose} className="rounded-full p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -224,7 +224,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
           </div>
         ) : (
           <div
-            className="relative mb-5 cursor-pointer rounded-2xl border-2 border-dashed border-border bg-surface-dim p-8 text-center transition-colors hover:border-brand-300 hover:bg-brand-50 active:bg-brand-100"
+            className="relative mb-5 cursor-pointer rounded-2xl border-2 border-dashed border-border-light bg-surface p-8 text-center transition-colors hover:border-brand-300 hover:bg-brand-50 active:bg-brand-100"
             onClick={() => setShowSourcePicker(true)}
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
@@ -249,7 +249,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
                   <span className="text-sm font-medium text-text-primary">Choose from Library 從相簿選取</span>
                 </button>
               </div>
-              <button onClick={() => setShowSourcePicker(false)} className="mt-2 w-full rounded-2xl bg-surface py-4 text-center text-sm font-semibold text-brand-500 shadow-xl transition-colors active:bg-surface-dim">
+              <button onClick={() => setShowSourcePicker(false)} className="mt-2 w-full rounded-full bg-surface py-3 text-center text-sm font-semibold text-brand-500 shadow-xl transition-colors active:bg-surface-dim">
                 Cancel
               </button>
             </div>

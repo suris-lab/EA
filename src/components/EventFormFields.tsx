@@ -192,27 +192,26 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       .catch(() => {});
   }, []);
 
-  const inputClass = "w-full rounded-[10px] border border-border-light bg-surface px-4 py-3 text-[15px] text-text-primary placeholder:text-text-muted transition-colors focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500/30";
-  const errorInputClass = "w-full rounded-[10px] border border-[#FF3B30]/40 bg-surface px-4 py-3 text-[15px] text-text-primary transition-colors focus:border-[#FF3B30] focus:outline-none focus:ring-1 focus:ring-[#FF3B30]/30";
+  const inputClass = "w-full h-11 rounded-full border border-border-light bg-surface px-4 text-[15px] text-text-primary placeholder:text-text-muted transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20";
+  const errorInputClass = "w-full h-11 rounded-full border border-[#FF3B30]/40 bg-surface px-4 text-[15px] text-text-primary transition-colors focus:border-[#FF3B30] focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/20";
 
   return (
     <div className="space-y-4">
       {/* Title */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted"><BiText text={L.title} /></label>
+        <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.title} /></label>
         <input type="text" placeholder={L.titlePlaceholder} value={form.title} onChange={(e) => form.set("title", e.target.value)} className={inputClass} />
       </div>
 
       {/* Category */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted"><BiText text={L.category} /></label>
+        <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.category} /></label>
         <div className="flex gap-2 overflow-x-auto pb-1">
           {CATEGORIES.map((cat) => (
             <button key={cat.value} type="button" onClick={() => form.set("category", cat.value)}
-              className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${
-                form.category === cat.value ? `${cat.color} text-white shadow-sm` : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"
-              }`}
-              style={{ minHeight: 40 }}>
+              className={`shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${
+                form.category === cat.value ? `${cat.color} text-white` : "border border-border-light bg-surface text-text-secondary active:opacity-70"
+              }`}>
               {cat.label}
             </button>
           ))}
@@ -221,13 +220,13 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
 
       {/* Location — moved after Category */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted"><BiText text={L.location} /></label>
+        <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.location} /></label>
         {recentLocations.length > 0 && (
           <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
             {recentLocations.map((loc) => (
               <button key={loc} type="button" onClick={() => form.set("location", form.location === loc ? "" : loc)}
-                className={`group shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${
-                  form.location === loc ? "bg-brand-500 text-white shadow-sm" : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"
+                className={`group shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${
+                  form.location === loc ? "bg-brand-500 text-white" : "border border-border-light bg-surface text-text-secondary active:opacity-70"
                 }`}>
                 <span className="flex items-center gap-1.5">
                   {loc}
@@ -254,7 +253,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                 localStorage.setItem("ea-recent-locations", JSON.stringify(updated));
                 localStorage.setItem("ea-locations-custom", "1");
               }}
-              className="shrink-0 rounded-2xl border border-brand-300 bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-600 transition-all active:bg-brand-100"
+              className="shrink-0 h-11 rounded-full border border-brand-300 bg-brand-50 px-4 text-[13px] font-semibold text-brand-600 transition-all active:opacity-70"
             >
               {L.save}
             </button>
@@ -263,8 +262,8 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       </div>
 
       {/* All day toggle */}
-      <div className="flex items-center justify-between rounded-[10px] bg-surface px-4 py-3">
-        <span className="text-sm font-medium text-text-primary"><BiText text={L.allDay} /></span>
+      <div className="flex items-center justify-between rounded-full bg-surface px-4 h-11">
+        <span className="text-[15px] font-medium text-text-primary"><BiText text={L.allDay} /></span>
         <button
           type="button"
           role="switch"
@@ -279,13 +278,13 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       {/* Duration presets */}
       {!form.allDay && (
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted"><BiText text={L.duration} /></label>
+          <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.duration} /></label>
           <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Duration">
             {DURATIONS.map((d) => (
               <button key={d.minutes} type="button" onClick={() => form.handleDuration(d.minutes)}
-                className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${
-                  form.selectedDuration === d.minutes ? "bg-brand-500 text-white shadow-sm" : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"
-                }`} style={{ minHeight: 40 }}>
+                className={`shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${
+                  form.selectedDuration === d.minutes ? "bg-brand-500 text-white" : "border border-border-light bg-surface text-text-secondary active:opacity-70"
+                }`}>
                 {d.label}
               </button>
             ))}
@@ -295,7 +294,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
 
       {/* Start */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted"><BiText text={L.start} /></label>
+        <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.start} /></label>
         <div className={`flex gap-2 ${form.allDay ? "" : ""}`}>
           <input type="date" value={form.date} onChange={(e) => form.handleDateChange(e.target.value)} className={`${inputClass} ${!form.allDay ? "flex-[1.2]" : ""}`} />
           {!form.allDay && (
@@ -306,7 +305,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
 
       {/* End */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted"><BiText text={L.end} /></label>
+        <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.end} /></label>
         <div className="flex gap-2">
           <input type="date" value={form.endDate} min={form.date || undefined} onChange={(e) => form.handleEndDateChange(e.target.value)} className={`${form.endBeforeStart ? errorInputClass : inputClass} ${!form.allDay ? "flex-[1.2]" : ""}`} />
           {!form.allDay && (
@@ -315,14 +314,14 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
         </div>
       </div>
       {form.endBeforeStart && (
-        <p className="text-xs text-red-500">{form.allDay ? L.endDateError : L.endTimeError}</p>
+        <p className="text-[13px] text-[#FF3B30]">{form.allDay ? L.endDateError : L.endTimeError}</p>
       )}
 
       {/* Recurrence */}
       {showRecurrence && (
         <>
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted"><BiText text={L.repeat} /></label>
+            <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.repeat} /></label>
             <select value={form.recurrence} onChange={(e) => { form.set("recurrence", e.target.value); if (e.target.value !== "weekly") form.set("recDays", []); }} className={inputClass}>
               <option value="none">{L.doesNotRepeat}</option>
               <option value="daily">{L.daily}</option>
@@ -337,34 +336,34 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
               {form.recurrence === "weekly" ? (
                 <>
                   <div>
-                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted"><BiText text={L.repeatOn} /></label>
+                    <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.repeatOn} /></label>
                     <div className="flex gap-1.5">
                       {[{ s: "S", v: 0 }, { s: "M", v: 1 }, { s: "T", v: 2 }, { s: "W", v: 3 }, { s: "T", v: 4 }, { s: "F", v: 5 }, { s: "S", v: 6 }].map((wd) => (
                         <button key={wd.v} type="button" onClick={() => form.toggleDay(wd.v)}
-                          className={`flex h-10 w-10 items-center justify-center rounded-2xl text-xs font-bold transition-all ${
-                            form.recDays.includes(wd.v) ? "bg-brand-500 text-white shadow-sm" : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"
+                          className={`flex h-9 w-9 items-center justify-center rounded-full text-[13px] font-bold transition-all ${
+                            form.recDays.includes(wd.v) ? "bg-brand-500 text-white" : "border border-border-light bg-surface text-text-secondary active:opacity-70"
                           }`}>{wd.s}</button>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted"><BiText text={L.frequency} /></label>
+                    <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.frequency} /></label>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-text-secondary"><BiText text={L.every} /></span>
+                      <span className="text-[15px] text-text-secondary"><BiText text={L.every} /></span>
                       <input type="number" min={1} max={99} value={form.recInterval} onChange={(e) => form.set("recInterval", Math.max(1, parseInt(e.target.value) || 1))}
-                        className="w-16 rounded-2xl border border-border bg-surface-dim px-3 py-3 text-center text-sm text-text-primary focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100" />
-                      <span className="text-sm text-text-secondary">{form.recInterval === 1 ? "week 週" : "weeks 週"}</span>
+                        className="w-16 h-11 rounded-full border border-border-light bg-surface px-3 text-center text-[15px] text-text-primary focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
+                      <span className="text-[15px] text-text-secondary">{form.recInterval === 1 ? "week 週" : "weeks 週"}</span>
                     </div>
                   </div>
                 </>
               ) : (
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Frequency</label>
+                  <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.frequency} /></label>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-text-secondary">Every</span>
+                    <span className="text-[15px] text-text-secondary"><BiText text={L.every} /></span>
                     <input type="number" min={1} max={99} value={form.recInterval} onChange={(e) => form.set("recInterval", Math.max(1, parseInt(e.target.value) || 1))}
                       className="w-16 rounded-2xl border border-border bg-surface-dim px-3 py-3 text-center text-sm text-text-primary focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100" />
-                    <span className="text-sm text-text-secondary">
+                    <span className="text-[15px] text-text-secondary">
                       {form.recurrence === "daily" ? (form.recInterval === 1 ? "day 日" : "days 日") :
                        form.recurrence === "monthly" ? (form.recInterval === 1 ? "month 月" : "months 月") :
                        (form.recInterval === 1 ? "year 年" : "years 年")}
@@ -375,14 +374,14 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
 
               {/* End mode — pill toggle */}
               <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted"><BiText text={L.ends} /></label>
-                <div className="mb-3 inline-flex rounded-2xl border border-border bg-surface-dim p-1">
+                <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.ends} /></label>
+                <div className="mb-3 inline-flex rounded-full bg-surface p-1">
                   <button type="button" onClick={() => form.set("recEndMode", "date")}
-                    className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${form.recEndMode === "date" ? "bg-brand-500 text-white shadow-sm" : "text-text-secondary"}`}>
+                    className={`h-8 rounded-full px-4 text-[13px] font-semibold transition-all ${form.recEndMode === "date" ? "bg-brand-500 text-white" : "text-text-secondary"}`}>
                     {L.onDate}
                   </button>
                   <button type="button" onClick={() => form.set("recEndMode", "none")}
-                    className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${form.recEndMode === "none" ? "bg-brand-500 text-white shadow-sm" : "text-text-secondary"}`}>
+                    className={`h-8 rounded-full px-4 text-[13px] font-semibold transition-all ${form.recEndMode === "none" ? "bg-brand-500 text-white" : "text-text-secondary"}`}>
                     {L.noEnd}
                   </button>
                 </div>
@@ -391,20 +390,20 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                     <input type="date" value={form.recurrenceEnd} min={form.endDate || form.date || undefined} onChange={(e) => form.set("recurrenceEnd", e.target.value)}
                       className={form.recurrenceEndInvalid ? errorInputClass : inputClass} />
                     {form.recurrenceEndInvalid && (
-                      <p className="mt-1 text-xs text-red-500">{L.recEndError}</p>
+                      <p className="mt-1 text-[13px] text-[#FF3B30]">{L.recEndError}</p>
                     )}
                     {!form.recurrenceEndInvalid && !form.recurrenceEnd && (
-                      <p className="mt-1 text-xs text-text-muted">{L.recEndHint}</p>
+                      <p className="mt-1 text-[13px] text-text-muted">{L.recEndHint}</p>
                     )}
                   </>
                 )}
                 {form.recEndMode === "none" && (
-                  <p className="text-xs text-text-muted">{L.recNoEndHint}</p>
+                  <p className="text-[13px] text-text-muted">{L.recNoEndHint}</p>
                 )}
               </div>
 
               {form.recSummary && (
-                <div className="rounded-2xl bg-brand-50 px-4 py-3 text-xs font-medium text-brand-700">{form.recSummary}</div>
+                <div className="rounded-full bg-brand-50 px-4 py-2.5 text-[13px] font-medium text-brand-700">{form.recSummary}</div>
               )}
             </>
           )}
@@ -420,7 +419,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
 
       {/* Notes */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted"><BiText text={L.notes} /></label>
+        <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.notes} /></label>
         <textarea rows={3} placeholder={L.notesPlaceholder} value={form.description} onChange={(e) => form.set("description", e.target.value)} className={`${inputClass} resize-none`} />
       </div>
     </div>

@@ -254,7 +254,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
         <BiText text={L.prepReminder} />
       </label>
 
-      <div className="rounded-2xl border border-border-light bg-surface-dim p-3">
+      <div className="rounded-2xl border border-border-light bg-surface-dim p-4">
         <p className="mb-2 text-center text-[11px] text-text-muted"><BiText text={L.tapZoneHint} /></p>
 
         <KidIllustration
@@ -269,7 +269,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
           <button
             type="button"
             onClick={toggleStroller}
-            className="flex items-center gap-2 rounded-2xl px-4 py-2 text-xs font-semibold transition-all"
+            className="flex items-center gap-2 rounded-full h-9 px-4 text-[13px] font-semibold transition-all"
             style={
               showStroller
                 ? { backgroundColor: hex, color: "#fff" }
@@ -288,9 +288,9 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
 
         {/* Zone editing panel */}
         {activeZone && (
-          <div className="animate-slide-down mt-3 rounded-xl border border-border-light bg-surface p-3">
+          <div className="animate-slide-down mt-3 rounded-2xl border border-border-light bg-surface p-3">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-xs font-semibold text-text-primary">{getZoneLabel(activeZone)}</span>
+              <span className="text-[15px] font-semibold text-text-primary">{getZoneLabel(activeZone)}</span>
               <button
                 type="button"
                 onClick={() => setActiveZone(null)}
@@ -309,14 +309,14 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
                 return (
                   <span key={preset.id} className="inline-flex items-center">
                     <button type="button" onClick={() => togglePreset(activeZone, preset)}
-                      className="rounded-l-2xl px-3 py-1.5 text-xs font-semibold transition-all"
+                      className="rounded-l-full h-9 px-3 text-[13px] font-semibold transition-all"
                       style={selected
                         ? { backgroundColor: hex, color: "#fff" }
                         : { border: "1px solid var(--color-border)", borderRight: "none", color: "var(--color-text-secondary)" }}>
                       {preset.label}
                     </button>
                     <button type="button" onClick={() => hidePreset(activeZone, preset.id)}
-                      className="rounded-r-2xl px-1.5 py-1.5 text-xs transition-all"
+                      className="rounded-r-full h-9 px-2 text-[13px] transition-all"
                       style={selected
                         ? { backgroundColor: hex, color: "#fff", opacity: 0.8 }
                         : { border: "1px solid var(--color-border)", borderLeft: "none", color: "var(--color-text-muted)" }}>
@@ -330,14 +330,14 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
                 return (
                   <span key={item.id} className="inline-flex items-center">
                     <button type="button" onClick={() => toggleCustom(activeZone, item)}
-                      className="rounded-l-2xl px-3 py-1.5 text-xs font-semibold transition-all"
+                      className="rounded-l-full h-9 px-3 text-[13px] font-semibold transition-all"
                       style={selected
                         ? { backgroundColor: hex, color: "#fff" }
                         : { border: "1px solid var(--color-border)", borderRight: "none", color: "var(--color-text-secondary)" }}>
                       {item.label}
                     </button>
                     <button type="button" onClick={() => deleteCustom(activeZone, item.id)}
-                      className="rounded-r-2xl px-1.5 py-1.5 text-xs transition-all"
+                      className="rounded-r-full h-9 px-2 text-[13px] transition-all"
                       style={selected
                         ? { backgroundColor: hex, color: "#fff", opacity: 0.8 }
                         : { border: "1px solid var(--color-border)", borderLeft: "none", color: "var(--color-text-muted)" }}>
@@ -380,13 +380,13 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
                     addCustomItem(activeZone);
                   }
                 }}
-                className="flex-1 rounded-xl border border-border bg-surface-dim px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                className="flex-1 rounded-full h-11 border border-border-light bg-surface px-4 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
               <button
                 type="button"
                 onClick={() => addCustomItem(activeZone)}
                 disabled={!customInput.trim() && !suggestion}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-500 text-white transition-opacity disabled:opacity-40"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-500 text-white transition-opacity disabled:opacity-40"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -413,7 +413,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
               if (!items || items.length === 0) return null;
               return (
                 <div key={zone} className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                  <span className="text-[13px] font-semibold text-text-secondary">
                     {ZONE_LABELS[zone]}:
                   </span>
                   {items.map((item: PrepItem) => (
@@ -426,7 +426,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
             })}
             {preparation.stroller && preparation.stroller.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                <span className="text-[13px] font-semibold text-text-secondary">
                   {STROLLER_LABEL}:
                 </span>
                 {preparation.stroller.map((item: PrepItem) => (
