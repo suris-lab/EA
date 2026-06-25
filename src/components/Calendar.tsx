@@ -470,12 +470,12 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           {/* Category filter */}
           <div className="mt-3 flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
             <button onClick={() => setCategoryFilter(null)}
-              className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${!categoryFilter ? "bg-brand-500 text-white shadow-sm" : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"}`}>
+              className={`shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${!categoryFilter ? "bg-brand-500 text-white" : "bg-surface-dim text-text-secondary active:opacity-70"}`}>
               All
             </button>
             {CATEGORIES.map((cat) => (
               <button key={cat.value} onClick={() => setCategoryFilter(categoryFilter === cat.value ? null : cat.value)}
-                className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${categoryFilter === cat.value ? `${cat.color} text-white shadow-sm` : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"}`}>
+                className={`shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${categoryFilter === cat.value ? `${cat.color} text-white` : "bg-surface-dim text-text-secondary active:opacity-70"}`}>
                 {cat.label}
               </button>
             ))}
