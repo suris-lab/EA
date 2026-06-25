@@ -58,6 +58,31 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
             <path d={KID_D1} transform={`scale(${KID_SCALE})`} />
             <path d={KID_D2} transform={`scale(${KID_SCALE})`} />
           </clipPath>
+
+          {/* Head: solid top, fades at neck */}
+          <linearGradient id="head-fade" gradientUnits="userSpaceOnUse" x1="0" y1="-2" x2="0" y2="16">
+            <stop offset="0%" stopColor="white" />
+            <stop offset="55%" stopColor="white" />
+            <stop offset="100%" stopColor="black" />
+          </linearGradient>
+          <mask id="head-mask"><rect x="-10" y="-10" width="120" height="70" fill="url(#head-fade)" /></mask>
+
+          {/* Body: fades at top (neck) and bottom (waist) */}
+          <linearGradient id="body-fade" gradientUnits="userSpaceOnUse" x1="0" y1="8" x2="0" y2="36">
+            <stop offset="0%" stopColor="black" />
+            <stop offset="18%" stopColor="white" />
+            <stop offset="78%" stopColor="white" />
+            <stop offset="100%" stopColor="black" />
+          </linearGradient>
+          <mask id="body-mask"><rect x="-10" y="-10" width="120" height="70" fill="url(#body-fade)" /></mask>
+
+          {/* Feet: fades at top (waist), solid bottom */}
+          <linearGradient id="feet-fade" gradientUnits="userSpaceOnUse" x1="0" y1="26" x2="0" y2="54">
+            <stop offset="0%" stopColor="black" />
+            <stop offset="25%" stopColor="white" />
+            <stop offset="100%" stopColor="white" />
+          </linearGradient>
+          <mask id="feet-mask"><rect x="-10" y="-10" width="120" height="70" fill="url(#feet-fade)" /></mask>
         </defs>
 
         {/* Child with backpack */}
@@ -66,27 +91,33 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
           <path d={KID_D2} fill={BODY} />
         </g>
 
-        {/* Active zone: color the body part directly via clip */}
-        {activeZone && activeZone !== "bag" && activeZone !== "stroller" && (() => {
-          const r = ZONE_RECTS[activeZone];
-          return <rect x={r.x} y={r.y} width={r.w} height={r.h} fill={hex} clipPath="url(#kid-silhouette)" />;
-        })()}
+        {/* Active zone: color body part with gradient fade via clip + mask */}
+        {activeZone === "head" && (
+          <rect x={-5} y={-3} width={40} height={22} fill={hex}
+            clipPath="url(#kid-silhouette)" mask="url(#head-mask)" />
+        )}
+        {activeZone === "body" && (
+          <rect x={-5} y={6} width={40} height={32} fill={hex}
+            clipPath="url(#kid-silhouette)" mask="url(#body-mask)" />
+        )}
+        {activeZone === "feet" && (
+          <rect x={-5} y={24} width={40} height={32} fill={hex}
+            clipPath="url(#kid-silhouette)" mask="url(#feet-mask)" />
+        )}
 
-        {/* Standalone school bag */}
-        <g id="school-backpack" transform={`translate(34, 5) scale(${BAG_SCALE})`}
-          opacity={activeZone === "bag" ? 1 : 0.65}>
-          <path d={BAG_D1} fill={hex} />
-          <path d={BAG_D2} fill={hex} />
-          <path d={BAG_D3} fill={hex} />
+        {/* Standalone school bag — grey when inactive, category color when active */}
+        <g id="school-backpack" transform={`translate(34, 5) scale(${BAG_SCALE})`}>
+          <path d={BAG_D1} fill={activeZone === "bag" ? hex : BODY} />
+          <path d={BAG_D2} fill={activeZone === "bag" ? hex : BODY} />
+          <path d={BAG_D3} fill={activeZone === "bag" ? hex : BODY} />
         </g>
 
-        {/* Baby stroller */}
+        {/* Baby stroller — grey when inactive, category color when active */}
         {showStroller && (
-          <g id="baby-stroller" transform={`translate(64, 10) scale(${STROLLER_SCALE})`}
-            opacity={activeZone === "stroller" ? 1 : 0.65}>
-            <path d={STROLLER_D1} fill={hex} />
-            <path d={STROLLER_D2} fill={hex} />
-            <path d={STROLLER_D3} fill={hex} />
+          <g id="baby-stroller" transform={`translate(64, 10) scale(${STROLLER_SCALE})`}>
+            <path d={STROLLER_D1} fill={activeZone === "stroller" ? hex : BODY} />
+            <path d={STROLLER_D2} fill={activeZone === "stroller" ? hex : BODY} />
+            <path d={STROLLER_D3} fill={activeZone === "stroller" ? hex : BODY} />
           </g>
         )}
 
