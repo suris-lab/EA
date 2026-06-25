@@ -220,16 +220,40 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
         {recentLocations.length > 0 && (
           <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
             {recentLocations.map((loc) => (
-              <button key={loc} type="button" onClick={() => form.set("location", loc)}
-                className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${
+              <button key={loc} type="button" onClick={() => form.set("location", form.location === loc ? "" : loc)}
+                className={`group shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${
                   form.location === loc ? "bg-brand-500 text-white shadow-sm" : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"
                 }`}>
-                {loc}
+                <span className="flex items-center gap-1.5">
+                  {loc}
+                  <span
+                    onClick={(e) => { e.stopPropagation(); const updated = recentLocations.filter((l) => l !== loc); setRecentLocations(updated); localStorage.setItem("ea-recent-locations", JSON.stringify(updated)); if (form.location === loc) form.set("location", ""); }}
+                    className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] leading-none transition-colors ${form.location === loc ? "bg-white/25 text-white" : "bg-gray-200 text-gray-500"}`}
+                  >
+                    ×
+                  </span>
+                </span>
               </button>
             ))}
           </div>
         )}
-        <input type="text" placeholder="e.g. School Hall" value={form.location} onChange={(e) => form.set("location", e.target.value)} className={inputClass} />
+        <div className="flex gap-2">
+          <input type="text" placeholder="e.g. School Hall" value={form.location} onChange={(e) => form.set("location", e.target.value)} className={inputClass} />
+          {form.location.trim() && !recentLocations.some((l) => l.toLowerCase() === form.location.trim().toLowerCase()) && (
+            <button
+              type="button"
+              onClick={() => {
+                const loc = form.location.trim();
+                const updated = [loc, ...recentLocations].slice(0, 6);
+                setRecentLocations(updated);
+                localStorage.setItem("ea-recent-locations", JSON.stringify(updated));
+              }}
+              className="shrink-0 rounded-2xl border border-brand-300 bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-600 transition-all active:bg-brand-100"
+            >
+              + Save
+            </button>
+          )}
+        </div>
       </div>
 
       {/* All day toggle */}
