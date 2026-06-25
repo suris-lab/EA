@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import type { EventClickArg, DatesSetArg, DayCellContentArg, EventDropArg } from "@fullcalendar/core";
 import type { CalendarEvent } from "@/types/event";
@@ -366,9 +367,9 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
       <div className="ea-calendar overflow-hidden rounded-2xl border border-border-light bg-surface shadow-sm sm:p-6">
         <FullCalendar
           ref={calendarRef}
-          plugins={[dayGridPlugin, interactionPlugin]}
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
-          headerToolbar={isMobile ? false : { left: "prev,next today", center: "title", right: "dayGridMonth,dayGridWeek" }}
+          headerToolbar={isMobile ? false : { left: "prev,next today", center: "title", right: "dayGridMonth,timeGridWeek" }}
           height={isMobile ? "auto" : "calc(100vh - 80px)"}
           expandRows={!isMobile}
           events={fcEvents}
@@ -380,6 +381,15 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           selectable={true}
           dayMaxEvents={isMobile ? 0 : 20}
           fixedWeekCount={false}
+          slotMinTime="06:00:00"
+          slotMaxTime="22:00:00"
+          slotDuration="00:30:00"
+          slotLabelInterval="01:00:00"
+          slotLabelFormat={{ hour: "numeric", minute: "2-digit", meridiem: "short" }}
+          scrollTime="08:00:00"
+          allDaySlot={true}
+          allDayText="All day"
+          nowIndicator={true}
           eventClassNames="cursor-pointer"
           dayCellContent={isMobile ? dayCellContent : undefined}
           eventDisplay={isMobile ? "none" : "auto"}
