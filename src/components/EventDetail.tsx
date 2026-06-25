@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import type { CalendarEvent } from "@/types/event";
-import { getCategoryColor, getCategoryLabel } from "@/types/event";
+import { getCategoryColor, getCategoryLabel, type PreparationData } from "@/types/event";
+import PrepItemsDisplay from "./PrepItemsDisplay";
 import { toDateValue, toTimeValue, buildLocalISO } from "@/lib/date-utils";
 import Button from "./Button";
 import EventFormFields, { useFormState } from "./EventFormFields";
@@ -26,6 +27,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
     location: event.location ?? "",
     description: event.description ?? "",
     category: (event.category as "school") || "school",
+    preparation: (event.preparation as PreparationData) || {},
   });
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -54,6 +56,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
         location: form.location.trim() || null,
         description: form.description.trim() || null,
         category: form.category,
+        preparation: Object.keys(form.preparation).length > 0 ? form.preparation : null,
       }),
     });
 
@@ -149,6 +152,9 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
                     </svg>
                     <span>{event.description}</span>
                   </div>
+                )}
+                {event.preparation && (
+                  <PrepItemsDisplay preparation={event.preparation} category={event.category} />
                 )}
                 {event.category && (
                   <div className="flex items-center gap-2">

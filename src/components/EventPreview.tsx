@@ -95,6 +95,7 @@ export default function EventPreview({
       location: form.location.trim() || null,
       description: form.description.trim() || null,
       category: form.category,
+      preparation: Object.keys(form.preparation).length > 0 ? form.preparation : null,
       recurrence: recurrenceObj as CalendarEvent["recurrence"],
       source: event.source || "photo",
       created_at: event.created_at || "",

@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { CATEGORIES, type EventCategory } from "@/types/event";
+import { CATEGORIES, type EventCategory, type PreparationData } from "@/types/event";
 import { addMinutesToDateTime, minutesBetween, toTimestamp } from "@/lib/date-utils";
+import PrepReminderSection from "./PrepReminderSection";
 
 const DURATIONS = [
   { label: "Drop by", minutes: 15 },
@@ -28,6 +29,7 @@ export interface FormState {
   recDays: number[];
   recEndMode: "date" | "none";
   recurrenceEnd: string;
+  preparation: PreparationData;
 }
 
 export function useFormState(initial?: Partial<FormState>): FormState & {
@@ -50,6 +52,7 @@ export function useFormState(initial?: Partial<FormState>): FormState & {
     title: "", date: "", time: "", endDate: "", endTime: "",
     allDay: false, location: "", description: "", category: "school",
     recurrence: "none", recInterval: 1, recDays: [], recEndMode: "date", recurrenceEnd: "",
+    preparation: {},
     ...initial,
   });
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
@@ -404,6 +407,13 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
           )}
         </>
       )}
+
+      {/* Preparation Reminder */}
+      <PrepReminderSection
+        category={form.category}
+        preparation={form.preparation}
+        onUpdate={(data) => form.set("preparation", data)}
+      />
 
       {/* Notes */}
       <div>

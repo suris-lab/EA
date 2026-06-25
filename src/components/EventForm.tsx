@@ -89,6 +89,7 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
           location: form.location.trim() || null,
           description: form.description.trim() || null,
           category: form.category,
+          preparation: Object.keys(form.preparation).length > 0 ? form.preparation : null,
           recurrence: recurrenceObj,
           source: "manual",
         }),

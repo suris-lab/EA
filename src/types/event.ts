@@ -20,6 +20,16 @@ export function getCategoryLabel(cat: EventCategory | string | undefined | null)
   return CATEGORIES.find((c) => c.value === cat)?.label ?? "Other";
 }
 
+export type PrepZone = "head" | "body" | "feet" | "bag";
+
+export interface PrepItem {
+  id: string;
+  label: string;
+  isCustom?: boolean;
+}
+
+export type PreparationData = Partial<Record<PrepZone, PrepItem[]>>;
+
 export interface CalendarEvent {
   id: string;
   title: string;
@@ -31,6 +41,7 @@ export interface CalendarEvent {
   recurrence?: RecurrenceRule | null;
   series_id?: string | null;
   category?: EventCategory | null;
+  preparation?: PreparationData | null;
   source: "manual" | "photo";
   created_at: string;
 }
@@ -54,5 +65,6 @@ export interface CreateEventPayload {
   recurrence?: RecurrenceRule | null;
   series_id?: string | null;
   category?: EventCategory | null;
+  preparation?: PreparationData | null;
   source: "manual" | "photo";
 }
