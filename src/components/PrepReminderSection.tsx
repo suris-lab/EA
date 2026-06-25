@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { EventCategory, PrepZone, PreparationData, PrepItem } from "@/types/event";
 import { getCategoryHex } from "@/types/event";
 import { PREP_PRESETS, ZONE_LABELS, ZONE_ORDER, STROLLER_PRESETS, STROLLER_LABEL } from "@/lib/prep-presets";
+import { L } from "@/lib/labels";
 import KidIllustration, { type ActiveZone } from "./KidIllustration";
 
 const CUSTOM_KEY = "ea-custom-prep";
@@ -201,11 +202,11 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
   return (
     <div>
       <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">
-        Preparation Reminder
+        {L.prepReminder}
       </label>
 
       <div className="rounded-2xl border border-border-light bg-surface-dim p-3">
-        <p className="mb-2 text-center text-[11px] text-text-muted">Tap a zone to add items</p>
+        <p className="mb-2 text-center text-[11px] text-text-muted">{L.tapZoneHint}</p>
 
         <KidIllustration
           category={category}
@@ -232,7 +233,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
               <circle cx="7" cy="17.5" r="1.8" />
               <circle cx="14" cy="17.5" r="1.8" />
             </svg>
-            Baby cart / Stroller
+            {L.strollerLabel}
           </button>
         </div>
 
@@ -302,7 +303,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
             <div className="flex gap-2">
               <input
                 type="text"
-                placeholder="Add custom item..."
+                placeholder={L.addCustomPlaceholder}
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
                 onKeyDown={(e) => {

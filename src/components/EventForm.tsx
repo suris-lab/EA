@@ -7,6 +7,7 @@ import HolidayReminder from "./HolidayReminder";
 import { findHolidaysInRange, type HKHoliday } from "@/lib/hk-holidays";
 import { buildLocalISO, findOverlappingEvents } from "@/lib/date-utils";
 import type { CalendarEvent } from "@/types/event";
+import { L } from "@/lib/labels";
 
 interface EventFormProps {
   onClose: () => void;
@@ -97,7 +98,7 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        setSaveError(err.error || "Failed to save event.");
+        setSaveError(err.error || L.failedToSave);
         savingRef.current = false;
         setSaving(false);
         return;
@@ -106,7 +107,7 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
       onSaved();
       onClose();
     } catch {
-      setSaveError("Network error. Please check your connection.");
+      setSaveError(L.networkError);
       savingRef.current = false;
       setSaving(false);
     }
@@ -123,7 +124,7 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
       <div className="animate-modal-in flex max-h-[90vh] w-full max-w-md flex-col rounded-t-2xl bg-surface shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="shrink-0 border-b border-border-light px-6 pb-3 pt-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-text-primary">New Event</h2>
+            <h2 className="text-base font-semibold text-text-primary">{L.newEvent}</h2>
             <button onClick={onClose} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -148,8 +149,8 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
             />
           ) : (
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" size="md" onClick={onClose} disabled={saving}>Cancel</Button>
-              <Button variant="primary" size="md" onClick={handleSaveClick} loading={saving} disabled={!form.canSave || saving}>Save Event</Button>
+              <Button variant="ghost" size="md" onClick={onClose} disabled={saving}>{L.cancel}</Button>
+              <Button variant="primary" size="md" onClick={handleSaveClick} loading={saving} disabled={!form.canSave || saving}>{L.saveEvent}</Button>
             </div>
           )}
         </div>

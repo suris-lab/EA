@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { CalendarEvent } from "@/types/event";
 import { getCategoryColor, getCategoryLabel, type PreparationData } from "@/types/event";
+import { L } from "@/lib/labels";
 import PrepItemsDisplay from "./PrepItemsDisplay";
 import { toDateValue, toTimeValue, buildLocalISO } from "@/lib/date-utils";
 import Button from "./Button";
@@ -94,7 +95,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
       <div className="animate-modal-in flex max-h-[90vh] w-full max-w-md flex-col rounded-t-2xl bg-surface shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="shrink-0 border-b border-border-light px-6 pb-3 pt-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-text-primary">{editing ? "Edit Event" : "Event Details"}</h2>
+            <h2 className="text-base font-semibold text-text-primary">{editing ? L.editEvent : L.eventDetails}</h2>
             <button onClick={onClose} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -127,7 +128,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
                     <span>{formatDate(event.end_date)}</span>
                   </div>
                 )}
-                {event.all_day && <div className="inline-block rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-700">All day</div>}
+                {event.all_day && <div className="inline-block rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-700">{L.allDay}</div>}
                 {recurrenceLabel && (
                   <div className="flex items-center gap-2">
                     <svg className="h-4 w-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -163,7 +164,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
                   </div>
                 )}
                 <div className="inline-block rounded-full bg-surface px-2 py-0.5 text-xs text-text-muted">
-                  {event.source === "photo" ? "From notice scan" : "Manually added"}
+                  {event.source === "photo" ? L.fromScan : L.manuallyAdded}
                 </div>
               </div>
             </div>
@@ -171,11 +172,11 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
 
           {deleteMode === "single" && (
             <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-3">
-              <p className="text-xs font-medium text-red-700">Delete this event? This cannot be undone.</p>
+              <p className="text-xs font-medium text-red-700">{L.deletePrompt}</p>
               <div className="mt-2 flex gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setDeleteMode(null)}>Keep</Button>
+                <Button variant="ghost" size="sm" onClick={() => setDeleteMode(null)}>{L.keep}</Button>
                 <button onClick={() => handleDelete(false)} disabled={deleting} className="rounded-2xl bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:bg-red-300">
-                  {deleting ? "Deleting..." : "Delete"}
+                  {deleting ? L.deleting : L.delete}
                 </button>
               </div>
             </div>
@@ -183,15 +184,15 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
 
           {deleteMode === "prompt" && (
             <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4">
-              <p className="mb-3 text-sm font-medium text-red-700">This is a recurring event.</p>
+              <p className="mb-3 text-sm font-medium text-red-700">{L.recurringWarning}</p>
               <div className="flex flex-col gap-2">
                 <button onClick={() => handleDelete(false)} disabled={deleting} className="flex w-full items-center rounded-2xl border border-red-200 bg-surface px-4 py-3 text-left text-sm active:bg-red-100">
-                  <div><p className="font-medium text-text-primary">Delete this event only</p><p className="text-xs text-text-secondary">Other events in the series will remain.</p></div>
+                  <div><p className="font-medium text-text-primary">{L.deleteThisOnly}</p><p className="text-xs text-text-secondary">{L.deleteThisOnlyHint}</p></div>
                 </button>
                 <button onClick={() => handleDelete(true)} disabled={deleting} className="flex w-full items-center rounded-2xl border border-red-200 bg-surface px-4 py-3 text-left text-sm active:bg-red-100">
-                  <div><p className="font-medium text-red-600">Delete all events in this series</p><p className="text-xs text-text-secondary">This will remove every occurrence.</p></div>
+                  <div><p className="font-medium text-red-600">{L.deleteAll}</p><p className="text-xs text-text-secondary">{L.deleteAllHint}</p></div>
                 </button>
-                <button onClick={() => setDeleteMode(null)} className="mt-1 text-center text-xs font-medium text-text-secondary">Cancel</button>
+                <button onClick={() => setDeleteMode(null)} className="mt-1 text-center text-xs font-medium text-text-secondary">{L.cancel}</button>
               </div>
             </div>
           )}
@@ -201,21 +202,21 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
           <div className="shrink-0 border-t border-border-light px-6 pb-6 pt-3">
             <div className="flex items-center justify-between">
               {!editing ? (
-                <button onClick={handleDeleteClick} className="text-xs font-medium text-red-500 hover:text-red-600">Delete event</button>
+                <button onClick={handleDeleteClick} className="text-xs font-medium text-red-500 hover:text-red-600">{L.deleteEvent}</button>
               ) : <div />}
               <div className="flex gap-2">
                 {editing ? (
                   <>
-                    <Button variant="ghost" size="md" onClick={() => setEditing(false)}>Cancel</Button>
-                    <Button variant="primary" size="md" onClick={handleSave} loading={saving} disabled={!form.canSave}>Save Changes</Button>
+                    <Button variant="ghost" size="md" onClick={() => setEditing(false)}>{L.cancel}</Button>
+                    <Button variant="primary" size="md" onClick={handleSave} loading={saving} disabled={!form.canSave}>{L.saveChanges}</Button>
                   </>
                 ) : (
                   <>
                     {onDuplicate && (
-                      <Button variant="ghost" size="md" onClick={() => { onDuplicate(event); onClose(); }}>Duplicate</Button>
+                      <Button variant="ghost" size="md" onClick={() => { onDuplicate(event); onClose(); }}>{L.duplicate}</Button>
                     )}
-                    <Button variant="ghost" size="md" onClick={onClose}>Close</Button>
-                    <Button variant="secondary" size="md" onClick={() => setEditing(true)}>Edit</Button>
+                    <Button variant="ghost" size="md" onClick={onClose}>{L.close}</Button>
+                    <Button variant="secondary" size="md" onClick={() => setEditing(true)}>{L.edit}</Button>
                   </>
                 )}
               </div>

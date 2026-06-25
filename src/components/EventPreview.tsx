@@ -7,6 +7,7 @@ import Button from "./Button";
 import EventFormFields, { useFormState } from "./EventFormFields";
 import HolidayReminder from "./HolidayReminder";
 import { findHolidaysInRange, type HKHoliday } from "@/lib/hk-holidays";
+import { L } from "@/lib/labels";
 
 interface EventPreviewProps {
   event: CalendarEvent;
@@ -20,7 +21,7 @@ interface EventPreviewProps {
 
 export default function EventPreview({
   event, onConfirm, onCancel,
-  confirmLabel = "Save Event", cancelLabel = "Cancel",
+  confirmLabel = L.saveEvent, cancelLabel = L.cancel,
   subtitle, error: externalError,
 }: EventPreviewProps) {
   const form = useFormState({
@@ -120,7 +121,7 @@ export default function EventPreview({
         <div className="shrink-0 border-b border-border-light px-6 pb-3 pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold text-text-primary">Confirm Event</h2>
+              <h2 className="text-base font-semibold text-text-primary">{L.confirmEvent}</h2>
               {subtitle && <p className="text-xs text-text-muted">{subtitle}</p>}
             </div>
             <button onClick={onCancel} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
@@ -132,7 +133,7 @@ export default function EventPreview({
         </div>
 
         <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-4">
-          <p className="mb-4 text-sm text-text-secondary">Review and edit the details before saving.</p>
+          <p className="mb-4 text-sm text-text-secondary">{L.reviewHint}</p>
           <EventFormFields form={form} />
         </div>
 

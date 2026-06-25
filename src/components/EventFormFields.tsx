@@ -4,14 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 import { CATEGORIES, type EventCategory, type PreparationData } from "@/types/event";
 import { addMinutesToDateTime, minutesBetween, toTimestamp } from "@/lib/date-utils";
 import PrepReminderSection from "./PrepReminderSection";
+import { L } from "@/lib/labels";
 
 const DURATIONS = [
-  { label: "Drop by", minutes: 15 },
-  { label: "30 min", minutes: 30 },
-  { label: "1 hr", minutes: 60 },
-  { label: "1.5 hr", minutes: 90 },
-  { label: "2 hr", minutes: 120 },
-  { label: "3 hr", minutes: 180 },
+  { label: "Drop by 探訪", minutes: 15 },
+  { label: "30 min 分鐘", minutes: 30 },
+  { label: "1 hr 小時", minutes: 60 },
+  { label: "1.5 hr 小時", minutes: 90 },
+  { label: "2 hr 小時", minutes: 120 },
+  { label: "3 hr 小時", minutes: 180 },
 ];
 
 export interface FormState {
@@ -198,13 +199,13 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
     <div className="space-y-4">
       {/* Title */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Title</label>
-        <input type="text" placeholder="e.g. Sports Day" value={form.title} onChange={(e) => form.set("title", e.target.value)} className={inputClass} />
+        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">{L.title}</label>
+        <input type="text" placeholder={L.titlePlaceholder} value={form.title} onChange={(e) => form.set("title", e.target.value)} className={inputClass} />
       </div>
 
       {/* Category */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Category</label>
+        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">{L.category}</label>
         <div className="flex gap-2 overflow-x-auto pb-1">
           {CATEGORIES.map((cat) => (
             <button key={cat.value} type="button" onClick={() => form.set("category", cat.value)}
@@ -220,7 +221,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
 
       {/* Location — moved after Category */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Location</label>
+        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">{L.location}</label>
         {recentLocations.length > 0 && (
           <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
             {recentLocations.map((loc) => (
@@ -242,7 +243,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
           </div>
         )}
         <div className="flex gap-2">
-          <input type="text" placeholder="e.g. School Hall" value={form.location} onChange={(e) => form.set("location", e.target.value)} className={inputClass} />
+          <input type="text" placeholder={L.locationPlaceholder} value={form.location} onChange={(e) => form.set("location", e.target.value)} className={inputClass} />
           {form.location.trim() && !recentLocations.some((l) => l.toLowerCase() === form.location.trim().toLowerCase()) && (
             <button
               type="button"
@@ -255,7 +256,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
               }}
               className="shrink-0 rounded-2xl border border-brand-300 bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-600 transition-all active:bg-brand-100"
             >
-              + Save
+              {L.save}
             </button>
           )}
         </div>
@@ -263,7 +264,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
 
       {/* All day toggle */}
       <div className="flex items-center justify-between rounded-2xl border border-border bg-surface-dim px-4 py-3.5">
-        <span className="text-sm font-medium text-text-primary">All day</span>
+        <span className="text-sm font-medium text-text-primary">{L.allDay}</span>
         <button
           type="button"
           role="switch"
@@ -278,7 +279,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       {/* Duration presets */}
       {!form.allDay && (
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Duration</label>
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">{L.duration}</label>
           <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Duration">
             {DURATIONS.map((d) => (
               <button key={d.minutes} type="button" onClick={() => form.handleDuration(d.minutes)}
@@ -294,7 +295,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
 
       {/* Start */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Start</label>
+        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">{L.start}</label>
         <div className={`flex gap-2 ${form.allDay ? "" : ""}`}>
           <input type="date" value={form.date} onChange={(e) => form.handleDateChange(e.target.value)} className={`${inputClass} ${!form.allDay ? "flex-[1.2]" : ""}`} />
           {!form.allDay && (
@@ -305,7 +306,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
 
       {/* End */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">End</label>
+        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">{L.end}</label>
         <div className="flex gap-2">
           <input type="date" value={form.endDate} min={form.date || undefined} onChange={(e) => form.handleEndDateChange(e.target.value)} className={`${form.endBeforeStart ? errorInputClass : inputClass} ${!form.allDay ? "flex-[1.2]" : ""}`} />
           {!form.allDay && (
@@ -314,20 +315,20 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
         </div>
       </div>
       {form.endBeforeStart && (
-        <p className="text-xs text-red-500">{form.allDay ? "End date must be the same as or later than start date." : "End time must be later than start time."}</p>
+        <p className="text-xs text-red-500">{form.allDay ? L.endDateError : L.endTimeError}</p>
       )}
 
       {/* Recurrence */}
       {showRecurrence && (
         <>
           <div>
-            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Repeat</label>
+            <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">{L.repeat}</label>
             <select value={form.recurrence} onChange={(e) => { form.set("recurrence", e.target.value); if (e.target.value !== "weekly") form.set("recDays", []); }} className={inputClass}>
-              <option value="none">Does not repeat</option>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
+              <option value="none">{L.doesNotRepeat}</option>
+              <option value="daily">{L.daily}</option>
+              <option value="weekly">{L.weekly}</option>
+              <option value="monthly">{L.monthly}</option>
+              <option value="yearly">{L.yearly}</option>
             </select>
           </div>
 
@@ -336,7 +337,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
               {form.recurrence === "weekly" ? (
                 <>
                   <div>
-                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Repeat on</label>
+                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">{L.repeatOn}</label>
                     <div className="flex gap-1.5">
                       {[{ s: "S", v: 0 }, { s: "M", v: 1 }, { s: "T", v: 2 }, { s: "W", v: 3 }, { s: "T", v: 4 }, { s: "F", v: 5 }, { s: "S", v: 6 }].map((wd) => (
                         <button key={wd.v} type="button" onClick={() => form.toggleDay(wd.v)}
@@ -347,12 +348,12 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                     </div>
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Frequency</label>
+                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">{L.frequency}</label>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-text-secondary">Every</span>
+                      <span className="text-sm text-text-secondary">{L.every}</span>
                       <input type="number" min={1} max={99} value={form.recInterval} onChange={(e) => form.set("recInterval", Math.max(1, parseInt(e.target.value) || 1))}
                         className="w-16 rounded-2xl border border-border bg-surface-dim px-3 py-3 text-center text-sm text-text-primary focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100" />
-                      <span className="text-sm text-text-secondary">{form.recInterval === 1 ? "week" : "weeks"}</span>
+                      <span className="text-sm text-text-secondary">{form.recInterval === 1 ? "week 週" : "weeks 週"}</span>
                     </div>
                   </div>
                 </>
@@ -364,9 +365,9 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                     <input type="number" min={1} max={99} value={form.recInterval} onChange={(e) => form.set("recInterval", Math.max(1, parseInt(e.target.value) || 1))}
                       className="w-16 rounded-2xl border border-border bg-surface-dim px-3 py-3 text-center text-sm text-text-primary focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100" />
                     <span className="text-sm text-text-secondary">
-                      {form.recurrence === "daily" ? (form.recInterval === 1 ? "day" : "days") :
-                       form.recurrence === "monthly" ? (form.recInterval === 1 ? "month" : "months") :
-                       (form.recInterval === 1 ? "year" : "years")}
+                      {form.recurrence === "daily" ? (form.recInterval === 1 ? "day 日" : "days 日") :
+                       form.recurrence === "monthly" ? (form.recInterval === 1 ? "month 月" : "months 月") :
+                       (form.recInterval === 1 ? "year 年" : "years 年")}
                     </span>
                   </div>
                 </div>
@@ -374,15 +375,15 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
 
               {/* End mode — pill toggle */}
               <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Ends</label>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">{L.ends}</label>
                 <div className="mb-3 inline-flex rounded-2xl border border-border bg-surface-dim p-1">
                   <button type="button" onClick={() => form.set("recEndMode", "date")}
                     className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${form.recEndMode === "date" ? "bg-brand-500 text-white shadow-sm" : "text-text-secondary"}`}>
-                    On date
+                    {L.onDate}
                   </button>
                   <button type="button" onClick={() => form.set("recEndMode", "none")}
                     className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${form.recEndMode === "none" ? "bg-brand-500 text-white shadow-sm" : "text-text-secondary"}`}>
-                    No end
+                    {L.noEnd}
                   </button>
                 </div>
                 {form.recEndMode === "date" && (
@@ -390,15 +391,15 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                     <input type="date" value={form.recurrenceEnd} min={form.endDate || form.date || undefined} onChange={(e) => form.set("recurrenceEnd", e.target.value)}
                       className={form.recurrenceEndInvalid ? errorInputClass : inputClass} />
                     {form.recurrenceEndInvalid && (
-                      <p className="mt-1 text-xs text-red-500">Repeat until must be later than the event end time.</p>
+                      <p className="mt-1 text-xs text-red-500">{L.recEndError}</p>
                     )}
                     {!form.recurrenceEndInvalid && !form.recurrenceEnd && (
-                      <p className="mt-1 text-xs text-text-muted">Leave empty to repeat for 1 year</p>
+                      <p className="mt-1 text-xs text-text-muted">{L.recEndHint}</p>
                     )}
                   </>
                 )}
                 {form.recEndMode === "none" && (
-                  <p className="text-xs text-text-muted">Repeats for up to 2 years</p>
+                  <p className="text-xs text-text-muted">{L.recNoEndHint}</p>
                 )}
               </div>
 
@@ -419,8 +420,8 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
 
       {/* Notes */}
       <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">Notes</label>
-        <textarea rows={3} placeholder="Optional details..." value={form.description} onChange={(e) => form.set("description", e.target.value)} className={`${inputClass} resize-none`} />
+        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">{L.notes}</label>
+        <textarea rows={3} placeholder={L.notesPlaceholder} value={form.description} onChange={(e) => form.set("description", e.target.value)} className={`${inputClass} resize-none`} />
       </div>
     </div>
   );

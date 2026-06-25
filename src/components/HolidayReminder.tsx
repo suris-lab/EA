@@ -3,6 +3,7 @@
 import type { HKHoliday } from "@/lib/hk-holidays";
 import type { CalendarEvent } from "@/types/event";
 import Button from "./Button";
+import { L } from "@/lib/labels";
 
 interface ConflictReminderProps {
   holidays: HKHoliday[];
@@ -27,18 +28,20 @@ export default function HolidayReminder({ holidays, conflicts, onContinue, onGoB
             const dateStr = d.toLocaleDateString("en-GB", { day: "numeric", month: "long" });
             return (
               <p key={h.date}>
-                This event falls on the Hong Kong public holiday <span className="font-semibold">&lsquo;{h.name}&rsquo;</span> on {dateStr}.
+                此活動落在香港公眾假期 This event falls on the Hong Kong public holiday <span className="font-semibold">&lsquo;{h.name}&rsquo;</span> on {dateStr}.
               </p>
             );
           })}
           {conflicts.length > 0 && (
             <div>
-              <p className="font-medium">This time overlaps with {conflicts.length === 1 ? "an existing event" : `${conflicts.length} existing events`}:</p>
+              <p className="font-medium">
+                此時間與{conflicts.length}個現有活動重疊 This time overlaps with {conflicts.length === 1 ? "an existing event" : `${conflicts.length} existing events`}:
+              </p>
               <ul className="mt-1 space-y-0.5">
                 {conflicts.map((evt) => {
                   const d = new Date(evt.start_date);
                   const timeStr = evt.all_day
-                    ? "All day"
+                    ? L.allDay
                     : d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
                   return (
                     <li key={evt.id} className="flex items-center gap-1.5 text-xs">
@@ -55,10 +58,10 @@ export default function HolidayReminder({ holidays, conflicts, onContinue, onGoB
       </div>
       <div className="flex justify-end gap-2">
         <Button variant="ghost" size="sm" onClick={onGoBack}>
-          Go Back
+          {L.goBack}
         </Button>
         <Button variant="primary" size="sm" onClick={onContinue} loading={saving}>
-          Continue & Save
+          {L.continueSave}
         </Button>
       </div>
     </div>
