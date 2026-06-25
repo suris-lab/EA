@@ -78,7 +78,7 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
           <mask id="body-mask"><rect x="-10" y="-10" width="120" height="70" fill="url(#body-fade)" /></mask>
 
           {/* Feet: fades at top (waist), solid bottom */}
-          <linearGradient id="feet-fade" gradientUnits="userSpaceOnUse" x1="0" y1="26" x2="0" y2="54">
+          <linearGradient id="feet-fade" gradientUnits="userSpaceOnUse" x1="0" y1="30" x2="0" y2="54">
             <stop offset="0%" stopColor="black" />
             <stop offset="25%" stopColor="white" />
             <stop offset="100%" stopColor="white" />
@@ -102,7 +102,7 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
             clipPath="url(#kid-silhouette)" mask="url(#body-mask)" />
         )}
         {activeZone === "feet" && (
-          <rect x={-5} y={24} width={40} height={32} fill={hex}
+          <rect x={-5} y={28} width={40} height={30} fill={hex}
             clipPath="url(#kid-silhouette)" mask="url(#feet-mask)" />
         )}
 
