@@ -4,10 +4,12 @@ import type { EventCategory, PrepZone, PreparationData } from "@/types/event";
 import { getCategoryHex } from "@/types/event";
 import { ZONE_ORDER } from "@/lib/prep-presets";
 
+export type ActiveZone = PrepZone | "stroller" | null;
+
 interface KidIllustrationProps {
   category: EventCategory;
-  activeZone: PrepZone | null;
-  onZoneTap: (zone: PrepZone) => void;
+  activeZone: ActiveZone;
+  onZoneTap: (zone: PrepZone | "stroller") => void;
   preparation: PreparationData;
 }
 
@@ -43,7 +45,8 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
     return items && items.length > 0;
   };
 
-  const showStroller = !!preparation.stroller;
+  const showStroller = Array.isArray(preparation.stroller);
+  const strollerHasItems = showStroller && preparation.stroller!.length > 0;
   const vb = showStroller ? "-3 -2 100 56" : "-3 -2 66 56";
   const svgW = showStroller ? 250 : 168;
 
@@ -92,6 +95,22 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
             </g>
           );
         })}
+
+        {/* Stroller zone overlay */}
+        {showStroller && (
+          <g>
+            {activeZone === "stroller" && (
+              <rect x={62} y={8} width={36} height={44} rx="4"
+                fill={hex} opacity={0.12} stroke={hex} strokeWidth="0.8" strokeDasharray="3 2" />
+            )}
+            {strollerHasItems && activeZone !== "stroller" && (
+              <circle cx={95} cy={12} r="3" fill={hex} />
+            )}
+            <rect x={62} y={8} width={36} height={44}
+              fill="transparent" cursor="pointer" style={{ pointerEvents: "all" }}
+              onClick={() => onZoneTap("stroller")} />
+          </g>
+        )}
       </svg>
     </div>
   );

@@ -11,6 +11,19 @@ export const ZONE_ORDER: PrepZone[] = ["head", "body", "feet", "bag"];
 
 interface Preset { id: string; label: string }
 
+export const STROLLER_LABEL = "Stroller";
+
+export const STROLLER_PRESETS: Preset[] = [
+  { id: "stroller-blanket", label: "Blanket" },
+  { id: "stroller-rain-cover", label: "Rain cover" },
+  { id: "stroller-sunshade", label: "Sunshade" },
+  { id: "stroller-snack", label: "Snack" },
+  { id: "stroller-bottle", label: "Bottle" },
+  { id: "stroller-toy", label: "Toy" },
+  { id: "stroller-wipes", label: "Wet wipes" },
+  { id: "stroller-nappies", label: "Nappies" },
+];
+
 export const PREP_PRESETS: Record<EventCategory, Record<PrepZone, Preset[]>> = {
   school: {
     head: [

@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { EventCategory, PrepZone, PreparationData, PrepItem } from "@/types/event";
 import { getCategoryHex } from "@/types/event";
-import { PREP_PRESETS, ZONE_LABELS, ZONE_ORDER } from "@/lib/prep-presets";
-import KidIllustration from "./KidIllustration";
+import { PREP_PRESETS, ZONE_LABELS, ZONE_ORDER, STROLLER_PRESETS, STROLLER_LABEL } from "@/lib/prep-presets";
+import KidIllustration, { type ActiveZone } from "./KidIllustration";
 
 interface PrepReminderSectionProps {
   category: EventCategory;
@@ -13,7 +13,7 @@ interface PrepReminderSectionProps {
 }
 
 export default function PrepReminderSection({ category, preparation, onUpdate }: PrepReminderSectionProps) {
-  const [activeZone, setActiveZone] = useState<PrepZone | null>(null);
+  const [activeZone, setActiveZone] = useState<ActiveZone>(null);
   const [customInput, setCustomInput] = useState("");
   const prevCategory = useRef(category);
 
@@ -31,52 +31,98 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
       if (kept.length > 0) updated[zone] = kept;
     }
 
+    if (preparation.stroller) updated.stroller = preparation.stroller;
     onUpdate(updated);
   }, [category, preparation, onUpdate]);
 
   const hex = getCategoryHex(category);
+  const showStroller = Array.isArray(preparation.stroller);
 
-  const togglePreset = (zone: PrepZone, preset: { id: string; label: string }) => {
-    const zoneItems = preparation[zone] || [];
-    const exists = zoneItems.some((i) => i.id === preset.id);
-
-    const newItems = exists
-      ? zoneItems.filter((i) => i.id !== preset.id)
-      : [...zoneItems, { id: preset.id, label: preset.label }];
-
-    const updated = { ...preparation, [zone]: newItems };
-    if (newItems.length === 0) delete updated[zone];
-    onUpdate(updated);
+  const getZoneItems = (zone: ActiveZone): PrepItem[] => {
+    if (zone === "stroller") return preparation.stroller || [];
+    if (zone) return preparation[zone] || [];
+    return [];
   };
 
-  const addCustomItem = (zone: PrepZone) => {
+  const getZonePresets = (zone: ActiveZone) => {
+    if (zone === "stroller") return STROLLER_PRESETS;
+    if (zone) return PREP_PRESETS[category][zone];
+    return [];
+  };
+
+  const getZoneLabel = (zone: ActiveZone) => {
+    if (zone === "stroller") return STROLLER_LABEL;
+    if (zone) return ZONE_LABELS[zone];
+    return "";
+  };
+
+  const togglePreset = (zone: ActiveZone, preset: { id: string; label: string }) => {
+    const items = getZoneItems(zone);
+    const exists = items.some((i) => i.id === preset.id);
+    const newItems = exists
+      ? items.filter((i) => i.id !== preset.id)
+      : [...items, { id: preset.id, label: preset.label }];
+
+    if (zone === "stroller") {
+      onUpdate({ ...preparation, stroller: newItems });
+    } else if (zone) {
+      const updated = { ...preparation, [zone]: newItems };
+      if (newItems.length === 0) delete updated[zone as PrepZone];
+      onUpdate(updated);
+    }
+  };
+
+  const addCustomItem = (zone: ActiveZone) => {
     const label = customInput.trim();
-    if (!label) return;
+    if (!label || !zone) return;
 
     const id = `custom-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-    const zoneItems = preparation[zone] || [];
-    const updated = {
-      ...preparation,
-      [zone]: [...zoneItems, { id, label, isCustom: true }],
-    };
-    onUpdate(updated);
+    const items = getZoneItems(zone);
+    const newItems = [...items, { id, label, isCustom: true } as PrepItem];
+
+    if (zone === "stroller") {
+      onUpdate({ ...preparation, stroller: newItems });
+    } else {
+      onUpdate({ ...preparation, [zone]: newItems });
+    }
     setCustomInput("");
   };
 
-  const removeItem = (zone: PrepZone, itemId: string) => {
-    const zoneItems = (preparation[zone] || []).filter((i) => i.id !== itemId);
-    const updated = { ...preparation, [zone]: zoneItems };
-    if (zoneItems.length === 0) delete updated[zone];
-    onUpdate(updated);
+  const removeItem = (zone: ActiveZone, itemId: string) => {
+    if (!zone) return;
+    const newItems = getZoneItems(zone).filter((i) => i.id !== itemId);
+
+    if (zone === "stroller") {
+      onUpdate({ ...preparation, stroller: newItems });
+    } else {
+      const updated = { ...preparation, [zone]: newItems };
+      if (newItems.length === 0) delete updated[zone as PrepZone];
+      onUpdate(updated);
+    }
   };
 
-  const handleZoneTap = (zone: PrepZone) => {
+  const handleZoneTap = (zone: PrepZone | "stroller") => {
     setActiveZone((prev) => (prev === zone ? null : zone));
     setCustomInput("");
   };
 
-  const presets = PREP_PRESETS[category];
-  const totalItems = ZONE_ORDER.reduce((n, z) => n + (preparation[z]?.length || 0), 0) + (preparation.stroller ? 1 : 0);
+  const toggleStroller = () => {
+    if (showStroller) {
+      const updated = { ...preparation };
+      delete updated.stroller;
+      setActiveZone(null);
+      onUpdate(updated);
+    } else {
+      onUpdate({ ...preparation, stroller: [] });
+    }
+  };
+
+  const totalItems =
+    ZONE_ORDER.reduce((n, z) => n + (preparation[z]?.length || 0), 0) +
+    (preparation.stroller?.length || 0);
+
+  const currentPresets = getZonePresets(activeZone);
+  const currentItems = getZoneItems(activeZone);
 
   return (
     <div>
@@ -94,14 +140,14 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
           preparation={preparation}
         />
 
-        {/* Stroller toggle — standalone, not a zone item */}
+        {/* Stroller toggle */}
         <div className="flex justify-center">
           <button
             type="button"
-            onClick={() => onUpdate({ ...preparation, stroller: !preparation.stroller })}
+            onClick={toggleStroller}
             className="flex items-center gap-2 rounded-2xl px-4 py-2 text-xs font-semibold transition-all"
             style={
-              preparation.stroller
+              showStroller
                 ? { backgroundColor: hex, color: "#fff" }
                 : { border: "1px solid var(--color-border)", color: "var(--color-text-secondary)" }
             }
@@ -120,7 +166,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
         {activeZone && (
           <div className="animate-slide-down mt-3 rounded-xl border border-border-light bg-surface p-3">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-xs font-semibold text-text-primary">{ZONE_LABELS[activeZone]}</span>
+              <span className="text-xs font-semibold text-text-primary">{getZoneLabel(activeZone)}</span>
               <button
                 type="button"
                 onClick={() => setActiveZone(null)}
@@ -134,8 +180,8 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
 
             {/* Preset pills */}
             <div className="mb-3 flex flex-wrap gap-2">
-              {presets[activeZone].map((preset) => {
-                const selected = (preparation[activeZone] || []).some((i) => i.id === preset.id);
+              {currentPresets.map((preset) => {
+                const selected = currentItems.some((i) => i.id === preset.id);
                 return (
                   <button
                     key={preset.id}
@@ -155,9 +201,9 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
             </div>
 
             {/* Custom items */}
-            {(preparation[activeZone] || []).filter((i) => i.isCustom).length > 0 && (
+            {currentItems.filter((i) => i.isCustom).length > 0 && (
               <div className="mb-3 flex flex-wrap gap-2">
-                {(preparation[activeZone] || []).filter((i) => i.isCustom).map((item) => (
+                {currentItems.filter((i) => i.isCustom).map((item) => (
                   <span
                     key={item.id}
                     className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-white"
@@ -215,17 +261,25 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
                     {ZONE_LABELS[zone]}:
                   </span>
                   {items.map((item: PrepItem) => (
-                    <span
-                      key={item.id}
-                      className="rounded-full px-2 py-0.5 text-[11px] font-medium text-white"
-                      style={{ backgroundColor: hex }}
-                    >
+                    <span key={item.id} className="rounded-full px-2 py-0.5 text-[11px] font-medium text-white" style={{ backgroundColor: hex }}>
                       {item.label}
                     </span>
                   ))}
                 </div>
               );
             })}
+            {preparation.stroller && preparation.stroller.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                  {STROLLER_LABEL}:
+                </span>
+                {preparation.stroller.map((item: PrepItem) => (
+                  <span key={item.id} className="rounded-full px-2 py-0.5 text-[11px] font-medium text-white" style={{ backgroundColor: hex }}>
+                    {item.label}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
