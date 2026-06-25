@@ -385,6 +385,30 @@ body {
   border-bottom: none;
 }
 
+/* TimeGrid mobile adjustments */
+@media (max-width: 639px) {
+  .fc .fc-timegrid-slot {
+    height: 2.5rem;
+  }
+
+  .fc .fc-timegrid-slot-label {
+    font-size: 0.6rem;
+  }
+
+  .fc .fc-timegrid-event {
+    font-size: 0.65rem;
+    padding: 2px 4px;
+  }
+
+  .fc .fc-timegrid-event .fc-event-time {
+    font-size: 0.6rem;
+  }
+
+  .fc .fc-col-header-cell {
+    font-size: 0.6rem !important;
+  }
+}
+
 /* =============================================
    FullCalendar — mobile overrides
    ============================================= */

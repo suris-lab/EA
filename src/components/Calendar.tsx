@@ -103,6 +103,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; action?: { label: string; onClick: () => void } } | null>(null);
   const [duplicateEvent, setDuplicateEvent] = useState<CalendarEvent | null>(null);
+  const [mobileView, setMobileView] = useState<"month" | "week">("month");
   const calendarRef = useRef<FullCalendar>(null);
   const calendarContainerRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -219,6 +220,14 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
 
   const handleMonthSelect = (month: number) => { setShowMonthPicker(false); goToDate(currentYear, month); };
   const handleYearSelect = (year: number) => { setShowYearPicker(false); goToDate(year, currentMonth); };
+
+  const switchMobileView = (view: "month" | "week") => {
+    setMobileView(view);
+    const api = calendarRef.current?.getApi();
+    if (api) api.changeView(view === "week" ? "timeGridWeek" : "dayGridMonth");
+  };
+
+  const isWeekView = mobileView === "week";
 
   const handleListItemClick = (item: DisplayItem) => {
     if (item.type === "holiday" && item.holiday) {
@@ -360,6 +369,19 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
             </button>
           </div>
+          {/* Month / Week toggle */}
+          <div className="mt-2 flex justify-center">
+            <div className="inline-flex rounded-lg border border-border bg-surface-dim p-0.5">
+              <button onClick={() => switchMobileView("month")}
+                className={`rounded-md px-4 py-1.5 text-xs font-semibold transition-all ${mobileView === "month" ? "bg-brand-500 text-white shadow-sm" : "text-text-secondary"}`}>
+                Month 月
+              </button>
+              <button onClick={() => switchMobileView("week")}
+                className={`rounded-md px-4 py-1.5 text-xs font-semibold transition-all ${mobileView === "week" ? "bg-brand-500 text-white shadow-sm" : "text-text-secondary"}`}>
+                Week 週
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -370,7 +392,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           headerToolbar={isMobile ? false : { left: "prev,next today", center: "title", right: "dayGridMonth,timeGridWeek" }}
-          height={isMobile ? "auto" : "calc(100vh - 80px)"}
+          height={isMobile ? (isWeekView ? "calc(100vh - 180px)" : "auto") : "calc(100vh - 80px)"}
           expandRows={!isMobile}
           events={fcEvents}
           eventClick={handleEventClick}
@@ -379,7 +401,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           editable={!isMobile}
           eventDrop={handleEventDrop}
           selectable={true}
-          dayMaxEvents={isMobile ? 0 : 20}
+          dayMaxEvents={isMobile && !isWeekView ? 0 : 20}
           fixedWeekCount={false}
           slotMinTime="06:00:00"
           slotMaxTime="22:00:00"
@@ -391,9 +413,9 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           allDayText="All day"
           nowIndicator={true}
           eventClassNames="cursor-pointer"
-          dayCellContent={isMobile ? dayCellContent : undefined}
-          eventDisplay={isMobile ? "none" : "auto"}
-          displayEventTime={!isMobile}
+          dayCellContent={isMobile && !isWeekView ? dayCellContent : undefined}
+          eventDisplay={isMobile && !isWeekView ? "none" : "auto"}
+          displayEventTime={!isMobile || isWeekView}
           eventTimeFormat={{ hour: "numeric", minute: "2-digit", meridiem: "short" }}
           dayCellClassNames={(arg) => {
             const dateStr = toLocalDate(arg.date);
