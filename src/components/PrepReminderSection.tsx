@@ -380,26 +380,28 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
                     addCustomItem(activeZone);
                   }
                 }}
-                className="flex-1 rounded-xl h-11 bg-surface px-4 text-sm text-text-primary placeholder:text-text-muted focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                className="flex-1 rounded-xl h-11 bg-surface px-4 text-[15px] text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand-500/20"
               />
               <button
                 type="button"
                 onClick={() => addCustomItem(activeZone)}
                 disabled={!customInput.trim() && !suggestion}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-500 text-white transition-opacity disabled:opacity-40"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white transition-opacity disabled:opacity-30"
+                style={{ backgroundColor: hex }}
               >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
               </button>
             </div>
 
-            {/* Bilingual suggestion toggle */}
-            <div className="mt-2 flex items-center justify-end gap-2">
-              <span className="text-[10px] text-text-muted">Auto-translate 自動翻譯</span>
+            {/* Auto-translate toggle */}
+            <div className="mt-3 flex items-center justify-between px-1 h-11">
+              <span className="text-[15px] font-medium text-text-primary">Auto-translate 自動翻譯</span>
               <button type="button" role="switch" aria-checked={suggestEnabled} onClick={toggleSuggest}
-                className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${suggestEnabled ? "bg-[#34C759]" : "bg-gray-300"}`}>
-                <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${suggestEnabled ? "translate-x-[18px]" : "translate-x-[2px]"}`} />
+                className={`relative inline-flex h-[31px] w-[51px] shrink-0 items-center rounded-full transition-colors duration-200 ${suggestEnabled ? "" : "bg-gray-300"}`}
+                style={suggestEnabled ? { backgroundColor: hex } : undefined}>
+                <span className={`inline-block h-[27px] w-[27px] rounded-full bg-white shadow transition-transform duration-200 ${suggestEnabled ? "translate-x-[22px]" : "translate-x-[2px]"}`} />
               </button>
             </div>
           </div>

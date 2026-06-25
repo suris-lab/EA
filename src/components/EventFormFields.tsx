@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { CATEGORIES, type EventCategory, type PreparationData } from "@/types/event";
+import { CATEGORIES, getCategoryHex, type EventCategory, type PreparationData } from "@/types/event";
 import { addMinutesToDateTime, minutesBetween, toTimestamp } from "@/lib/date-utils";
 import PrepReminderSection from "./PrepReminderSection";
 import { L, BiText } from "@/lib/labels";
@@ -192,6 +192,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       .catch(() => {});
   }, []);
 
+  const hex = getCategoryHex(form.category);
   const inputClass = "w-full h-11 rounded-xl bg-surface px-4 text-[15px] text-text-primary placeholder:text-text-muted transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500/20";
   const errorInputClass = "w-full h-11 rounded-xl bg-surface px-4 text-[15px] text-text-primary transition-colors ring-2 ring-[#FF3B30]/30 focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/40";
 
@@ -226,8 +227,9 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
             {recentLocations.map((loc) => (
               <button key={loc} type="button" onClick={() => form.set("location", form.location === loc ? "" : loc)}
                 className={`group shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${
-                  form.location === loc ? "bg-brand-500 text-white" : "bg-surface-dim text-text-secondary active:opacity-70"
-                }`}>
+                  form.location === loc ? "text-white" : "bg-surface-dim text-text-secondary active:opacity-70"
+                }`}
+                style={form.location === loc ? { backgroundColor: hex } : undefined}>
                 <span className="flex items-center gap-1.5">
                   {loc}
                   <span
@@ -253,7 +255,8 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                 localStorage.setItem("ea-recent-locations", JSON.stringify(updated));
                 localStorage.setItem("ea-locations-custom", "1");
               }}
-              className="shrink-0 h-11 rounded-xl bg-brand-50 px-4 text-[13px] font-semibold text-brand-600 transition-all active:opacity-70"
+              className="shrink-0 h-11 rounded-xl px-4 text-[13px] font-semibold transition-all active:opacity-70"
+              style={{ backgroundColor: `${hex}15`, color: hex }}
             >
               {L.save}
             </button>
@@ -269,7 +272,8 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
           role="switch"
           aria-checked={form.allDay}
           onClick={() => form.set("allDay", !form.allDay)}
-          className={`relative inline-flex h-[31px] w-[51px] shrink-0 items-center rounded-full transition-colors duration-200 ${form.allDay ? "bg-[#34C759]" : "bg-gray-300"}`}
+          className={`relative inline-flex h-[31px] w-[51px] shrink-0 items-center rounded-full transition-colors duration-200 ${form.allDay ? "" : "bg-gray-300"}`}
+          style={form.allDay ? { backgroundColor: hex } : undefined}
         >
           <span className={`inline-block h-[27px] w-[27px] rounded-full bg-white shadow transition-transform duration-200 ${form.allDay ? "translate-x-[22px]" : "translate-x-[2px]"}`} />
         </button>
@@ -283,8 +287,9 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
             {DURATIONS.map((d) => (
               <button key={d.minutes} type="button" onClick={() => form.handleDuration(d.minutes)}
                 className={`shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${
-                  form.selectedDuration === d.minutes ? "bg-brand-500 text-white" : "bg-surface-dim text-text-secondary active:opacity-70"
-                }`}>
+                  form.selectedDuration === d.minutes ? "text-white" : "bg-surface-dim text-text-secondary active:opacity-70"
+                }`}
+                style={form.selectedDuration === d.minutes ? { backgroundColor: hex } : undefined}>
                 {d.label}
               </button>
             ))}
@@ -341,8 +346,9 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
                       {[{ s: "S", v: 0 }, { s: "M", v: 1 }, { s: "T", v: 2 }, { s: "W", v: 3 }, { s: "T", v: 4 }, { s: "F", v: 5 }, { s: "S", v: 6 }].map((wd) => (
                         <button key={wd.v} type="button" onClick={() => form.toggleDay(wd.v)}
                           className={`flex h-9 w-9 items-center justify-center rounded-full text-[13px] font-bold transition-all ${
-                            form.recDays.includes(wd.v) ? "bg-brand-500 text-white" : "bg-surface-dim text-text-secondary active:opacity-70"
-                          }`}>{wd.s}</button>
+                            form.recDays.includes(wd.v) ? "text-white" : "bg-surface-dim text-text-secondary active:opacity-70"
+                          }`}
+                          style={form.recDays.includes(wd.v) ? { backgroundColor: hex } : undefined}>{wd.s}</button>
                       ))}
                     </div>
                   </div>
@@ -403,7 +409,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
               </div>
 
               {form.recSummary && (
-                <div className="rounded-xl bg-brand-50 px-4 py-2.5 text-[13px] font-medium text-brand-700">{form.recSummary}</div>
+                <div className="rounded-xl px-4 py-2.5 text-[13px] font-medium" style={{ backgroundColor: `${hex}12`, color: hex }}>{form.recSummary}</div>
               )}
             </>
           )}
