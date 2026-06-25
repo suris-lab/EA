@@ -27,6 +27,7 @@ const STROLLER_D2 = "M756.82,640.49c-25.3,32-60.97,50.77-101.55,50.74l-138.61-.1
 const STROLLER_D3 = "M782.02,450.21l-236-.06c-9.32,0-15.34-7.92-16.89-16.22l-51.99-277.86c-1.09-5.82,1.3-12.72,4.45-16.3,3.16-3.59,9.32-6.34,15.64-6.23,163.74,2.83,304.66,128.94,303.17,296.73-.1,10.91-6.56,19.94-18.37,19.93Z";
 
 const KID_SCALE = 0.048;
+const KID_CX = 17;
 const BAG_SCALE = 0.04;
 const STROLLER_SCALE = 0.038;
 
@@ -121,26 +122,46 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
           </g>
         )}
 
-        {/* Invisible tap targets + dot indicators */}
+        {/* Plus indicators — kid zones aligned on head center x */}
+        {hasItems("head") && activeZone !== "head" && (
+          <g><circle cx={KID_CX} cy={6} r="4.5" fill={hex} />
+            <line x1={KID_CX - 2.2} y1={6} x2={KID_CX + 2.2} y2={6} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1={KID_CX} y1={3.8} x2={KID_CX} y2={8.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
+        )}
+        {hasItems("body") && activeZone !== "body" && (
+          <g><circle cx={KID_CX} cy={22} r="4.5" fill={hex} />
+            <line x1={KID_CX - 2.2} y1={22} x2={KID_CX + 2.2} y2={22} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1={KID_CX} y1={19.8} x2={KID_CX} y2={24.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
+        )}
+        {hasItems("feet") && activeZone !== "feet" && (
+          <g><circle cx={KID_CX} cy={40} r="4.5" fill={hex} />
+            <line x1={KID_CX - 2.2} y1={40} x2={KID_CX + 2.2} y2={40} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1={KID_CX} y1={37.8} x2={KID_CX} y2={42.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
+        )}
+        {/* Plus indicator on bag */}
+        {hasItems("bag") && activeZone !== "bag" && (
+          <g><circle cx={47} cy={26} r="4.5" fill={hex} />
+            <line x1={44.8} y1={26} x2={49.2} y2={26} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1={47} y1={23.8} x2={47} y2={28.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
+        )}
+
+        {/* Invisible tap targets */}
         {ZONE_ORDER.map((zone) => {
           const r = ZONE_RECTS[zone];
           return (
-            <g key={zone}>
-              {hasItems(zone) && activeZone !== zone && (
-                <circle cx={r.x + r.w - 3} cy={r.y + 4} r="3" fill={hex} />
-              )}
-              <rect x={r.x} y={r.y} width={r.w} height={r.h}
-                fill="transparent" cursor="pointer" style={{ pointerEvents: "all" }}
-                onClick={() => onZoneTap(zone)} />
-            </g>
+            <rect key={zone} x={r.x} y={r.y} width={r.w} height={r.h}
+              fill="transparent" cursor="pointer" style={{ pointerEvents: "all" }}
+              onClick={() => onZoneTap(zone)} />
           );
         })}
 
-        {/* Stroller tap target + dot */}
+        {/* Stroller plus indicator + tap target */}
         {showStroller && (
           <g>
             {strollerHasItems && activeZone !== "stroller" && (
-              <circle cx={95} cy={12} r="3" fill={hex} />
+              <g><circle cx={81} cy={30} r="4.5" fill={hex} />
+                <line x1={78.8} y1={30} x2={83.2} y2={30} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
+                <line x1={81} y1={27.8} x2={81} y2={32.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
             )}
             <rect x={62} y={8} width={36} height={44}
               fill="transparent" cursor="pointer" style={{ pointerEvents: "all" }}
