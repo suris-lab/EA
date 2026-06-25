@@ -32,7 +32,6 @@ export const PREP_PRESETS: Record<EventCategory, Record<PrepZone, Preset[]>> = {
       { id: "school-feet-wellies", label: "Wellies" },
     ],
     bag: [
-      { id: "school-bag-stroller", label: "Baby cart / Stroller" },
       { id: "school-bag-lunchbox", label: "Lunch box" },
       { id: "school-bag-water", label: "Water bottle" },
       { id: "school-bag-snack", label: "Snack" },
@@ -56,7 +55,6 @@ export const PREP_PRESETS: Record<EventCategory, Record<PrepZone, Preset[]>> = {
       { id: "tutor-feet-sandals", label: "Sandals" },
     ],
     bag: [
-      { id: "tutor-bag-stroller", label: "Baby cart / Stroller" },
       { id: "tutor-bag-snack", label: "Snack" },
       { id: "tutor-bag-water", label: "Water bottle" },
       { id: "tutor-bag-nappies", label: "Nappies" },
@@ -78,7 +76,6 @@ export const PREP_PRESETS: Record<EventCategory, Record<PrepZone, Preset[]>> = {
       { id: "medical-feet-socks", label: "Clean socks" },
     ],
     bag: [
-      { id: "medical-bag-stroller", label: "Baby cart / Stroller" },
       { id: "medical-bag-health", label: "Health book" },
       { id: "medical-bag-insurance", label: "Insurance card" },
       { id: "medical-bag-medicine", label: "Current medication" },
@@ -102,7 +99,6 @@ export const PREP_PRESETS: Record<EventCategory, Record<PrepZone, Preset[]>> = {
       { id: "family-feet-sandals", label: "Sandals" },
     ],
     bag: [
-      { id: "family-bag-stroller", label: "Baby cart / Stroller" },
       { id: "family-bag-snack", label: "Snacks" },
       { id: "family-bag-water", label: "Water bottle" },
       { id: "family-bag-toy", label: "Favourite toy" },
@@ -122,7 +118,6 @@ export const PREP_PRESETS: Record<EventCategory, Record<PrepZone, Preset[]>> = {
       { id: "other-feet-shoes", label: "Appropriate shoes" },
     ],
     bag: [
-      { id: "other-bag-stroller", label: "Baby cart / Stroller" },
       { id: "other-bag-snack", label: "Snack" },
       { id: "other-bag-water", label: "Water bottle" },
     ],

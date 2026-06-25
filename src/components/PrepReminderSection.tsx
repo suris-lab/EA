@@ -76,7 +76,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
   };
 
   const presets = PREP_PRESETS[category];
-  const totalItems = ZONE_ORDER.reduce((n, z) => n + (preparation[z]?.length || 0), 0);
+  const totalItems = ZONE_ORDER.reduce((n, z) => n + (preparation[z]?.length || 0), 0) + (preparation.stroller ? 1 : 0);
 
   return (
     <div>
@@ -93,6 +93,28 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
           onZoneTap={handleZoneTap}
           preparation={preparation}
         />
+
+        {/* Stroller toggle — standalone, not a zone item */}
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={() => onUpdate({ ...preparation, stroller: !preparation.stroller })}
+            className="flex items-center gap-2 rounded-2xl px-4 py-2 text-xs font-semibold transition-all"
+            style={
+              preparation.stroller
+                ? { backgroundColor: hex, color: "#fff" }
+                : { border: "1px solid var(--color-border)", color: "var(--color-text-secondary)" }
+            }
+          >
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 3 L4 14 L16 14 L16 8 Q16 6 14 6 L4 6" />
+              <path d="M4 6 Q10 1 16 6" />
+              <circle cx="7" cy="17.5" r="1.8" />
+              <circle cx="14" cy="17.5" r="1.8" />
+            </svg>
+            Baby cart / Stroller
+          </button>
+        </div>
 
         {/* Zone editing panel */}
         {activeZone && (

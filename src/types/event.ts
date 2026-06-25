@@ -28,7 +28,7 @@ export interface PrepItem {
   isCustom?: boolean;
 }
 
-export type PreparationData = Partial<Record<PrepZone, PrepItem[]>>;
+export type PreparationData = Partial<Record<PrepZone, PrepItem[]>> & { stroller?: boolean };
 
 export interface CalendarEvent {
   id: string;

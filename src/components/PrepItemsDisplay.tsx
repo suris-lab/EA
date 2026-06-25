@@ -10,7 +10,7 @@ interface PrepItemsDisplayProps {
 }
 
 export default function PrepItemsDisplay({ preparation, category }: PrepItemsDisplayProps) {
-  const hasAny = ZONE_ORDER.some((z) => preparation[z] && preparation[z]!.length > 0);
+  const hasAny = ZONE_ORDER.some((z) => preparation[z] && preparation[z]!.length > 0) || preparation.stroller;
   if (!hasAny) return null;
 
   const hex = getCategoryHex(category);
@@ -43,6 +43,13 @@ export default function PrepItemsDisplay({ preparation, category }: PrepItemsDis
             </div>
           );
         })}
+        {preparation.stroller && (
+          <div className="mt-0.5 flex flex-wrap gap-1">
+            <span className="rounded-full px-2 py-0.5 text-[11px] font-medium text-white" style={{ backgroundColor: hex }}>
+              Baby cart / Stroller
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
