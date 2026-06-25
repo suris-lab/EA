@@ -115,7 +115,7 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
 
         {/* Baby stroller — grey when inactive, category color when active */}
         {showStroller && (
-          <g id="baby-stroller" transform={`translate(64, 10) scale(${STROLLER_SCALE})`}>
+          <g id="baby-stroller" transform={`translate(61, 10) scale(${STROLLER_SCALE})`}>
             <path d={STROLLER_D1} fill={activeZone === "stroller" ? hex : BODY} />
             <path d={STROLLER_D2} fill={activeZone === "stroller" ? hex : BODY} />
             <path d={STROLLER_D3} fill={activeZone === "stroller" ? hex : BODY} />
@@ -159,11 +159,11 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
         {showStroller && (
           <g>
             {strollerHasItems && activeZone !== "stroller" && (
-              <g><circle cx={81} cy={30} r="4.5" fill={hex} />
-                <line x1={78.8} y1={30} x2={83.2} y2={30} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
-                <line x1={81} y1={27.8} x2={81} y2={32.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
+              <g><circle cx={78} cy={30} r="4.5" fill={hex} />
+                <line x1={75.8} y1={30} x2={80.2} y2={30} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
+                <line x1={78} y1={27.8} x2={78} y2={32.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
             )}
-            <rect x={62} y={8} width={36} height={44}
+            <rect x={59} y={8} width={36} height={44}
               fill="transparent" cursor="pointer" style={{ pointerEvents: "all" }}
               onClick={() => onZoneTap("stroller")} />
           </g>

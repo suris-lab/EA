@@ -39,6 +39,11 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
   const [customInput, setCustomInput] = useState("");
   const [savedCustoms, setSavedCustoms] = useState<Record<string, { id: string; label: string }[]>>(loadSavedCustoms);
   const [hiddenPresets, setHiddenPresets] = useState<Set<string>>(loadHiddenPresets);
+  const [suggestion, setSuggestion] = useState<{ original: string; bilingual: string } | null>(null);
+  const [suggestEnabled, setSuggestEnabled] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    return localStorage.getItem("ea-suggest-bilingual") !== "0";
+  });
   const prevCategory = useRef(category);
 
   useEffect(() => {
@@ -118,10 +123,12 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
     }
   };
 
-  const addCustomItem = (zone: ActiveZone) => {
-    const label = customInput.trim();
-    if (!label || !zone) return;
+  const hasChinese = (s: string) => /[一-鿿㐀-䶿]/.test(s);
+  const hasEnglish = (s: string) => /[a-zA-Z]{2,}/.test(s);
+  const isMono = (s: string) => (hasChinese(s) && !hasEnglish(s)) || (hasEnglish(s) && !hasChinese(s));
 
+  const commitItem = (zone: ActiveZone, label: string) => {
+    if (!zone) return;
     const id = `custom-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const items = getZoneItems(zone);
     const newItems = [...items, { id, label, isCustom: true } as PrepItem];
@@ -136,8 +143,50 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
     updated[zone] = [...(updated[zone] || []), { id, label }];
     setSavedCustoms(updated);
     saveCustoms(updated);
+  };
 
+  const addCustomItem = async (zone: ActiveZone) => {
+    const label = customInput.trim();
+    if (!label || !zone) return;
+
+    if (suggestEnabled && isMono(label)) {
+      setCustomInput("");
+      setSuggestion(null);
+      try {
+        const res = await fetch("/api/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: label }),
+        });
+        const data = await res.json();
+        if (data.suggestion && data.suggestion !== label) {
+          setSuggestion({ original: label, bilingual: data.suggestion });
+          return;
+        }
+      } catch { /* fall through */ }
+    }
+
+    commitItem(zone, label);
     setCustomInput("");
+    setSuggestion(null);
+  };
+
+  const acceptSuggestion = () => {
+    if (!suggestion) return;
+    commitItem(activeZone, suggestion.bilingual);
+    setSuggestion(null);
+  };
+
+  const rejectSuggestion = () => {
+    if (!suggestion) return;
+    commitItem(activeZone, suggestion.original);
+    setSuggestion(null);
+  };
+
+  const toggleSuggest = () => {
+    const next = !suggestEnabled;
+    setSuggestEnabled(next);
+    localStorage.setItem("ea-suggest-bilingual", next ? "1" : "0");
   };
 
   const deleteCustom = (zone: ActiveZone, itemId: string) => {
@@ -299,13 +348,32 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
               })}
             </div>
 
+            {/* Suggestion banner */}
+            {suggestion && (
+              <div className="mb-3 rounded-xl border border-brand-200 bg-brand-50 p-3">
+                <p className="mb-2 text-xs text-brand-700">
+                  Do you mean 你是否指：<span className="font-semibold">{suggestion.bilingual}</span>?
+                </p>
+                <div className="flex gap-2">
+                  <button type="button" onClick={acceptSuggestion}
+                    className="rounded-lg bg-brand-500 px-3 py-1.5 text-xs font-semibold text-white">
+                    Accept 接受
+                  </button>
+                  <button type="button" onClick={rejectSuggestion}
+                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-text-secondary">
+                    Keep original 保留原文
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Add custom input */}
             <div className="flex gap-2">
               <input
                 type="text"
                 placeholder={L.addCustomPlaceholder}
                 value={customInput}
-                onChange={(e) => setCustomInput(e.target.value)}
+                onChange={(e) => { setCustomInput(e.target.value); setSuggestion(null); }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.nativeEvent.isComposing) {
                     e.preventDefault();
@@ -317,12 +385,21 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
               <button
                 type="button"
                 onClick={() => addCustomItem(activeZone)}
-                disabled={!customInput.trim()}
+                disabled={!customInput.trim() && !suggestion}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-500 text-white transition-opacity disabled:opacity-40"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
+              </button>
+            </div>
+
+            {/* Bilingual suggestion toggle */}
+            <div className="mt-2 flex items-center justify-end gap-2">
+              <span className="text-[10px] text-text-muted">Auto-translate 自動翻譯</span>
+              <button type="button" role="switch" aria-checked={suggestEnabled} onClick={toggleSuggest}
+                className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${suggestEnabled ? "bg-brand-500" : "bg-gray-300"}`}>
+                <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${suggestEnabled ? "translate-x-[18px]" : "translate-x-[2px]"}`} />
               </button>
             </div>
           </div>
