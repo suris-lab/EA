@@ -97,26 +97,30 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
           <div className="h-[5px] w-9 rounded-full bg-border" />
         </div>
 
-        {/* Apple header */}
+        {/* Header: icon — title — icon */}
         <div className="flex items-center justify-between px-4 pb-2 pt-1">
           {editing ? (
-            <button onClick={() => setEditing(false)} className="min-w-[60px] text-left text-[17px] font-normal text-brand-500 active:opacity-60">Cancel 取消</button>
+            <button onClick={() => setEditing(false)} className="flex h-10 w-10 items-center justify-center rounded-full text-text-muted active:bg-surface-dim">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
           ) : (
-            <button onClick={handleDeleteClick} className="min-w-[60px] text-left text-[17px] font-normal text-[#FF3B30] active:opacity-60">
-              <BiText text={L.deleteEvent} />
+            <button onClick={handleDeleteClick} className="flex h-10 w-10 items-center justify-center rounded-full text-[#FF3B30] active:bg-surface-dim">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
             </button>
           )}
-          <span className="text-[17px] font-semibold text-text-primary">
+          <span className="text-[17px] font-semibold text-text-primary text-center">
             <BiText text={editing ? L.editEvent : L.eventDetails} />
           </span>
           {editing ? (
             <button onClick={handleSave} disabled={!form.canSave || saving}
-              className="min-w-[60px] text-right text-[17px] font-semibold text-brand-500 disabled:opacity-30 active:opacity-60">
-              {saving ? "..." : "Done 完成"}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-brand-500 disabled:opacity-30 active:bg-surface-dim">
+              {saving
+                ? <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                : <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
             </button>
           ) : (
-            <button onClick={() => setEditing(true)} className="min-w-[60px] text-right text-[17px] font-normal text-brand-500 active:opacity-60">
-              <BiText text={L.edit} />
+            <button onClick={() => setEditing(true)} className="flex h-10 w-10 items-center justify-center rounded-full text-brand-500 active:bg-surface-dim">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" /></svg>
             </button>
           )}
         </div>

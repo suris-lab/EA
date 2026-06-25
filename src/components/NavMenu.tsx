@@ -57,7 +57,7 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
             <span className="text-[17px] font-semibold tracking-[-0.01em] text-text-primary">
               EA Calendar
             </span>
-            <span className="text-[10px] font-medium text-text-muted">v1.0.1</span>
+            <span className="text-[10px] font-medium text-text-muted">v1.0.2</span>
           </div>
 
           {/* Mobile: share + subscribe */}
