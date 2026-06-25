@@ -120,8 +120,8 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
   };
 
   return (
-    <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center" onClick={onClose}>
-      <div className="animate-modal-in flex max-h-[92vh] w-full max-w-lg flex-col rounded-t-2xl bg-surface-dim shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
+    <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center modal-open overscroll-none touch-none" onClick={onClose}>
+      <div className="animate-modal-in flex max-h-[92vh] w-full max-w-lg flex-col rounded-t-2xl bg-surface-dim shadow-2xl sm:rounded-2xl touch-auto" onClick={(e) => e.stopPropagation()}>
         {/* Grabber */}
         <div className="flex justify-center pt-2 pb-1 sm:hidden">
           <div className="h-[5px] w-9 rounded-full bg-border" />
@@ -129,15 +129,15 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
 
         {/* Header: ✕ — Title — ✓ */}
         <div className="flex items-center justify-between px-4 pb-2 pt-1">
-          <button onClick={onClose} disabled={saving} className="flex h-8 w-8 items-center justify-center rounded-full text-text-muted active:bg-surface-dim">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          <button onClick={onClose} disabled={saving} className="flex h-10 w-10 items-center justify-center rounded-full text-text-muted active:bg-surface-dim">
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
           <span className="text-[17px] font-semibold text-text-primary text-center">{L.newEvent}</span>
           <button onClick={handleSaveClick} disabled={!form.canSave || saving}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-brand-500 disabled:opacity-30 active:bg-surface-dim">
+            className="flex h-10 w-10 items-center justify-center rounded-full text-brand-500 disabled:opacity-30 active:bg-surface-dim">
             {saving
-              ? <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-              : <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+              ? <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+              : <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
           </button>
         </div>
 

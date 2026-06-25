@@ -198,7 +198,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
   }
 
   return (
-    <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center" onClick={onClose}>
+    <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center modal-open overscroll-none touch-none" onClick={onClose}>
       <div className="animate-modal-in w-full max-w-md rounded-t-2xl bg-surface p-6 shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-1 flex items-center justify-between">
           <h2 className="text-base font-semibold text-text-primary">Scan Notice 掃描通告</h2>

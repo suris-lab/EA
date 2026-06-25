@@ -91,8 +91,8 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
   const dotColor = getCategoryColor(event.category);
 
   return (
-    <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center" onClick={onClose}>
-      <div className="animate-modal-in flex max-h-[92vh] w-full max-w-lg flex-col rounded-t-2xl bg-surface-dim shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
+    <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center modal-open overscroll-none touch-none" onClick={onClose}>
+      <div className="animate-modal-in flex max-h-[92vh] w-full max-w-lg flex-col rounded-t-2xl bg-surface-dim shadow-2xl sm:rounded-2xl touch-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-center pt-2 pb-1 sm:hidden">
           <div className="h-[5px] w-9 rounded-full bg-border" />
         </div>

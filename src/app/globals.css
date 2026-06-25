@@ -28,6 +28,12 @@ html, body {
   overscroll-behavior-x: none;
 }
 
+body:has(.modal-open) {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
