@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import EventFormFields, { useFormState } from "./EventFormFields";
 import HolidayReminder from "./HolidayReminder";
 import { findHolidaysInRange, type HKHoliday } from "@/lib/hk-holidays";
-import { buildLocalISO } from "@/lib/date-utils";
+import { buildLocalISO, findOverlappingEvents } from "@/lib/date-utils";
+import type { CalendarEvent } from "@/types/event";
 
 interface EventFormProps {
   onClose: () => void;
@@ -23,16 +24,35 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [holidayWarning, setHolidayWarning] = useState<HKHoliday[]>([]);
+  const [conflictWarning, setConflictWarning] = useState<CalendarEvent[]>([]);
+  const [allEvents, setAllEvents] = useState<CalendarEvent[]>([]);
+  const [warningShown, setWarningShown] = useState(false);
   const savingRef = useRef(false);
+
+  useEffect(() => {
+    fetch("/api/events").then((r) => r.json()).then((d) => setAllEvents(d.events ?? [])).catch(() => {});
+  }, []);
 
   const handleSaveClick = () => {
     if (!form.canSave || savingRef.current) return;
     setSaveError(null);
-    const holidays = findHolidaysInRange(form.date, form.endDate || form.date);
-    if (holidays.length > 0 && holidayWarning.length === 0) {
-      setHolidayWarning(holidays);
-      return;
+
+    if (!warningShown) {
+      const holidays = findHolidaysInRange(form.date, form.endDate || form.date);
+      const startISO = buildLocalISO(form.date, form.allDay || !form.time ? undefined : form.time);
+      const endISO = form.endDate
+        ? buildLocalISO(form.endDate, form.allDay || !form.endTime ? "23:59" : form.endTime)
+        : null;
+      const conflicts = findOverlappingEvents(allEvents, startISO, endISO, form.allDay);
+
+      if (holidays.length > 0 || conflicts.length > 0) {
+        setHolidayWarning(holidays);
+        setConflictWarning(conflicts);
+        setWarningShown(true);
+        return;
+      }
     }
+
     doSave();
   };
 
@@ -82,7 +102,6 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
         return;
       }
 
-      setHolidayWarning([]);
       onSaved();
       onClose();
     } catch {
@@ -90,6 +109,12 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
       savingRef.current = false;
       setSaving(false);
     }
+  };
+
+  const handleGoBack = () => {
+    setHolidayWarning([]);
+    setConflictWarning([]);
+    setWarningShown(false);
   };
 
   return (
@@ -112,8 +137,14 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
 
         <div className="shrink-0 border-t border-border-light px-6 pb-6 pt-3">
           {saveError && <p className="mb-3 rounded-2xl bg-red-50 p-3 text-xs text-red-600">{saveError}</p>}
-          {holidayWarning.length > 0 ? (
-            <HolidayReminder holidays={holidayWarning} onContinue={doSave} onGoBack={() => setHolidayWarning([])} saving={saving} />
+          {warningShown && (holidayWarning.length > 0 || conflictWarning.length > 0) ? (
+            <HolidayReminder
+              holidays={holidayWarning}
+              conflicts={conflictWarning}
+              onContinue={doSave}
+              onGoBack={handleGoBack}
+              saving={saving}
+            />
           ) : (
             <div className="flex justify-end gap-2">
               <Button variant="ghost" size="md" onClick={onClose} disabled={saving}>Cancel</Button>

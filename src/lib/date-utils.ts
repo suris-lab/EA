@@ -80,3 +80,21 @@ export function eventsOnDate(events: { start_date: string; end_date?: string | n
     return false;
   });
 }
+
+export function findOverlappingEvents<T extends { id?: string; start_date: string; end_date?: string | null; all_day?: boolean }>(
+  events: T[],
+  startDate: string,
+  endDate: string | null,
+  allDay: boolean,
+  excludeId?: string
+): T[] {
+  const newStart = new Date(startDate).getTime();
+  const newEnd = endDate ? new Date(endDate).getTime() : (allDay ? newStart + 86400000 : newStart + 3600000);
+
+  return events.filter((e) => {
+    if (excludeId && e.id === excludeId) return false;
+    const eStart = new Date(e.start_date).getTime();
+    const eEnd = e.end_date ? new Date(e.end_date).getTime() : (e.all_day ? eStart + 86400000 : eStart + 3600000);
+    return newStart < eEnd && newEnd > eStart;
+  });
+}

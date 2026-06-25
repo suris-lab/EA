@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CalendarEvent } from "@/types/event";
-import { toDateValue, toTimeValue, buildLocalISO } from "@/lib/date-utils";
+import { toDateValue, toTimeValue, buildLocalISO, findOverlappingEvents } from "@/lib/date-utils";
 import Button from "./Button";
 import EventFormFields, { useFormState } from "./EventFormFields";
 import HolidayReminder from "./HolidayReminder";
@@ -37,14 +37,33 @@ export default function EventPreview({
 
   const [saving, setSaving] = useState(false);
   const [holidayWarning, setHolidayWarning] = useState<HKHoliday[]>([]);
+  const [conflictWarning, setConflictWarning] = useState<CalendarEvent[]>([]);
+  const [allEvents, setAllEvents] = useState<CalendarEvent[]>([]);
+  const [warningShown, setWarningShown] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/events").then((r) => r.json()).then((d) => setAllEvents(d.events ?? [])).catch(() => {});
+  }, []);
 
   const handleConfirmClick = () => {
     if (!form.canSave || saving) return;
-    const holidays = findHolidaysInRange(form.date, form.endDate || form.date);
-    if (holidays.length > 0 && holidayWarning.length === 0) {
-      setHolidayWarning(holidays);
-      return;
+
+    if (!warningShown) {
+      const holidays = findHolidaysInRange(form.date, form.endDate || form.date);
+      const startISO = buildLocalISO(form.date, form.allDay || !form.time ? undefined : form.time);
+      const endISO = form.endDate
+        ? buildLocalISO(form.endDate, form.allDay || !form.endTime ? "23:59" : form.endTime)
+        : null;
+      const conflicts = findOverlappingEvents(allEvents, startISO, endISO, form.allDay);
+
+      if (holidays.length > 0 || conflicts.length > 0) {
+        setHolidayWarning(holidays);
+        setConflictWarning(conflicts);
+        setWarningShown(true);
+        return;
+      }
     }
+
     doConfirm();
   };
 
@@ -88,6 +107,12 @@ export default function EventPreview({
     }
   };
 
+  const handleGoBack = () => {
+    setHolidayWarning([]);
+    setConflictWarning([]);
+    setWarningShown(false);
+  };
+
   return (
     <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center" onClick={onCancel}>
       <div className="animate-modal-in flex max-h-[90vh] w-full max-w-md flex-col rounded-t-2xl bg-surface shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
@@ -112,8 +137,14 @@ export default function EventPreview({
 
         <div className="shrink-0 border-t border-border-light px-6 pb-6 pt-3">
           {externalError && <p className="mb-3 rounded-2xl bg-red-50 p-3 text-xs text-red-600">{externalError}</p>}
-          {holidayWarning.length > 0 ? (
-            <HolidayReminder holidays={holidayWarning} onContinue={doConfirm} onGoBack={() => setHolidayWarning([])} saving={saving} />
+          {warningShown && (holidayWarning.length > 0 || conflictWarning.length > 0) ? (
+            <HolidayReminder
+              holidays={holidayWarning}
+              conflicts={conflictWarning}
+              onContinue={doConfirm}
+              onGoBack={handleGoBack}
+              saving={saving}
+            />
           ) : (
             <div className="flex justify-end gap-2">
               <Button variant="ghost" size="md" onClick={onCancel} disabled={saving}>{cancelLabel}</Button>
