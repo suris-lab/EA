@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import Button from "./Button";
 import PhotoUpload from "./PhotoUpload";
 import EventForm from "./EventForm";
-import { L } from "@/lib/labels";
+import { L, BiText } from "@/lib/labels";
 
 function CameraIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
@@ -111,7 +111,7 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
               <span className="text-lg font-bold leading-tight tracking-tight text-text-primary">
                 EA Calendar
               </span>
-              <span className="text-[10px] font-medium leading-tight text-text-muted">v0.8.4</span>
+              <span className="text-[10px] font-medium leading-tight text-text-muted">v0.8.5</span>
             </div>
           </div>
 
@@ -137,12 +137,12 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
             <button onClick={handleAddEvent}
               className="inline-flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-text-primary shadow-sm transition-all hover:bg-surface-dim hover:shadow-md active:scale-[0.98]">
               <PlusIcon className="h-4 w-4" />
-              {L.addEvent}
+              <BiText text={L.addEvent} />
             </button>
             <button onClick={handleUpload}
               className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-b from-brand-400 to-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-brand-500/30 transition-all hover:shadow-lg hover:shadow-brand-500/40 active:scale-[0.98]">
               <CameraIcon className="h-4 w-4" />
-              {L.scanNotice}
+              <BiText text={L.scanNotice} />
             </button>
           </div>
         </div>
@@ -164,7 +164,7 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
               <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-surface-dim text-text-secondary transition-colors group-active:bg-gray-200">
                 <PlusIcon className="h-5 w-5" />
               </div>
-              <span className="text-sm font-semibold text-text-primary">{L.addEvent}</span>
+              <span className="text-sm font-semibold text-text-primary"><BiText text={L.addEvent} /></span>
             </button>
 
             {/* Scan Notice */}
@@ -176,7 +176,7 @@ export default function NavMenu({ onEventSaved }: NavMenuProps) {
               <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-white/15 text-white transition-colors group-active:bg-white/25">
                 <CameraIcon className="h-5 w-5" />
               </div>
-              <span className="text-sm font-semibold text-white">{L.scanNotice}</span>
+              <span className="text-sm font-semibold text-white"><BiText text={L.scanNotice} /></span>
             </button>
           </div>
         </div>

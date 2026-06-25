@@ -1,5 +1,18 @@
+import React from "react";
+
 export function bi(en: string, zh: string) {
-  return `${en} ${zh}`;
+  return `${en}\n${zh}`;
+}
+
+export function BiText({ text, className }: { text: string; className?: string }) {
+  if (!text.includes("\n")) return React.createElement("span", { className }, text);
+  const [en, zh] = text.split("\n");
+  return React.createElement(
+    "span",
+    { className: `inline-flex flex-col leading-snug ${className || ""}` },
+    React.createElement("span", null, en),
+    React.createElement("span", { className: "text-[0.82em] opacity-65" }, zh)
+  );
 }
 
 export const L = {
@@ -26,16 +39,16 @@ export const L = {
   save: bi("+ Save", "+ 儲存"),
 
   title: bi("Title", "標題"),
-  titlePlaceholder: "e.g. Sports Day 例如：運動會",
+  titlePlaceholder: "e.g. Sports Day\n例如：運動會",
   category: bi("Category", "類別"),
   location: bi("Location", "地點"),
-  locationPlaceholder: "e.g. School Hall 例如：學校禮堂",
+  locationPlaceholder: "e.g. School Hall\n例如：學校禮堂",
   allDay: bi("All day", "全日"),
   duration: bi("Duration", "時長"),
   start: bi("Start", "開始"),
   end: bi("End", "結束"),
   notes: bi("Notes", "備註"),
-  notesPlaceholder: "Optional details... 選填詳情...",
+  notesPlaceholder: "Optional details...\n選填詳情...",
   repeat: bi("Repeat", "重複"),
   repeatOn: bi("Repeat on", "重複日"),
   frequency: bi("Frequency", "頻率"),
@@ -50,48 +63,32 @@ export const L = {
   yearly: bi("Yearly", "每年"),
   every: bi("Every", "每"),
 
-  endDateError: bi(
-    "End date must be the same as or later than start date.",
-    "結束日期必須等於或晚於開始日期。"
-  ),
-  endTimeError: bi(
-    "End time must be later than start time.",
-    "結束時間必須晚於開始時間。"
-  ),
-  recEndError: bi(
-    "Repeat until must be later than the event end time.",
-    "重複結束日期必須晚於活動結束時間。"
-  ),
-  recEndHint: bi("Leave empty to repeat for 1 year", "留空則重複一年"),
-  recNoEndHint: bi("Repeats for up to 2 years", "最多重複兩年"),
+  endDateError: "End date must be the same as or later than start date.\n結束日期必須等於或晚於開始日期。",
+  endTimeError: "End time must be later than start time.\n結束時間必須晚於開始時間。",
+  recEndError: "Repeat until must be later than the event end time.\n重複結束日期必須晚於活動結束時間。",
+  recEndHint: "Leave empty to repeat for 1 year\n留空則重複一年",
+  recNoEndHint: "Repeats for up to 2 years\n最多重複兩年",
 
-  reviewHint: bi("Review and edit the details before saving.", "儲存前請檢查並編輯詳情。"),
-  deletePrompt: bi("Delete this event? This cannot be undone.", "刪除此活動？此操作無法撤銷。"),
-  recurringWarning: bi("This is a recurring event.", "這是一個重複活動。"),
+  reviewHint: "Review and edit the details before saving.\n儲存前請檢查並編輯詳情。",
+  deletePrompt: "Delete this event? This cannot be undone.\n刪除此活動？此操作無法撤銷。",
+  recurringWarning: "This is a recurring event.\n這是一個重複活動。",
   deleteThisOnly: bi("Delete this event only", "只刪除此活動"),
-  deleteThisOnlyHint: bi("Other events in the series will remain.", "系列中其他活動將保留。"),
+  deleteThisOnlyHint: "Other events in the series will remain.\n系列中其他活動將保留。",
   deleteAll: bi("Delete all events in this series", "刪除此系列所有活動"),
-  deleteAllHint: bi("This will remove every occurrence.", "這將刪除所有重複項。"),
+  deleteAllHint: "This will remove every occurrence.\n這將刪除所有重複項。",
   deleteEvent: bi("Delete event", "刪除活動"),
   fromScan: bi("From notice scan", "來自通告掃描"),
   manuallyAdded: bi("Manually added", "手動新增"),
 
-  failedToSave: bi("Failed to save event.", "儲存活動失敗。"),
-  networkError: bi("Network error. Please check your connection.", "網路錯誤，請檢查連線。"),
-  linkCopied: bi("Link copied to clipboard!", "連結已複製！"),
-  shareText: bi("Check out my school events calendar", "查看我的校園活動日曆"),
+  failedToSave: "Failed to save event.\n儲存活動失敗。",
+  networkError: "Network error. Please check your connection.\n網路錯誤，請檢查連線。",
+  linkCopied: "Link copied to clipboard!\n連結已複製！",
+  shareText: "Check out my school events calendar\n查看我的校園活動日曆",
 
   prepReminder: bi("Preparation Reminder", "準備提醒"),
   tapZoneHint: bi("Tap a zone to add items", "點選區域以新增物品"),
   strollerLabel: bi("Baby cart / Stroller", "嬰兒車"),
-  addCustomPlaceholder: "Add custom item... 新增自訂項目...",
-
-  dropBy: bi("Drop by", "探訪"),
-  min30: "30 min 分鐘",
-  hr1: "1 hr 小時",
-  hr1_5: "1.5 hr 小時",
-  hr2: "2 hr 小時",
-  hr3: "3 hr 小時",
+  addCustomPlaceholder: "Add custom item...\n新增自訂項目...",
 
   catSchool: bi("School", "學校"),
   catPlaygroup: bi("Playgroup", "遊戲班"),
@@ -99,12 +96,3 @@ export const L = {
   catFamily: bi("Family", "家庭"),
   catOther: bi("Other", "其他"),
 };
-
-export const ZONE_LABELS_BI: Record<string, string> = {
-  head: bi("Head", "頭部"),
-  body: bi("Body", "身體"),
-  feet: bi("Feet", "腳部"),
-  bag: bi("Bag", "書包"),
-};
-
-export const STROLLER_LABEL_BI = bi("Stroller", "嬰兒車");

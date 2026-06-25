@@ -7,7 +7,7 @@ import Button from "./Button";
 import EventFormFields, { useFormState } from "./EventFormFields";
 import HolidayReminder from "./HolidayReminder";
 import { findHolidaysInRange, type HKHoliday } from "@/lib/hk-holidays";
-import { L } from "@/lib/labels";
+import { L, BiText } from "@/lib/labels";
 
 interface EventPreviewProps {
   event: CalendarEvent;
@@ -122,7 +122,7 @@ export default function EventPreview({
         <div className="shrink-0 border-b border-border-light px-6 pb-3 pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold text-text-primary">{L.confirmEvent}</h2>
+              <h2 className="text-base font-semibold text-text-primary"><BiText text={L.confirmEvent} /></h2>
               {subtitle && <p className="text-xs text-text-muted">{subtitle}</p>}
             </div>
             <button onClick={onCancel} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">

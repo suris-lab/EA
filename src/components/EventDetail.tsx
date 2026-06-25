@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { CalendarEvent } from "@/types/event";
 import { getCategoryColor, getCategoryLabel, type PreparationData } from "@/types/event";
-import { L } from "@/lib/labels";
+import { L, BiText } from "@/lib/labels";
 import PrepItemsDisplay from "./PrepItemsDisplay";
 import { toDateValue, toTimeValue, buildLocalISO } from "@/lib/date-utils";
 import Button from "./Button";
@@ -95,7 +95,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
       <div className="animate-modal-in flex max-h-[90vh] w-full max-w-md flex-col rounded-t-2xl bg-surface shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="shrink-0 border-b border-border-light px-6 pb-3 pt-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-text-primary">{editing ? L.editEvent : L.eventDetails}</h2>
+            <h2 className="text-base font-semibold text-text-primary"><BiText text={editing ? L.editEvent : L.eventDetails} /></h2>
             <button onClick={onClose} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -174,7 +174,7 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
             <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-3">
               <p className="text-xs font-medium text-red-700">{L.deletePrompt}</p>
               <div className="mt-2 flex gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setDeleteMode(null)}>{L.keep}</Button>
+                <Button variant="ghost" size="sm" onClick={() => setDeleteMode(null)}><BiText text={L.keep} /></Button>
                 <button onClick={() => handleDelete(false)} disabled={deleting} className="rounded-2xl bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:bg-red-300">
                   {deleting ? L.deleting : L.delete}
                 </button>
@@ -187,12 +187,12 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
               <p className="mb-3 text-sm font-medium text-red-700">{L.recurringWarning}</p>
               <div className="flex flex-col gap-2">
                 <button onClick={() => handleDelete(false)} disabled={deleting} className="flex w-full items-center rounded-2xl border border-red-200 bg-surface px-4 py-3 text-left text-sm active:bg-red-100">
-                  <div><p className="font-medium text-text-primary">{L.deleteThisOnly}</p><p className="text-xs text-text-secondary">{L.deleteThisOnlyHint}</p></div>
+                  <div><p className="font-medium text-text-primary"><BiText text={L.deleteThisOnly} /></p><p className="text-xs text-text-secondary">{L.deleteThisOnlyHint}</p></div>
                 </button>
                 <button onClick={() => handleDelete(true)} disabled={deleting} className="flex w-full items-center rounded-2xl border border-red-200 bg-surface px-4 py-3 text-left text-sm active:bg-red-100">
-                  <div><p className="font-medium text-red-600">{L.deleteAll}</p><p className="text-xs text-text-secondary">{L.deleteAllHint}</p></div>
+                  <div><p className="font-medium text-red-600"><BiText text={L.deleteAll} /></p><p className="text-xs text-text-secondary">{L.deleteAllHint}</p></div>
                 </button>
-                <button onClick={() => setDeleteMode(null)} className="mt-1 text-center text-xs font-medium text-text-secondary">{L.cancel}</button>
+                <button onClick={() => setDeleteMode(null)} className="mt-1 text-center text-xs font-medium text-text-secondary"><BiText text={L.cancel} /></button>
               </div>
             </div>
           )}
@@ -202,21 +202,21 @@ export default function EventDetail({ event, onClose, onUpdated, onDuplicate }: 
           <div className="shrink-0 border-t border-border-light px-6 pb-6 pt-3">
             <div className="flex items-center justify-between">
               {!editing ? (
-                <button onClick={handleDeleteClick} className="text-xs font-medium text-red-500 hover:text-red-600">{L.deleteEvent}</button>
+                <button onClick={handleDeleteClick} className="text-xs font-medium text-red-500 hover:text-red-600"><BiText text={L.deleteEvent} /></button>
               ) : <div />}
               <div className="flex gap-2">
                 {editing ? (
                   <>
-                    <Button variant="ghost" size="md" onClick={() => setEditing(false)}>{L.cancel}</Button>
-                    <Button variant="primary" size="md" onClick={handleSave} loading={saving} disabled={!form.canSave}>{L.saveChanges}</Button>
+                    <Button variant="ghost" size="md" onClick={() => setEditing(false)}><BiText text={L.cancel} /></Button>
+                    <Button variant="primary" size="md" onClick={handleSave} loading={saving} disabled={!form.canSave}><BiText text={L.saveChanges} /></Button>
                   </>
                 ) : (
                   <>
                     {onDuplicate && (
-                      <Button variant="ghost" size="md" onClick={() => { onDuplicate(event); onClose(); }}>{L.duplicate}</Button>
+                      <Button variant="ghost" size="md" onClick={() => { onDuplicate(event); onClose(); }}><BiText text={L.duplicate} /></Button>
                     )}
-                    <Button variant="ghost" size="md" onClick={onClose}>{L.close}</Button>
-                    <Button variant="secondary" size="md" onClick={() => setEditing(true)}>{L.edit}</Button>
+                    <Button variant="ghost" size="md" onClick={onClose}><BiText text={L.close} /></Button>
+                    <Button variant="secondary" size="md" onClick={() => setEditing(true)}><BiText text={L.edit} /></Button>
                   </>
                 )}
               </div>
