@@ -27,7 +27,7 @@ const STROLLER_D2 = "M756.82,640.49c-25.3,32-60.97,50.77-101.55,50.74l-138.61-.1
 const STROLLER_D3 = "M782.02,450.21l-236-.06c-9.32,0-15.34-7.92-16.89-16.22l-51.99-277.86c-1.09-5.82,1.3-12.72,4.45-16.3,3.16-3.59,9.32-6.34,15.64-6.23,163.74,2.83,304.66,128.94,303.17,296.73-.1,10.91-6.56,19.94-18.37,19.93Z";
 
 const KID_SCALE = 0.048;
-const KID_CX = 17;
+const KID_CX = 18;
 const BAG_SCALE = 0.04;
 const STROLLER_SCALE = 0.038;
 
@@ -124,19 +124,19 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
 
         {/* Plus indicators — kid zones aligned on head center x */}
         {hasItems("head") && activeZone !== "head" && (
-          <g><circle cx={KID_CX} cy={6} r="4.5" fill={hex} />
-            <line x1={KID_CX - 2.2} y1={6} x2={KID_CX + 2.2} y2={6} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
-            <line x1={KID_CX} y1={3.8} x2={KID_CX} y2={8.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
+          <g><circle cx={KID_CX} cy={8} r="4.5" fill={hex} />
+            <line x1={KID_CX - 2.2} y1={8} x2={KID_CX + 2.2} y2={8} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1={KID_CX} y1={5.8} x2={KID_CX} y2={10.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
         )}
         {hasItems("body") && activeZone !== "body" && (
-          <g><circle cx={KID_CX} cy={22} r="4.5" fill={hex} />
-            <line x1={KID_CX - 2.2} y1={22} x2={KID_CX + 2.2} y2={22} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
-            <line x1={KID_CX} y1={19.8} x2={KID_CX} y2={24.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
+          <g><circle cx={KID_CX} cy={24} r="4.5" fill={hex} />
+            <line x1={KID_CX - 2.2} y1={24} x2={KID_CX + 2.2} y2={24} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1={KID_CX} y1={21.8} x2={KID_CX} y2={26.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
         )}
         {hasItems("feet") && activeZone !== "feet" && (
-          <g><circle cx={KID_CX} cy={40} r="4.5" fill={hex} />
-            <line x1={KID_CX - 2.2} y1={40} x2={KID_CX + 2.2} y2={40} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
-            <line x1={KID_CX} y1={37.8} x2={KID_CX} y2={42.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
+          <g><circle cx={KID_CX} cy={42} r="4.5" fill={hex} />
+            <line x1={KID_CX - 2.2} y1={42} x2={KID_CX + 2.2} y2={42} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1={KID_CX} y1={39.8} x2={KID_CX} y2={44.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
         )}
         {/* Plus indicator on bag */}
         {hasItems("bag") && activeZone !== "bag" && (
