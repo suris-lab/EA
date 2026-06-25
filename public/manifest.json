@@ -4,8 +4,8 @@
   "description": "School notice calendar for parents",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f8f9fc",
-  "theme_color": "#3362fc",
+  "background_color": "#F2F2F7",
+  "theme_color": "#007AFF",
   "icons": [
     {
       "src": "/icon-192.png",

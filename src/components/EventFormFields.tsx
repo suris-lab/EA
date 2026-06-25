@@ -192,8 +192,8 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       .catch(() => {});
   }, []);
 
-  const inputClass = "w-full rounded-2xl border border-border bg-surface-dim px-4 py-3.5 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-brand-400 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand-100";
-  const errorInputClass = "w-full rounded-2xl border border-red-300 bg-surface-dim px-4 py-3.5 text-sm text-text-primary transition-colors focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-100";
+  const inputClass = "w-full rounded-[10px] border border-border-light bg-surface px-4 py-3 text-[15px] text-text-primary placeholder:text-text-muted transition-colors focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500/30";
+  const errorInputClass = "w-full rounded-[10px] border border-[#FF3B30]/40 bg-surface px-4 py-3 text-[15px] text-text-primary transition-colors focus:border-[#FF3B30] focus:outline-none focus:ring-1 focus:ring-[#FF3B30]/30";
 
   return (
     <div className="space-y-4">
@@ -263,14 +263,14 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       </div>
 
       {/* All day toggle */}
-      <div className="flex items-center justify-between rounded-2xl border border-border bg-surface-dim px-4 py-3.5">
+      <div className="flex items-center justify-between rounded-[10px] bg-surface px-4 py-3">
         <span className="text-sm font-medium text-text-primary"><BiText text={L.allDay} /></span>
         <button
           type="button"
           role="switch"
           aria-checked={form.allDay}
           onClick={() => form.set("allDay", !form.allDay)}
-          className={`relative inline-flex h-[31px] w-[51px] shrink-0 items-center rounded-full transition-colors duration-200 ${form.allDay ? "bg-brand-500" : "bg-gray-300"}`}
+          className={`relative inline-flex h-[31px] w-[51px] shrink-0 items-center rounded-full transition-colors duration-200 ${form.allDay ? "bg-[#34C759]" : "bg-gray-300"}`}
         >
           <span className={`inline-block h-[27px] w-[27px] rounded-full bg-white shadow transition-transform duration-200 ${form.allDay ? "translate-x-[22px]" : "translate-x-[2px]"}`} />
         </button>

@@ -1,11 +1,11 @@
 export type EventCategory = "school" | "tutor" | "medical" | "family" | "other";
 
 export const CATEGORIES: { value: EventCategory; label: string; color: string; dot: string; hex: string }[] = [
-  { value: "school", label: "School 學校", color: "bg-blue-500", dot: "bg-blue-500", hex: "#3b82f6" },
-  { value: "tutor", label: "Playgroup 遊戲班", color: "bg-purple-500", dot: "bg-purple-500", hex: "#a855f7" },
-  { value: "medical", label: "Medical 醫療", color: "bg-orange-500", dot: "bg-orange-500", hex: "#f97316" },
-  { value: "family", label: "Family 家庭", color: "bg-pink-500", dot: "bg-pink-500", hex: "#ec4899" },
-  { value: "other", label: "Other 其他", color: "bg-gray-400", dot: "bg-gray-400", hex: "#9ca3af" },
+  { value: "school", label: "School 學校", color: "bg-[#007AFF]", dot: "bg-[#007AFF]", hex: "#007AFF" },
+  { value: "tutor", label: "Playgroup 遊戲班", color: "bg-[#AF52DE]", dot: "bg-[#AF52DE]", hex: "#AF52DE" },
+  { value: "medical", label: "Medical 醫療", color: "bg-[#FF9500]", dot: "bg-[#FF9500]", hex: "#FF9500" },
+  { value: "family", label: "Family 家庭", color: "bg-[#FF2D55]", dot: "bg-[#FF2D55]", hex: "#FF2D55" },
+  { value: "other", label: "Other 其他", color: "bg-[#8E8E93]", dot: "bg-[#8E8E93]", hex: "#8E8E93" },
 ];
 
 export function getCategoryColor(cat: EventCategory | string | undefined | null): string {

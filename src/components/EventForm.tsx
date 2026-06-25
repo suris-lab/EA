@@ -120,25 +120,29 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
   };
 
   return (
-    <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center" onClick={onClose}>
-      <div className="animate-modal-in flex max-h-[90vh] w-full max-w-md flex-col rounded-t-2xl bg-surface shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
-        <div className="shrink-0 border-b border-border-light px-6 pb-3 pt-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-text-primary"><BiText text={L.newEvent} /></h2>
-            <button onClick={onClose} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+    <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center" onClick={onClose}>
+      <div className="animate-modal-in flex max-h-[92vh] w-full max-w-lg flex-col rounded-t-[12px] bg-surface-dim shadow-2xl sm:rounded-[12px]" onClick={(e) => e.stopPropagation()}>
+        {/* Grabber */}
+        <div className="flex justify-center pt-2 pb-1 sm:hidden">
+          <div className="h-[5px] w-9 rounded-full bg-border" />
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-4">
-          <EventFormFields form={form} />
+        {/* Apple-style header: Cancel — Title — Done */}
+        <div className="flex items-center justify-between px-4 pb-2 pt-1">
+          <button onClick={onClose} disabled={saving} className="min-w-[60px] text-left text-[17px] font-normal text-brand-500 active:opacity-60">
+            Cancel 取消
+          </button>
+          <span className="text-[17px] font-semibold text-text-primary">
+            <BiText text={L.newEvent} />
+          </span>
+          <button onClick={handleSaveClick} disabled={!form.canSave || saving}
+            className="min-w-[60px] text-right text-[17px] font-semibold text-brand-500 disabled:opacity-30 active:opacity-60">
+            {saving ? "..." : "Done 完成"}
+          </button>
         </div>
 
-        <div className="shrink-0 border-t border-border-light px-6 pb-6 pt-3">
-          {saveError && <p className="mb-3 rounded-2xl bg-red-50 p-3 text-xs text-red-600">{saveError}</p>}
+        <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-6 pt-2">
+          {saveError && <p className="mb-3 rounded-lg bg-red-50 p-3 text-[13px] text-red-600">{saveError}</p>}
           {warningShown && (holidayWarning.length > 0 || conflictWarning.length > 0) ? (
             <HolidayReminder
               holidays={holidayWarning}
@@ -148,10 +152,7 @@ export default function EventForm({ onClose, onSaved, prefill }: EventFormProps)
               saving={saving}
             />
           ) : (
-            <div className="flex justify-end gap-2">
-              <Button variant="ghost" size="md" onClick={onClose} disabled={saving}><BiText text={L.cancel} /></Button>
-              <Button variant="primary" size="md" onClick={handleSaveClick} loading={saving} disabled={!form.canSave || saving}><BiText text={L.saveEvent} /></Button>
-            </div>
+            <EventFormFields form={form} />
           )}
         </div>
       </div>
