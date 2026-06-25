@@ -6,15 +6,25 @@ import { getCategoryHex } from "@/types/event";
 import { PREP_PRESETS, ZONE_LABELS, ZONE_ORDER, STROLLER_PRESETS, STROLLER_LABEL } from "@/lib/prep-presets";
 import KidIllustration, { type ActiveZone } from "./KidIllustration";
 
-const STORAGE_KEY = "ea-custom-prep";
+const CUSTOM_KEY = "ea-custom-prep";
+const HIDDEN_KEY = "ea-hidden-presets";
 
 function loadSavedCustoms(): Record<string, { id: string; label: string }[]> {
   if (typeof window === "undefined") return {};
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || "{}"); } catch { return {}; }
 }
 
 function saveCustoms(data: Record<string, { id: string; label: string }[]>) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  localStorage.setItem(CUSTOM_KEY, JSON.stringify(data));
+}
+
+function loadHiddenPresets(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try { return new Set(JSON.parse(localStorage.getItem(HIDDEN_KEY) || "[]")); } catch { return new Set(); }
+}
+
+function saveHiddenPresets(set: Set<string>) {
+  localStorage.setItem(HIDDEN_KEY, JSON.stringify([...set]));
 }
 
 interface PrepReminderSectionProps {
@@ -27,6 +37,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
   const [activeZone, setActiveZone] = useState<ActiveZone>(null);
   const [customInput, setCustomInput] = useState("");
   const [savedCustoms, setSavedCustoms] = useState<Record<string, { id: string; label: string }[]>>(loadSavedCustoms);
+  const [hiddenPresets, setHiddenPresets] = useState<Set<string>>(loadHiddenPresets);
   const prevCategory = useRef(category);
 
   useEffect(() => {
@@ -57,9 +68,10 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
   };
 
   const getZonePresets = (zone: ActiveZone) => {
-    if (zone === "stroller") return STROLLER_PRESETS;
-    if (zone) return PREP_PRESETS[category][zone];
-    return [];
+    let presets: { id: string; label: string }[] = [];
+    if (zone === "stroller") presets = STROLLER_PRESETS;
+    else if (zone) presets = PREP_PRESETS[category][zone];
+    return presets.filter((p) => !hiddenPresets.has(p.id));
   };
 
   const getSavedCustomsForZone = (zone: ActiveZone): { id: string; label: string }[] => {
@@ -151,6 +163,22 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
     setCustomInput("");
   };
 
+  const hidePreset = (zone: ActiveZone, presetId: string) => {
+    if (!zone) return;
+    const newItems = getZoneItems(zone).filter((i) => i.id !== presetId);
+    if (zone === "stroller") {
+      onUpdate({ ...preparation, stroller: newItems });
+    } else {
+      const updated = { ...preparation, [zone]: newItems };
+      if (newItems.length === 0) delete updated[zone as PrepZone];
+      onUpdate(updated);
+    }
+    const next = new Set(hiddenPresets);
+    next.add(presetId);
+    setHiddenPresets(next);
+    saveHiddenPresets(next);
+  };
+
   const toggleStroller = () => {
     if (showStroller) {
       const updated = { ...preparation };
@@ -224,54 +252,45 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
               </button>
             </div>
 
-            {/* Preset pills + saved custom pills */}
+            {/* Preset + saved custom pills — all deletable */}
             <div className="mb-3 flex flex-wrap gap-2">
               {currentPresets.map((preset) => {
                 const selected = currentItems.some((i) => i.id === preset.id);
                 return (
-                  <button
-                    key={preset.id}
-                    type="button"
-                    onClick={() => togglePreset(activeZone, preset)}
-                    className="rounded-2xl px-3 py-1.5 text-xs font-semibold transition-all"
-                    style={
-                      selected
+                  <span key={preset.id} className="inline-flex items-center">
+                    <button type="button" onClick={() => togglePreset(activeZone, preset)}
+                      className="rounded-l-2xl px-3 py-1.5 text-xs font-semibold transition-all"
+                      style={selected
                         ? { backgroundColor: hex, color: "#fff" }
-                        : { border: "1px solid var(--color-border)", color: "var(--color-text-secondary)" }
-                    }
-                  >
-                    {preset.label}
-                  </button>
+                        : { border: "1px solid var(--color-border)", borderRight: "none", color: "var(--color-text-secondary)" }}>
+                      {preset.label}
+                    </button>
+                    <button type="button" onClick={() => hidePreset(activeZone, preset.id)}
+                      className="rounded-r-2xl px-1.5 py-1.5 text-xs transition-all"
+                      style={selected
+                        ? { backgroundColor: hex, color: "#fff", opacity: 0.8 }
+                        : { border: "1px solid var(--color-border)", borderLeft: "none", color: "var(--color-text-muted)" }}>
+                      ×
+                    </button>
+                  </span>
                 );
               })}
-
-              {/* Saved custom items as toggleable pills with delete */}
               {currentSavedCustoms.map((item) => {
                 const selected = currentItems.some((i) => i.id === item.id);
                 return (
-                  <span key={item.id} className="inline-flex items-center gap-0.5">
-                    <button
-                      type="button"
-                      onClick={() => toggleCustom(activeZone, item)}
+                  <span key={item.id} className="inline-flex items-center">
+                    <button type="button" onClick={() => toggleCustom(activeZone, item)}
                       className="rounded-l-2xl px-3 py-1.5 text-xs font-semibold transition-all"
-                      style={
-                        selected
-                          ? { backgroundColor: hex, color: "#fff" }
-                          : { border: "1px solid var(--color-border)", borderRight: "none", color: "var(--color-text-secondary)" }
-                      }
-                    >
+                      style={selected
+                        ? { backgroundColor: hex, color: "#fff" }
+                        : { border: "1px solid var(--color-border)", borderRight: "none", color: "var(--color-text-secondary)" }}>
                       {item.label}
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteCustom(activeZone, item.id)}
+                    <button type="button" onClick={() => deleteCustom(activeZone, item.id)}
                       className="rounded-r-2xl px-1.5 py-1.5 text-xs transition-all"
-                      style={
-                        selected
-                          ? { backgroundColor: hex, color: "#fff", opacity: 0.8 }
-                          : { border: "1px solid var(--color-border)", borderLeft: "none", color: "var(--color-text-muted)" }
-                      }
-                    >
+                      style={selected
+                        ? { backgroundColor: hex, color: "#fff", opacity: 0.8 }
+                        : { border: "1px solid var(--color-border)", borderLeft: "none", color: "var(--color-text-muted)" }}>
                       ×
                     </button>
                   </span>
