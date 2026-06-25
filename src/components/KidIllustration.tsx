@@ -35,7 +35,7 @@ const ZONE_RECTS: Record<PrepZone, { x: number; y: number; w: number; h: number 
   head: { x: 8, y: -1, w: 20, h: 14 },
   body: { x: 2, y: 12, w: 28, h: 18 },
   feet: { x: 0, y: 28, w: 30, h: 24 },
-  bag: { x: 33, y: 3, w: 28, h: 44 },
+  bag: { x: 36, y: 3, w: 28, h: 44 },
 };
 
 export default function KidIllustration({ category, activeZone, onZoneTap, preparation }: KidIllustrationProps) {
@@ -107,7 +107,7 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
         )}
 
         {/* Standalone school bag — grey when inactive, category color when active */}
-        <g id="school-backpack" transform={`translate(34, 5) scale(${BAG_SCALE})`}>
+        <g id="school-backpack" transform={`translate(37, 5) scale(${BAG_SCALE})`}>
           <path d={BAG_D1} fill={activeZone === "bag" ? hex : BODY} />
           <path d={BAG_D2} fill={activeZone === "bag" ? hex : BODY} />
           <path d={BAG_D3} fill={activeZone === "bag" ? hex : BODY} />
@@ -140,9 +140,9 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
         )}
         {/* Plus indicator on bag */}
         {hasItems("bag") && activeZone !== "bag" && (
-          <g><circle cx={47} cy={26} r="4.5" fill={hex} />
-            <line x1={44.8} y1={26} x2={49.2} y2={26} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
-            <line x1={47} y1={23.8} x2={47} y2={28.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
+          <g><circle cx={50} cy={26} r="4.5" fill={hex} />
+            <line x1={47.8} y1={26} x2={52.2} y2={26} stroke="white" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1={50} y1={23.8} x2={50} y2={28.2} stroke="white" strokeWidth="1.3" strokeLinecap="round" /></g>
         )}
 
         {/* Invisible tap targets */}
