@@ -206,7 +206,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       {/* Category */}
       <div>
         <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.category} /></label>
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
           {CATEGORIES.map((cat) => (
             <button key={cat.value} type="button" onClick={() => form.set("category", cat.value)}
               className={`shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${
@@ -222,7 +222,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       <div>
         <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.location} /></label>
         {recentLocations.length > 0 && (
-          <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
+          <div className="mb-2 flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
             {recentLocations.map((loc) => (
               <button key={loc} type="button" onClick={() => form.set("location", form.location === loc ? "" : loc)}
                 className={`group shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${
@@ -279,7 +279,7 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
       {!form.allDay && (
         <div>
           <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary"><BiText text={L.duration} /></label>
-          <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Duration">
+          <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar" role="group" aria-label="Duration">
             {DURATIONS.map((d) => (
               <button key={d.minutes} type="button" onClick={() => form.handleDuration(d.minutes)}
                 className={`shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${

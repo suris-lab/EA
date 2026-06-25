@@ -468,7 +468,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
           </div>
 
           {/* Category filter */}
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
             <button onClick={() => setCategoryFilter(null)}
               className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-semibold transition-all ${!categoryFilter ? "bg-brand-500 text-white shadow-sm" : "border border-border bg-surface-dim text-text-secondary active:bg-gray-100"}`}>
               All
