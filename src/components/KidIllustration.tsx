@@ -53,6 +53,12 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
   return (
     <div className="flex justify-center py-3">
       <svg viewBox={vb} width={svgW} height={140} fill="none">
+        <defs>
+          <clipPath id="kid-silhouette">
+            <path d={KID_D1} transform={`scale(${KID_SCALE})`} />
+            <path d={KID_D2} transform={`scale(${KID_SCALE})`} />
+          </clipPath>
+        </defs>
 
         {/* Child with backpack */}
         <g id="child-with-backpack" transform={`scale(${KID_SCALE})`}>
@@ -60,8 +66,15 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
           <path d={KID_D2} fill={BODY} />
         </g>
 
+        {/* Active zone: color the body part directly via clip */}
+        {activeZone && activeZone !== "bag" && activeZone !== "stroller" && (() => {
+          const r = ZONE_RECTS[activeZone];
+          return <rect x={r.x} y={r.y} width={r.w} height={r.h} fill={hex} clipPath="url(#kid-silhouette)" />;
+        })()}
+
         {/* Standalone school bag */}
-        <g id="school-backpack" transform={`translate(34, 5) scale(${BAG_SCALE})`}>
+        <g id="school-backpack" transform={`translate(34, 5) scale(${BAG_SCALE})`}
+          opacity={activeZone === "bag" ? 1 : 0.65}>
           <path d={BAG_D1} fill={hex} />
           <path d={BAG_D2} fill={hex} />
           <path d={BAG_D3} fill={hex} />
@@ -69,24 +82,20 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
 
         {/* Baby stroller */}
         {showStroller && (
-          <g id="baby-stroller" transform={`translate(64, 10) scale(${STROLLER_SCALE})`}>
+          <g id="baby-stroller" transform={`translate(64, 10) scale(${STROLLER_SCALE})`}
+            opacity={activeZone === "stroller" ? 1 : 0.65}>
             <path d={STROLLER_D1} fill={hex} />
             <path d={STROLLER_D2} fill={hex} />
             <path d={STROLLER_D3} fill={hex} />
           </g>
         )}
 
-        {/* Zone interaction overlays */}
+        {/* Invisible tap targets + dot indicators */}
         {ZONE_ORDER.map((zone) => {
           const r = ZONE_RECTS[zone];
-          const isActive = activeZone === zone;
           return (
             <g key={zone}>
-              {isActive && (
-                <rect x={r.x} y={r.y} width={r.w} height={r.h} rx="4"
-                  fill={hex} opacity={0.12} stroke={hex} strokeWidth="0.8" strokeDasharray="3 2" />
-              )}
-              {hasItems(zone) && !isActive && (
+              {hasItems(zone) && activeZone !== zone && (
                 <circle cx={r.x + r.w - 3} cy={r.y + 4} r="3" fill={hex} />
               )}
               <rect x={r.x} y={r.y} width={r.w} height={r.h}
@@ -96,13 +105,9 @@ export default function KidIllustration({ category, activeZone, onZoneTap, prepa
           );
         })}
 
-        {/* Stroller zone overlay */}
+        {/* Stroller tap target + dot */}
         {showStroller && (
           <g>
-            {activeZone === "stroller" && (
-              <rect x={62} y={8} width={36} height={44} rx="4"
-                fill={hex} opacity={0.12} stroke={hex} strokeWidth="0.8" strokeDasharray="3 2" />
-            )}
             {strollerHasItems && activeZone !== "stroller" && (
               <circle cx={95} cy={12} r="3" fill={hex} />
             )}
