@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { CalendarEvent } from "@/types/event";
+import type { CalendarEvent, PreparationData } from "@/types/event";
 import { toDateValue, toTimeValue, buildLocalISO, findOverlappingEvents } from "@/lib/date-utils";
 import Button from "./Button";
 import EventFormFields, { useFormState } from "./EventFormFields";
@@ -34,6 +34,7 @@ export default function EventPreview({
     location: String(event.location || ""),
     description: String(event.description || ""),
     category: (event.category as "school") || "school",
+    preparation: (event.preparation as PreparationData) || {},
   });
 
   const [saving, setSaving] = useState(false);

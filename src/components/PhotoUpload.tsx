@@ -4,7 +4,8 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import Button from "./Button";
 import EventPreview from "./EventPreview";
-import type { CalendarEvent } from "@/types/event";
+import type { CalendarEvent, PreparationData } from "@/types/event";
+import { L } from "@/lib/labels";
 
 interface PhotoUploadProps {
   onClose: () => void;
@@ -37,9 +38,15 @@ interface ParsedEvent {
   all_day?: boolean;
   location?: string | null;
   description?: string | null;
+  category?: string;
+  preparation?: PreparationData | null;
 }
 
 function toCalendarEvent(raw: ParsedEvent): CalendarEvent {
+  const prep = raw.preparation && typeof raw.preparation === "object"
+    ? raw.preparation as PreparationData
+    : undefined;
+
   return {
     id: "",
     title: String(raw.title || "Untitled"),
@@ -48,6 +55,8 @@ function toCalendarEvent(raw: ParsedEvent): CalendarEvent {
     all_day: Boolean(raw.all_day),
     location: raw.location ? String(raw.location) : null,
     description: raw.description ? String(raw.description) : null,
+    category: (raw.category as CalendarEvent["category"]) || "school",
+    preparation: prep || null,
     source: "photo",
     created_at: "",
   };
@@ -124,6 +133,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
       location: edited.location || null,
       description: edited.description || null,
       category: edited.category || "school",
+      preparation: edited.preparation || null,
       source: "photo",
     };
     if (edited.recurrence) payload.recurrence = edited.recurrence;
@@ -179,8 +189,8 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
         event={calEvent}
         onConfirm={handleConfirmEvent}
         onCancel={handleSkipEvent}
-        confirmLabel={currentEventIdx < parsedEvents.length - 1 ? "Save & Next" : "Save Event"}
-        cancelLabel={currentEventIdx < parsedEvents.length - 1 ? "Skip" : "Cancel"}
+        confirmLabel={currentEventIdx < parsedEvents.length - 1 ? "Save & Next 儲存並下一個" : L.saveEvent}
+        cancelLabel={currentEventIdx < parsedEvents.length - 1 ? "Skip 跳過" : L.cancel}
         error={saveError}
         subtitle={parsedEvents.length > 1 ? `Event ${currentEventIdx + 1} of ${parsedEvents.length}` : undefined}
       />
@@ -191,7 +201,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
     <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center" onClick={onClose}>
       <div className="animate-modal-in w-full max-w-md rounded-t-2xl bg-surface p-6 shadow-2xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-1 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-text-primary">Scan School Notice</h2>
+          <h2 className="text-base font-semibold text-text-primary">Scan Notice 掃描通告</h2>
           <button onClick={onClose} className="rounded-2xl p-1 text-text-muted transition-colors hover:bg-surface-dim hover:text-text-secondary">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -199,7 +209,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
           </button>
         </div>
         <p className="mb-5 text-sm text-text-secondary">
-          Take a photo or choose from your library to extract events.
+          Take a photo or choose from your library to extract events. 拍照或從相簿選取以提取活動。
         </p>
 
         <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleInputChange} />
@@ -209,7 +219,7 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
           <div className="mb-5">
             <Image src={preview} alt="Notice preview" width={400} height={240} className="w-full rounded-2xl border border-border-light object-contain" style={{ maxHeight: 240 }} unoptimized />
             <button onClick={() => { setFile(null); setPreview(null); setError(null); }} className="mt-2 text-xs font-medium text-brand-500 hover:text-brand-600">
-              Choose different image
+              Choose different image 選擇其他圖片
             </button>
           </div>
         ) : (
@@ -220,8 +230,8 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
             onDrop={handleDrop}
           >
             <PhotoLibraryIcon />
-            <p className="mt-3 text-sm font-medium text-text-primary">Tap to add a photo</p>
-            <p className="mt-1 text-xs text-text-muted">PNG, JPG up to 10 MB</p>
+            <p className="mt-3 text-sm font-medium text-text-primary">Tap to add a photo 點按以新增相片</p>
+            <p className="mt-1 text-xs text-text-muted">PNG, JPG up to 10 MB 最大10MB</p>
           </div>
         )}
 
@@ -232,11 +242,11 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
               <div className="overflow-hidden rounded-2xl bg-surface shadow-xl">
                 <button onClick={() => { setShowSourcePicker(false); cameraInputRef.current?.click(); }} className="flex w-full items-center gap-3 border-b border-border-light px-5 py-4 text-left transition-colors active:bg-surface-dim">
                   <CameraIcon />
-                  <span className="text-sm font-medium text-text-primary">Take Photo</span>
+                  <span className="text-sm font-medium text-text-primary">Take Photo 拍照</span>
                 </button>
                 <button onClick={() => { setShowSourcePicker(false); libraryInputRef.current?.click(); }} className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors active:bg-surface-dim">
                   <PhotoLibraryIcon />
-                  <span className="text-sm font-medium text-text-primary">Choose from Library</span>
+                  <span className="text-sm font-medium text-text-primary">Choose from Library 從相簿選取</span>
                 </button>
               </div>
               <button onClick={() => setShowSourcePicker(false)} className="mt-2 w-full rounded-2xl bg-surface py-4 text-center text-sm font-semibold text-brand-500 shadow-xl transition-colors active:bg-surface-dim">
@@ -251,9 +261,9 @@ export default function PhotoUpload({ onClose, onSaved }: PhotoUploadProps) {
         )}
 
         <div className="flex justify-end gap-2">
-          <Button variant="ghost" size="md" onClick={onClose}>Cancel</Button>
+          <Button variant="ghost" size="md" onClick={onClose}>{L.cancel}</Button>
           <Button variant="primary" size="md" onClick={handleScan} loading={scanning} disabled={!file}>
-            {scanning ? "Scanning..." : "Scan"}
+            {scanning ? "Scanning 掃描中..." : "Scan 掃描"}
           </Button>
         </div>
       </div>

@@ -44,33 +44,56 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `You are a school notice reader. Extract ALL events, dates, and activities from the image.
+          content: `You are a school notice reader for Hong Kong parents. Extract ALL events, dates, and activities from the image.
 
 Be generous — if there is ANY mention of a date, time, activity, deadline, or event, include it.
 
 Return a JSON array. Each object:
 {
-  "title": "string (clear, concise event name)",
+  "title": "string — bilingual: English + 繁體中文 (e.g. 'Sports Day 運動會')",
   "start_date": "YYYY-MM-DDTHH:mm:ss (use current year ${new Date().getFullYear()} if year not shown)",
   "end_date": "YYYY-MM-DDTHH:mm:ss or null",
   "all_day": true/false,
-  "location": "string or null",
-  "description": "string or null — see rules below"
+  "location": "string or null — bilingual if identifiable",
+  "description": "string or null — MUST be bilingual (English + 繁體中文), see rules below",
+  "category": "school | tutor | medical | family | other",
+  "preparation": {
+    "head": [{"id": "auto-xxx", "label": "English 中文"}],
+    "body": [{"id": "auto-xxx", "label": "English 中文"}],
+    "feet": [{"id": "auto-xxx", "label": "English 中文"}],
+    "bag": [{"id": "auto-xxx", "label": "English 中文"}]
+  }
 }
 
 Title rules:
-- Use a clear, concise event name (e.g. "Sports Day", "Parent-Teacher Meeting")
+- ALWAYS bilingual: English first, then 繁體中文 (e.g. "Sports Day 運動會", "Parent-Teacher Meeting 家長日")
+- If the notice is only in Chinese, still provide an English translation
+- If the notice is only in English, still provide a Chinese translation
 - Do not repeat the date, time or location in the title
 
-Description rules — this is the most important field to get right:
-- Write a concise, useful summary (1-3 sentences max)
-- Include: the main purpose, required actions or instructions, and who issued the notice (school name, department, teacher, organisation) if clearly identifiable
+Description rules:
+- ALWAYS bilingual: write English first, then 繁體中文
+- Write a concise summary (1-3 sentences per language)
+- Include: the main purpose, required actions, and who issued the notice if identifiable
 - Do NOT repeat information already in title, start_date, end_date, or location
-- Do NOT copy the full notice text word-for-word
-- Do NOT include irrelevant disclaimers, repeated dates, phone numbers, fax numbers or generic administrative text
-- Do NOT invent information that is not in the notice
-- If there is nothing useful to add beyond what title/date/location already capture, set description to null
-- Keep the language matching the notice (Chinese notice → Chinese description, English → English)
+- Do NOT invent information not in the notice
+- If something is unclear, add a remark like "(unclear from notice 通告未列明)" instead of guessing
+- If there is nothing useful beyond title/date/location, set to null
+
+Preparation rules — CRITICAL: only extract items EXPLICITLY mentioned in the notice:
+- Scan the notice for any mention of items to bring, wear, or prepare
+- Map items to the correct zone:
+  - "head": hats, caps, helmets, sunscreen, hair accessories (e.g. "Sun hat 太陽帽")
+  - "body": uniforms, PE kits, specific clothing, jackets, costumes (e.g. "PE kit 體育服")
+  - "feet": specific shoes, trainers, boots, sandals (e.g. "Trainers 運動鞋")
+  - "bag": lunch boxes, water bottles, books, stationery, towels, any item to bring (e.g. "Water bottle 水壺")
+- Each item label MUST be bilingual: "English 中文"
+- Each item id should be "auto-" + a short slug (e.g. "auto-pe-kit", "auto-sunhat")
+- NEVER invent items not mentioned in the notice
+- If the notice says "wear PE uniform" → add to body zone
+- If the notice says "bring water" → add to bag zone
+- If no items are mentioned, omit the preparation field entirely or set to null
+- Only include zones that have items; omit empty zones
 
 Date/time rules:
 - If only a date is shown with no time, set all_day to true and time to 00:00:00
@@ -95,12 +118,12 @@ General rules:
             },
             {
               type: "text",
-              text: "Read this notice carefully. Extract every event, date, deadline, or activity mentioned. Return as JSON array.",
+              text: "Read this notice carefully. Extract every event, date, deadline, or activity mentioned. Identify any items to bring or wear. Return as JSON array with bilingual labels.",
             },
           ],
         },
       ],
-      max_tokens: 2000,
+      max_tokens: 3000,
       temperature: 0.1,
     });
   } catch (err) {
