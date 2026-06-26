@@ -350,7 +350,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
                 {showMonthPicker && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowMonthPicker(false)} />
-                    <div className="absolute left-1/2 top-full z-50 mt-2 w-48 -translate-x-1/2 overflow-hidden rounded-2xl border border-border-light bg-surface shadow-xl" role="listbox">
+                    <div className="absolute left-1/2 top-full z-50 mt-2 w-48 -translate-x-1/2 overflow-hidden rounded-2xl bg-surface shadow-xl" role="listbox">
                       <div className="max-h-72 overflow-y-auto overscroll-contain py-1">
                         {MONTHS.map((m, i) => (
                           <button key={m} onClick={() => handleMonthSelect(i)} role="option" aria-selected={i === currentMonth}
@@ -368,7 +368,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
                 {showYearPicker && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowYearPicker(false)} />
-                    <div className="absolute left-1/2 top-full z-50 mt-2 w-32 -translate-x-1/2 overflow-hidden rounded-2xl border border-border-light bg-surface shadow-xl" role="listbox">
+                    <div className="absolute left-1/2 top-full z-50 mt-2 w-32 -translate-x-1/2 overflow-hidden rounded-2xl bg-surface shadow-xl" role="listbox">
                       <div className="max-h-72 overflow-y-auto overscroll-contain py-1">
                         {yearOptions.map((y) => (
                           <button key={y} onClick={() => handleYearSelect(y)} role="option" aria-selected={y === currentYear}
@@ -388,7 +388,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
       )}
 
       {/* Calendar grid */}
-      <div className="ea-calendar overflow-hidden rounded-2xl border border-border-light bg-surface shadow-sm sm:p-6">
+      <div className="ea-calendar overflow-hidden rounded-2xl bg-surface sm:p-6">
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -427,11 +427,11 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
       </div>
 
       {/* Event list */}
-      <div className="mt-3 overflow-hidden rounded-2xl border border-border-light bg-surface-dim shadow-sm">
+      <div className="mt-3 overflow-hidden rounded-2xl bg-surface-dim">
         {/* Header + search */}
-        <div className="border-b border-border-light bg-surface px-4 py-3">
+        <div className="bg-surface px-4 py-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-semibold uppercase tracking-wide text-text-muted">
+            <h4 className="text-[13px] font-semibold text-text-secondary">
               {selectedDate
                 ? new Date(selectedDate + "T12:00:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })
                 : `${MONTHS[currentMonth]} ${currentYear}`}
@@ -443,7 +443,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
 
           {/* Lunar info */}
           {selectedDate && selectedLunar && (
-            <div className="mt-2 space-y-0.5 text-xs text-text-secondary">
+            <div className="mt-2 space-y-0.5 text-[13px] text-text-secondary">
               <p><span className="text-text-muted">農曆：</span><span className="font-medium text-text-primary">{selectedLunar.fullLabel}</span></p>
               <p><span className="text-text-muted">生肖：</span><span>{selectedLunar.yearShengXiao}</span></p>
               {selectedLunar.solarTerm && <p><span className="text-text-muted">節氣：</span><span className="font-medium text-brand-500">{selectedLunar.solarTerm}</span></p>}
@@ -511,7 +511,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
                     <p className="text-xs text-red-400">{item.holiday.nameCN}</p>
                     <div className="mt-0.5 flex items-center gap-2 text-xs text-text-secondary">
                       {!selectedDate && <span>{new Date(item.holiday.date + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}</span>}
-                      <span className="inline-flex items-center rounded-2xl bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-600">HK Public Holiday</span>
+                      <span className="inline-flex items-center rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-semibold text-red-600">HK Public Holiday</span>
                     </div>
                   </div>
                 </button>

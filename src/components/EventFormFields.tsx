@@ -193,8 +193,8 @@ export default function EventFormFields({ form, showRecurrence = true }: EventFo
   }, []);
 
   const hex = getCategoryHex(form.category);
-  const inputClass = "w-full h-11 rounded-xl bg-surface px-4 text-[15px] text-text-primary placeholder:text-text-muted transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500/20";
-  const errorInputClass = "w-full h-11 rounded-xl bg-surface px-4 text-[15px] text-text-primary transition-colors ring-2 ring-[#FF3B30]/30 focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/40";
+  const inputClass = "w-full h-11 rounded-xl bg-surface px-4 text-[15px] leading-[44px] text-text-primary placeholder:text-text-muted transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500/20";
+  const errorInputClass = "w-full h-11 rounded-xl bg-surface px-4 text-[15px] leading-[44px] text-text-primary transition-colors ring-2 ring-[#FF3B30]/30 focus:outline-none focus:ring-2 focus:ring-[#FF3B30]/40";
 
   return (
     <div className="space-y-4">

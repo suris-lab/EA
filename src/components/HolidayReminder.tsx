@@ -17,7 +17,7 @@ export default function HolidayReminder({ holidays, conflicts, onContinue, onGoB
   if (holidays.length === 0 && conflicts.length === 0) return null;
 
   return (
-    <div className="rounded-2xl border border-[#FF9500]/20 bg-[#FF9500]/5 p-4">
+    <div className="rounded-2xl bg-[#FF9500]/8 p-4">
       <div className="mb-3 flex items-start gap-2">
         <svg className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -44,7 +44,7 @@ export default function HolidayReminder({ holidays, conflicts, onContinue, onGoB
                     ? L.allDay
                     : d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
                   return (
-                    <li key={evt.id} className="flex items-center gap-1.5 text-xs">
+                    <li key={evt.id} className="flex items-center gap-1.5 text-[13px]">
                       <span className="text-amber-400">•</span>
                       <span className="font-medium">{evt.title}</span>
                       <span className="text-amber-600">({timeStr})</span>

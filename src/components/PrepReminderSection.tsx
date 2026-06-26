@@ -250,7 +250,7 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
 
   return (
     <div>
-      <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-text-muted">
+      <label className="mb-1.5 block text-[13px] font-semibold text-text-secondary">
         <BiText text={L.prepReminder} />
       </label>
 
@@ -350,17 +350,17 @@ export default function PrepReminderSection({ category, preparation, onUpdate }:
 
             {/* Suggestion banner */}
             {suggestion && (
-              <div className="mb-3 rounded-xl border border-brand-200 bg-brand-50 p-3">
-                <p className="mb-2 text-xs text-brand-700">
+              <div className="mb-3 rounded-xl bg-brand-50 p-3">
+                <p className="mb-2 text-[13px] text-brand-700">
                   Do you mean 你是否指：<span className="font-semibold">{suggestion.bilingual}</span>?
                 </p>
                 <div className="flex gap-2">
                   <button type="button" onClick={acceptSuggestion}
-                    className="rounded-xl bg-brand-500 px-3 py-1.5 text-xs font-semibold text-white">
+                    className="rounded-xl bg-brand-500 px-3 py-1.5 text-[13px] font-semibold text-white">
                     Accept 接受
                   </button>
                   <button type="button" onClick={rejectSuggestion}
-                    className="rounded-xl border border-border-light px-3 py-1.5 text-xs font-semibold text-text-secondary">
+                    className="rounded-xl bg-surface-dim px-3 py-1.5 text-[13px] font-semibold text-text-secondary">
                     Keep original 保留原文
                   </button>
                 </div>
