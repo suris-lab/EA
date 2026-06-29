@@ -222,16 +222,36 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
   const handleMonthSelect = (month: number) => { setShowMonthPicker(false); goToDate(currentYear, month); };
   const handleYearSelect = (year: number) => { setShowYearPicker(false); goToDate(year, currentMonth); };
 
+  const scrollToNow = useCallback(() => {
+    setTimeout(() => {
+      const container = calendarContainerRef.current?.closest(".ea-calendar") ?? calendarContainerRef.current?.parentElement;
+      const root = container ?? document;
+      const indicator = root.querySelector(".fc-timegrid-now-indicator-line");
+      if (indicator) {
+        indicator.scrollIntoView({ block: "center", behavior: "smooth" });
+      } else {
+        const scroller = root.querySelector(".fc-scroller-liquid-absolute") as HTMLElement;
+        if (scroller) {
+          const h = Math.max(0, new Date().getHours() - 1);
+          const slotHeight = scroller.scrollHeight / 16;
+          scroller.scrollTop = slotHeight * (h - 6);
+        }
+      }
+    }, 100);
+  }, []);
+
   const switchMobileView = (view: "month" | "week") => {
     setMobileView(view);
     const api = calendarRef.current?.getApi();
     if (api) api.changeView(view === "week" ? "timeGridWeek" : "dayGridMonth");
+    if (view === "week") scrollToNow();
   };
 
   const switchDesktopView = (view: "month" | "week") => {
     setDesktopView(view);
     const api = calendarRef.current?.getApi();
     if (api) api.changeView(view === "week" ? "timeGridWeek" : "dayGridMonth");
+    if (view === "week") scrollToNow();
   };
 
   const goToday = () => {
