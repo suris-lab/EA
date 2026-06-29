@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <>
       <NavMenu onEventSaved={handleEventSaved} />
-      <main className="px-4 pb-28 pt-2 sm:px-6 sm:pb-2 sm:pt-2 lg:px-10">
+      <main className="px-4 pb-28 pt-2 sm:px-6 sm:pb-4 sm:pt-3 lg:px-8">
         <Calendar refreshKey={refreshKey} onRefresh={handleEventSaved} />
       </main>
     </>

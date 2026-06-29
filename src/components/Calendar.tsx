@@ -104,6 +104,7 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
   const [toast, setToast] = useState<{ message: string; action?: { label: string; onClick: () => void } } | null>(null);
   const [duplicateEvent, setDuplicateEvent] = useState<CalendarEvent | null>(null);
   const [mobileView, setMobileView] = useState<"month" | "week">("month");
+  const [desktopView, setDesktopView] = useState<"month" | "week">("month");
   const calendarRef = useRef<FullCalendar>(null);
   const calendarContainerRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -227,7 +228,18 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
     if (api) api.changeView(view === "week" ? "timeGridWeek" : "dayGridMonth");
   };
 
-  const isWeekView = mobileView === "week";
+  const switchDesktopView = (view: "month" | "week") => {
+    setDesktopView(view);
+    const api = calendarRef.current?.getApi();
+    if (api) api.changeView(view === "week" ? "timeGridWeek" : "dayGridMonth");
+  };
+
+  const goToday = () => {
+    const api = calendarRef.current?.getApi();
+    if (api) api.today();
+  };
+
+  const isWeekView = isMobile ? mobileView === "week" : desktopView === "week";
 
   const handleListItemClick = (item: DisplayItem) => {
     if (item.type === "holiday" && item.holiday) {
@@ -320,6 +332,118 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
     return years;
   }, [currentYear]);
 
+  const isToday = currentMonth === new Date().getMonth() && currentYear === new Date().getFullYear();
+
+  const sidebarContent = (
+    <>
+      {/* Header + search */}
+      <div className="bg-surface px-4 py-3 lg:rounded-t-2xl">
+        <div className="flex items-center justify-between">
+          <h4 className="text-[13px] font-semibold text-text-secondary">
+            {selectedDate
+              ? new Date(selectedDate + "T12:00:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })
+              : `${MONTHS[currentMonth]} ${currentYear}`}
+          </h4>
+          {selectedDate && (
+            <button onClick={() => setSelectedDate(null)} className="rounded-xl bg-surface-dim px-4 py-1.5 text-[13px] font-medium text-brand-500 transition-all active:opacity-70 hover:bg-brand-50">Show all</button>
+          )}
+        </div>
+
+        {/* Lunar info */}
+        {selectedDate && selectedLunar && (
+          <div className="mt-2 space-y-0.5 text-[13px] text-text-secondary">
+            <p><span className="text-text-muted">農曆：</span><span className="font-medium text-text-primary">{selectedLunar.fullLabel}</span></p>
+            <p><span className="text-text-muted">生肖：</span><span>{selectedLunar.yearShengXiao}</span></p>
+            {selectedLunar.solarTerm && <p><span className="text-text-muted">節氣：</span><span className="font-medium text-brand-500">{selectedLunar.solarTerm}</span></p>}
+            {selectedLunar.festivals.length > 0 && <p><span className="text-text-muted">節日：</span><span className="font-medium text-amber-600">{selectedLunar.festivals.join("、")}</span></p>}
+          </div>
+        )}
+
+        {/* Search */}
+        <div className="mt-2 flex items-center gap-2">
+          <div className="relative flex-1">
+            <svg className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <circle cx="11" cy="11" r="8" /><path strokeLinecap="round" d="m21 21-4.3-4.3" />
+            </svg>
+            <input type="text" value={searchQuery} onChange={(e) => handleSearchChange(e.target.value)} placeholder="Search events..."
+              className="w-full h-9 rounded-lg bg-surface-dim pl-9 pr-8 text-[14px] text-text-primary placeholder:text-text-muted focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
+            {searchQuery && (
+              <button onClick={() => { setSearchQuery(""); setDebouncedQuery(""); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-0.5 text-text-muted hover:text-text-secondary">
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Category filter */}
+        <div className="mt-2.5 flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
+          <button onClick={() => setCategoryFilter(null)}
+            className={`shrink-0 h-8 rounded-full px-3.5 text-[12px] font-semibold transition-all ${!categoryFilter ? "bg-brand-500 text-white" : "bg-surface-dim text-text-secondary hover:bg-border-light active:opacity-70"}`}>
+            All
+          </button>
+          {CATEGORIES.map((cat) => (
+            <button key={cat.value} onClick={() => setCategoryFilter(categoryFilter === cat.value ? null : cat.value)}
+              className={`shrink-0 h-8 rounded-full px-3.5 text-[12px] font-semibold transition-all ${categoryFilter === cat.value ? `${cat.color} text-white` : "bg-surface-dim text-text-secondary hover:bg-border-light active:opacity-70"}`}>
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Event rows */}
+      <div className="divide-y divide-border-light">
+        {displayItems.length === 0 ? (
+          <div className="px-4 py-8 text-center">
+            {debouncedQuery ? (
+              <p className="text-[13px] text-text-muted">No events matching &ldquo;{debouncedQuery}&rdquo;</p>
+            ) : events.length === 0 && !selectedDate ? (
+              <div>
+                <p className="text-[13px] font-medium text-text-secondary">No events yet!</p>
+                <p className="mt-1 text-[12px] text-text-muted">Scan a school notice or add one manually.</p>
+              </div>
+            ) : (
+              <p className="text-[13px] text-text-muted">
+                {selectedDate ? "No events scheduled for this date." : `No events in ${MONTHS[currentMonth]}.`}
+              </p>
+            )}
+          </div>
+        ) : (
+          displayItems.map((item, idx) =>
+            item.type === "holiday" && item.holiday ? (
+              <button key={`h-${item.holiday.date}-${idx}`} onClick={() => handleListItemClick(item)}
+                className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-surface active:bg-gray-50"
+                aria-label={`Hong Kong Public Holiday: ${item.holiday.name}`}>
+                <div className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-red-500" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[13px] font-medium text-red-600">{item.holiday.name}</p>
+                  <p className="text-[12px] text-red-400">{item.holiday.nameCN}</p>
+                  <div className="mt-0.5 flex items-center gap-2 text-[12px] text-text-secondary">
+                    {!selectedDate && <span>{new Date(item.holiday.date + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}</span>}
+                    <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-600">HK Public Holiday</span>
+                  </div>
+                </div>
+              </button>
+            ) : item.event ? (
+              <button key={item.event.id} onClick={() => handleListItemClick(item)}
+                className="group flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-surface active:bg-gray-50">
+                <div className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${getCategoryColor(item.event.category)}`} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[13px] font-medium text-text-primary">{item.event.title}</p>
+                  <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[12px] text-text-secondary">
+                    {!selectedDate && <span>{formatEventDate(item.event.start_date)}</span>}
+                    <span>{item.event.all_day ? "All day" : formatEventTime(item.event.start_date) + (item.event.end_date ? ` – ${formatEventTime(item.event.end_date)}` : "")}</span>
+                    {item.event.location && (<><span className="text-text-muted">·</span><span className="text-text-muted">{item.event.location}</span></>)}
+                  </div>
+                </div>
+                <svg className="mt-1.5 h-4 w-4 shrink-0 text-text-muted opacity-0 transition-opacity group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+              </button>
+            ) : null
+          )
+        )}
+      </div>
+    </>
+  );
+
   return (
     <>
       {/* Mobile header */}
@@ -387,151 +511,141 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
         </div>
       )}
 
-      {/* Calendar grid */}
-      <div className="ea-calendar overflow-hidden rounded-2xl bg-surface sm:p-6">
-        <FullCalendar
-          ref={calendarRef}
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
-          headerToolbar={isMobile ? false : { left: "prev,next today", center: "title", right: "dayGridMonth,timeGridWeek" }}
-          height={isMobile ? (isWeekView ? "calc(100vh - 180px)" : "auto") : "calc(100vh - 80px)"}
-          expandRows={!isMobile}
-          events={fcEvents}
-          eventClick={handleEventClick}
-          dateClick={handleDateClick}
-          datesSet={handleDatesSet}
-          editable={!isMobile}
-          eventDrop={handleEventDrop}
-          selectable={true}
-          dayMaxEvents={isMobile && !isWeekView ? 0 : 20}
-          fixedWeekCount={false}
-          slotMinTime="06:00:00"
-          slotMaxTime="22:00:00"
-          slotDuration="00:30:00"
-          slotLabelInterval="01:00:00"
-          slotLabelFormat={{ hour: "numeric", minute: "2-digit", meridiem: "short" }}
-          scrollTime={(() => { const h = Math.max(0, new Date().getHours() - 1); return `${String(h).padStart(2, "0")}:00:00`; })()}
-          allDaySlot={true}
-          allDayText="All day"
-          nowIndicator={true}
-          eventClassNames="cursor-pointer"
-          dayCellContent={isMobile && !isWeekView ? dayCellContent : undefined}
-          eventDisplay={isMobile && !isWeekView ? "none" : "auto"}
-          displayEventTime={!isMobile || isWeekView}
-          eventTimeFormat={{ hour: "numeric", minute: "2-digit", meridiem: "short" }}
-          dayCellClassNames={(arg) => {
-            const dateStr = toLocalDate(arg.date);
-            return holidayMap.has(dateStr) ? ["hk-holiday-cell"] : [];
-          }}
-        />
-      </div>
-
-      {/* Event list */}
-      <div className="mt-3 overflow-hidden rounded-2xl bg-surface-dim">
-        {/* Header + search */}
-        <div className="bg-surface px-4 py-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-[13px] font-semibold text-text-secondary">
-              {selectedDate
-                ? new Date(selectedDate + "T12:00:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })
-                : `${MONTHS[currentMonth]} ${currentYear}`}
-            </h4>
-            {selectedDate && (
-              <button onClick={() => setSelectedDate(null)} className="rounded-xl bg-surface-dim px-4 py-1.5 text-[13px] font-medium text-brand-500 transition-all active:opacity-70">Show all</button>
-            )}
-          </div>
-
-          {/* Lunar info */}
-          {selectedDate && selectedLunar && (
-            <div className="mt-2 space-y-0.5 text-[13px] text-text-secondary">
-              <p><span className="text-text-muted">農曆：</span><span className="font-medium text-text-primary">{selectedLunar.fullLabel}</span></p>
-              <p><span className="text-text-muted">生肖：</span><span>{selectedLunar.yearShengXiao}</span></p>
-              {selectedLunar.solarTerm && <p><span className="text-text-muted">節氣：</span><span className="font-medium text-brand-500">{selectedLunar.solarTerm}</span></p>}
-              {selectedLunar.festivals.length > 0 && <p><span className="text-text-muted">節日：</span><span className="font-medium text-amber-600">{selectedLunar.festivals.join("、")}</span></p>}
-            </div>
-          )}
-
-          {/* Search */}
-          <div className="mt-2 flex items-center gap-2">
-            <div className="relative flex-1">
-              <svg className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <circle cx="11" cy="11" r="8" /><path strokeLinecap="round" d="m21 21-4.3-4.3" />
-              </svg>
-              <input type="text" value={searchQuery} onChange={(e) => handleSearchChange(e.target.value)} placeholder="Search events..."
-                className="w-full h-10 rounded-xl bg-surface-dim pl-10 pr-9 text-[15px] text-text-primary placeholder:text-text-muted focus:bg-surface focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
-              {searchQuery && (
-                <button onClick={() => { setSearchQuery(""); setDebouncedQuery(""); }} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-text-muted hover:text-text-secondary">
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Category filter */}
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
-            <button onClick={() => setCategoryFilter(null)}
-              className={`shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${!categoryFilter ? "bg-brand-500 text-white" : "bg-surface-dim text-text-secondary active:opacity-70"}`}>
-              All
+      {/* Desktop toolbar — Apple Calendar style */}
+      {!isMobile && (
+        <div className="mb-4 flex items-center justify-between" ref={calendarContainerRef}>
+          <div className="flex items-center gap-3">
+            <button onClick={goToday}
+              className={`h-8 rounded-lg border px-3 text-[13px] font-medium transition-colors ${isToday ? "border-border-light text-text-muted" : "border-border text-text-primary hover:bg-surface"}`}
+              disabled={isToday}>
+              Today
             </button>
-            {CATEGORIES.map((cat) => (
-              <button key={cat.value} onClick={() => setCategoryFilter(categoryFilter === cat.value ? null : cat.value)}
-                className={`shrink-0 h-9 rounded-full px-4 text-[13px] font-semibold transition-all ${categoryFilter === cat.value ? `${cat.color} text-white` : "bg-surface-dim text-text-secondary active:opacity-70"}`}>
-                {cat.label}
+            <div className="flex items-center">
+              <button onClick={() => navigate("prev")} className="flex h-8 w-8 items-center justify-center rounded-l-lg border border-border-light text-text-secondary transition-colors hover:bg-surface" aria-label="Previous">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
               </button>
-            ))}
+              <button onClick={() => navigate("next")} className="flex h-8 w-8 items-center justify-center rounded-r-lg border border-l-0 border-border-light text-text-secondary transition-colors hover:bg-surface" aria-label="Next">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+              </button>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="relative">
+                <button onClick={() => { setShowMonthPicker(!showMonthPicker); setShowYearPicker(false); }}
+                  className="rounded-lg px-1.5 py-1 text-[22px] font-bold tracking-tight text-text-primary transition-colors hover:bg-surface-dim">
+                  {MONTHS[currentMonth]}
+                </button>
+                {showMonthPicker && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setShowMonthPicker(false)} />
+                    <div className="absolute left-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-xl bg-surface shadow-xl ring-1 ring-border-light" role="listbox">
+                      <div className="max-h-72 overflow-y-auto overscroll-contain py-1">
+                        {MONTHS.map((m, i) => (
+                          <button key={m} onClick={() => handleMonthSelect(i)} role="option" aria-selected={i === currentMonth}
+                            className={`flex h-9 w-full items-center px-3.5 text-[14px] transition-colors hover:bg-surface-dim ${i === currentMonth ? "font-semibold text-brand-500" : "text-text-primary"}`}>
+                            {m}{i === currentMonth && <svg className="ml-auto h-3.5 w-3.5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="relative">
+                <button onClick={() => { setShowYearPicker(!showYearPicker); setShowMonthPicker(false); }}
+                  className="rounded-lg px-1.5 py-1 text-[22px] font-bold tracking-tight text-text-secondary transition-colors hover:bg-surface-dim">
+                  {currentYear}
+                </button>
+                {showYearPicker && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setShowYearPicker(false)} />
+                    <div className="absolute left-0 top-full z-50 mt-1 w-28 overflow-hidden rounded-xl bg-surface shadow-xl ring-1 ring-border-light" role="listbox">
+                      <div className="max-h-72 overflow-y-auto overscroll-contain py-1">
+                        {yearOptions.map((y) => (
+                          <button key={y} onClick={() => handleYearSelect(y)} role="option" aria-selected={y === currentYear}
+                            className={`flex h-9 w-full items-center justify-center text-[14px] transition-colors hover:bg-surface-dim ${y === currentYear ? "font-semibold text-brand-500" : "text-text-primary"}`}>{y}</button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Segmented control */}
+          <div className="inline-flex rounded-lg bg-surface-dim p-0.5">
+            <button onClick={() => switchDesktopView("month")}
+              className={`h-7 rounded-md px-4 text-[13px] font-medium transition-all ${desktopView === "month" ? "bg-surface text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
+              Month
+            </button>
+            <button onClick={() => switchDesktopView("week")}
+              className={`h-7 rounded-md px-4 text-[13px] font-medium transition-all ${desktopView === "week" ? "bg-surface text-text-primary shadow-sm" : "text-text-secondary hover:text-text-primary"}`}>
+              Week
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Two-column layout on desktop */}
+      <div className="lg:flex lg:gap-5 lg:items-start">
+        {/* Calendar grid */}
+        <div className="ea-calendar overflow-hidden rounded-2xl bg-surface lg:flex-1 lg:min-w-0">
+          <FullCalendar
+            ref={calendarRef}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            headerToolbar={false}
+            height={isMobile ? (isWeekView ? "calc(100vh - 180px)" : "auto") : (isWeekView ? "calc(100vh - 140px)" : "auto")}
+            aspectRatio={isMobile ? undefined : 1.5}
+            expandRows={isWeekView}
+            events={fcEvents}
+            eventClick={handleEventClick}
+            dateClick={handleDateClick}
+            datesSet={handleDatesSet}
+            editable={!isMobile}
+            eventDrop={handleEventDrop}
+            selectable={true}
+            dayMaxEvents={isMobile && !isWeekView ? 0 : (isWeekView ? 20 : 4)}
+            fixedWeekCount={false}
+            slotMinTime="06:00:00"
+            slotMaxTime="22:00:00"
+            slotDuration="00:30:00"
+            slotLabelInterval="01:00:00"
+            slotLabelFormat={{ hour: "numeric", minute: "2-digit", meridiem: "short" }}
+            scrollTime={(() => { const h = Math.max(0, new Date().getHours() - 1); return `${String(h).padStart(2, "0")}:00:00`; })()}
+            allDaySlot={true}
+            allDayText="All day"
+            nowIndicator={true}
+            eventClassNames="cursor-pointer"
+            dayCellContent={isMobile && !isWeekView ? dayCellContent : undefined}
+            eventDisplay={isMobile && !isWeekView ? "none" : "auto"}
+            displayEventTime={!isMobile || isWeekView}
+            eventTimeFormat={{ hour: "numeric", minute: "2-digit", meridiem: "short" }}
+            dayCellClassNames={(arg) => {
+              const dateStr = toLocalDate(arg.date);
+              const classes: string[] = [];
+              if (holidayMap.has(dateStr)) classes.push("hk-holiday-cell");
+              if (dateStr === selectedDate) classes.push("fc-day-active");
+              return classes;
+            }}
+          />
+        </div>
+
+        {/* Sidebar — desktop only */}
+        <div className="hidden lg:block lg:w-[340px] lg:shrink-0">
+          <div className="sticky top-[57px] max-h-[calc(100vh-73px)] overflow-hidden rounded-2xl bg-surface-dim">
+            <div className="flex max-h-[calc(100vh-73px)] flex-col">
+              <div className="shrink-0">{/* Search + filters header rendered inline */}</div>
+              <div className="flex-1 overflow-y-auto overscroll-contain hide-scrollbar">
+                {sidebarContent}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Event rows */}
-        <div className="divide-y divide-border-light">
-          {displayItems.length === 0 ? (
-            <div className="px-4 py-8 text-center">
-              {debouncedQuery ? (
-                <p className="text-sm text-text-muted">No events matching &ldquo;{debouncedQuery}&rdquo;</p>
-              ) : events.length === 0 && !selectedDate ? (
-                <div>
-                  <p className="text-sm font-medium text-text-secondary">No events yet!</p>
-                  <p className="mt-1 text-xs text-text-muted">Scan a school notice or add one manually.</p>
-                </div>
-              ) : (
-                <p className="text-sm text-text-muted">
-                  {selectedDate ? "No events scheduled for this date." : `No events in ${MONTHS[currentMonth]}.`}
-                </p>
-              )}
-            </div>
-          ) : (
-            displayItems.map((item, idx) =>
-              item.type === "holiday" && item.holiday ? (
-                <button key={`h-${item.holiday.date}-${idx}`} onClick={() => handleListItemClick(item)}
-                  className="flex w-full items-start gap-3 px-4 py-3.5 text-left transition-colors hover:bg-surface active:bg-gray-50"
-                  aria-label={`Hong Kong Public Holiday: ${item.holiday.name}`}>
-                  <div className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-red-500" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-red-600">{item.holiday.name}</p>
-                    <p className="text-xs text-red-400">{item.holiday.nameCN}</p>
-                    <div className="mt-0.5 flex items-center gap-2 text-xs text-text-secondary">
-                      {!selectedDate && <span>{new Date(item.holiday.date + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}</span>}
-                      <span className="inline-flex items-center rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-semibold text-red-600">HK Public Holiday</span>
-                    </div>
-                  </div>
-                </button>
-              ) : item.event ? (
-                <button key={item.event.id} onClick={() => handleListItemClick(item)}
-                  className="flex w-full items-start gap-3 px-4 py-3.5 text-left transition-colors hover:bg-surface active:bg-gray-50">
-                  <div className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${getCategoryColor(item.event.category)}`} />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-text-primary">{item.event.title}</p>
-                    <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-text-secondary">
-                      {!selectedDate && <span>{formatEventDate(item.event.start_date)}</span>}
-                      <span>{item.event.all_day ? "All day" : formatEventTime(item.event.start_date) + (item.event.end_date ? ` – ${formatEventTime(item.event.end_date)}` : "")}</span>
-                      {item.event.location && (<><span className="text-text-muted">·</span><span className="text-text-muted">{item.event.location}</span></>)}
-                    </div>
-                  </div>
-                  <svg className="mt-1.5 h-4 w-4 shrink-0 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-                </button>
-              ) : null
-            )
-          )}
+        {/* Mobile event list — below calendar */}
+        <div className="mt-3 overflow-hidden rounded-2xl bg-surface-dim lg:hidden">
+          {sidebarContent}
         </div>
       </div>
 

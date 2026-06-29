@@ -118,7 +118,7 @@ export default function EventPreview({
 
   return (
     <div className="animate-backdrop-in fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center modal-open overscroll-none touch-none" onClick={onCancel}>
-      <div className="animate-modal-in flex max-h-[92vh] w-full max-w-lg flex-col rounded-t-2xl bg-surface-dim shadow-2xl sm:rounded-2xl touch-auto" onClick={(e) => e.stopPropagation()}>
+      <div className="animate-modal-in flex max-h-[92vh] w-full max-w-lg flex-col rounded-t-2xl bg-surface-dim shadow-2xl sm:max-w-xl sm:rounded-2xl touch-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-center pt-2 pb-1 sm:hidden">
           <div className="h-[5px] w-9 rounded-full bg-border" />
         </div>
