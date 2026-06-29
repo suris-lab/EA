@@ -627,8 +627,8 @@ export default function Calendar({ refreshKey, onRefresh }: CalendarProps) {
             selectable={true}
             dayMaxEvents={isMobile && !isWeekView ? 0 : (isWeekView ? 20 : 4)}
             fixedWeekCount={false}
-            slotMinTime="06:00:00"
-            slotMaxTime="22:00:00"
+            slotMinTime="00:00:00"
+            slotMaxTime="24:00:00"
             slotDuration="00:30:00"
             slotLabelInterval="01:00:00"
             slotLabelFormat={{ hour: "numeric", minute: "2-digit", meridiem: "short" }}
